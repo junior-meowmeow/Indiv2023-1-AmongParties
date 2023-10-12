@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -15,8 +16,17 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController characterController;
 
+    [Header ("Input Action")]
+    public InputActionReference moveInput;
+    public InputActionReference interactInput;
+
+    [Header ("Body")]
+    public Rigidbody rb;
+    public ConfigurableJoint hipJoint;
+
     public PickableObject holdingObject;
     public Transform holdPos;
+    public Transform interactPoint;
 
     void Start()
     {
@@ -28,10 +38,50 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Movement();
-        Interact();
+        // Interact();
+    }
+
+    void OnEnable()
+    {
+        interactInput.action.started += Interact;
     }
 
     void Movement()
+    {
+        Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
+
+        float forwardMovement = moveDir.y * movementSpeed;
+        float strafeMovement = moveDir.x * movementSpeed;
+
+        rb.velocity = transform.forward * forwardMovement + transform.right * strafeMovement;
+
+        float targetAngle = Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg;
+        hipJoint.targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
+    }
+
+    void Interact(InputAction.CallbackContext c)
+    {
+        if (holdingObject == null)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(interactPoint.transform.position, interactPoint.transform.forward, out hit, interactRange))
+            {
+                PickableObject obj = hit.collider.GetComponent<PickableObject>();
+                if (obj != null)
+                {
+                    obj.Hold(this);
+                    holdingObject = obj;
+                }
+            }
+        }
+        else
+        {
+            holdingObject.Drop();
+            holdingObject = null;
+        }
+    }
+
+    void OldMovement()
     {
         float forwardMovement = Input.GetAxis("Vertical") * movementSpeed;
         float strafeMovement = Input.GetAxis("Horizontal") * movementSpeed;
@@ -56,7 +106,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    void Interact()
+    void OldInteract()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -80,5 +130,11 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(interactPoint.transform.position, transform.forward * interactRange);
     }
 }
