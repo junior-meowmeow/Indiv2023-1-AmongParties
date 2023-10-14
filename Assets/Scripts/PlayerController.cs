@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [Header ("Body")]
     public Rigidbody rb;
     public ConfigurableJoint hipJoint;
+    public Animator anim;
 
     public PickableObject holdingObject;
     public Transform holdPos;
@@ -56,6 +57,8 @@ public class PlayerController : MonoBehaviour
         //print(hipJoint.transform.localEulerAngles);
         if (moveDir == Vector2.zero)
         {
+            anim.SetBool("isWalk", false);
+
             if (!holdRotation)
             {
                 float currentAngleY = hipJoint.transform.localEulerAngles.y;
@@ -76,6 +79,7 @@ public class PlayerController : MonoBehaviour
             }
             return;
         }
+        anim.SetBool("isWalk", true);
 
         holdRotation = false;
 
