@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PickableObject : MonoBehaviour
 {
-    public float movementSpeed = 5.0f;
+    public float movementSpeed = 8.0f;
     public bool hasRigidbody = false;
 
     private Rigidbody rb;
@@ -18,7 +18,7 @@ public class PickableObject : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (holdPlayer)
         {
@@ -30,7 +30,6 @@ public class PickableObject : MonoBehaviour
             {
                 UpdatePositionNoRB();
             }
-            transform.position = holdPlayer.holdPos.position;
             transform.rotation = holdPlayer.holdPos.rotation;
         }
     }
