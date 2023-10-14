@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,9 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 2.0f;
     public float interactRange = 3.0f;
     public float rotationSpeed = 1.0f;
+    public float stepMultiplier = 0.01f;
+    public float stepSpeed = 0.5f;
+    public float currentStepTime;
 
     public bool holdRotation = false;
 
@@ -25,7 +29,8 @@ public class PlayerController : MonoBehaviour
     [Header ("Body")]
     public Rigidbody rb;
     public ConfigurableJoint hipJoint;
-    //public Animator anim;
+    public Transform leftLeg;
+    public Transform rightLeg;
 
     public PickableObject holdingObject;
     public Transform holdPos;
@@ -35,6 +40,7 @@ public class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         cam = GetComponentInChildren<Camera>();
+        currentStepTime = 0f;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -57,7 +63,6 @@ public class PlayerController : MonoBehaviour
         //print(hipJoint.transform.localEulerAngles);
         if (moveDir == Vector2.zero)
         {
-            //anim.SetBool("isWalk", false);
 
             if (!holdRotation)
             {
@@ -79,9 +84,18 @@ public class PlayerController : MonoBehaviour
             }
             return;
         }
-        //anim.SetBool("isWalk", true);
 
         holdRotation = false;
+
+        Vector3 leftLegAngle = leftLeg.localEulerAngles;
+        Vector3 rightLegAngle = rightLeg.localEulerAngles;
+        print("old : " + leftLegAngle);
+        leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier);
+        rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier);
+        print("new : " + leftLegAngle);
+        leftLeg.localRotation = Quaternion.Euler(leftLegAngle);
+        rightLeg.localRotation = Quaternion.Euler(rightLegAngle);
+        currentStepTime += stepSpeed * Time.fixedDeltaTime;
 
         float forwardMovement = moveDir.y * movementSpeed;
         float strafeMovement = moveDir.x * movementSpeed;
