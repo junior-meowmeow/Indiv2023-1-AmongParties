@@ -274,6 +274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementSpeed: 5
+  hasRigidbody: 1
 --- !u!65 &20933307
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -381,7 +383,7 @@ GameObject:
   - component: {fileID: 48532746}
   - component: {fileID: 48532745}
   m_Layer: 0
-  m_Name: Cube (5)
+  m_Name: Slope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -520,6 +522,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementSpeed: 5
+  hasRigidbody: 1
 --- !u!65 &128256889
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -636,7 +640,7 @@ MonoBehaviour:
   jumpForce: 1
   mouseSensitivity: 2
   interactRange: 3
-  rotationSpeed: 1
+  rotationSpeed: 200
   holdRotation: 0
   moveInput: {fileID: -6320487089797257092, guid: ad95213d430093d4d8d5d252b89f4d39,
     type: 3}
@@ -1755,12 +1759,12 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 3
-    positionSpring: 800
+    positionSpring: 1500
     positionDamper: 0
     maximumForce: 3.4028233e+38
   m_AngularYZDrive:
     serializedVersion: 3
-    positionSpring: 800
+    positionSpring: 1500
     positionDamper: 0
     maximumForce: 3.4028233e+38
   m_SlerpDrive:
@@ -3247,6 +3251,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementSpeed: 5
+  hasRigidbody: 1
 --- !u!65 &1502579274
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3374,6 +3380,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementSpeed: 5
+  hasRigidbody: 1
 --- !u!65 &1506375658
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3794,6 +3802,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementSpeed: 5
+  hasRigidbody: 1
 --- !u!65 &1736150697
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -4,15 +4,46 @@ using UnityEngine;
 
 public class PickableObject : MonoBehaviour
 {
+    public float movementSpeed = 5.0f;
+    public bool hasRigidbody = false;
+
+    private Rigidbody rb;
     private PlayerController holdPlayer;
+
+    private void Start()
+    {
+        if (hasRigidbody)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+    }
 
     void Update()
     {
         if (holdPlayer)
         {
+            if (hasRigidbody)
+            {
+                UpdatePositionRB();
+            }
+            else
+            {
+                UpdatePositionNoRB();
+            }
             transform.position = holdPlayer.holdPos.position;
             transform.rotation = holdPlayer.holdPos.rotation;
         }
+    }
+
+    private void UpdatePositionRB()
+    {
+        Vector3 targetPosition = holdPlayer.holdPos.position;
+        rb.velocity = (targetPosition - transform.position) * movementSpeed;
+    }
+
+    private void UpdatePositionNoRB()
+    {
+        transform.position = holdPlayer.holdPos.position;
     }
 
     public void Hold(PlayerController player)

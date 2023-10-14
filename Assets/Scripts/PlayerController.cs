@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     [Header ("Body")]
     public Rigidbody rb;
     public ConfigurableJoint hipJoint;
-    public Animator anim;
+    //public Animator anim;
 
     public PickableObject holdingObject;
     public Transform holdPos;
@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         Movement();
         // Interact();
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
         //print(hipJoint.transform.localEulerAngles);
         if (moveDir == Vector2.zero)
         {
-            anim.SetBool("isWalk", false);
+            //anim.SetBool("isWalk", false);
 
             if (!holdRotation)
             {
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
             }
             return;
         }
-        anim.SetBool("isWalk", true);
+        //anim.SetBool("isWalk", true);
 
         holdRotation = false;
 
@@ -117,9 +117,9 @@ public class PlayerController : MonoBehaviour
         }
 
         //print("before :"+currentAngle + " -> " + targetAngle);
-        if(Mathf.Abs(distance) > rotationSpeed)
+        if(Mathf.Abs(distance) > rotationSpeed * Time.fixedDeltaTime)
         {
-            targetAngle = currentAngle + rotationSpeed * Mathf.Sign(distance);
+            targetAngle = currentAngle + rotationSpeed * Mathf.Sign(distance) * Time.fixedDeltaTime;
         }
         //print("after :"+targetAngle);
 
