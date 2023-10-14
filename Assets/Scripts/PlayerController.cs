@@ -6,24 +6,21 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public float movementSpeed = 5.0f;
-    public float jumpForce = 1.0f;
-    public float mouseSensitivity = 2.0f;
-    public float interactRange = 3.0f;
-    public float rotationSpeed = 1.0f;
-    public float stepMultiplier = 0.01f;
-    public float stepSpeed = 0.5f;
-    public float currentStepTime;
+    [Header ("Movement")]
+    [SerializeField] private float movementSpeed = 5.0f;
+    [SerializeField] private float jumpForce = 1.0f;
+    [SerializeField] private float interactRange = 3.0f;
+    [SerializeField] private float rotationSpeed = 1.0f;
+    [SerializeField] private float stepMultiplier = 0.01f;
+    private float stepSpeed = 0.5f;
+    private float currentStepTime;
 
-    public bool isFall = false;
-    public float defaultFallDuration = 3f;
-    public float lastfallDuration;
+    private bool isFall = false;
+    [SerializeField] private float defaultFallDuration = 3f;
+    private float lastfallDuration;
     private float lastFallTime;
 
     public bool holdRotation = false;
-
-    private Camera cam;
-    private float verticalRotation = 0;
 
     private CharacterController characterController;
 
@@ -37,6 +34,7 @@ public class PlayerController : MonoBehaviour
     public Transform leftLeg;
     public Transform rightLeg;
 
+    private CameraController cam;
     public PickableObject holdingObject;
     public Transform holdPos;
     public Transform interactPoint;
@@ -44,7 +42,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
-        cam = GetComponentInChildren<Camera>();
+        cam = GetComponentInChildren<CameraController>();
         currentStepTime = 0f;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -59,8 +57,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        CheckFall();
+        if (isFall) return;
         Movement();
-        // Interact();
     }
 
     void OnEnable()
@@ -70,23 +69,6 @@ public class PlayerController : MonoBehaviour
 
     void Movement()
     {
-        if (isFall)
-        {
-            if(Time.time - lastFallTime > lastfallDuration)
-            {
-                isFall = false;
-                JointDrive jointXDrive = hipJoint.angularXDrive;
-                jointXDrive.positionSpring = 1500f;
-                hipJoint.angularXDrive = jointXDrive;
-
-                JointDrive jointYZDrive = hipJoint.angularYZDrive;
-                jointYZDrive.positionSpring = 1500f;
-                hipJoint.angularYZDrive = jointYZDrive;
-                interactInput.action.started += Interact;
-            }
-            return;
-        }
-
         Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
 
         //print(moveDir);
@@ -114,30 +96,22 @@ public class PlayerController : MonoBehaviour
             }
             return;
         }
-
         holdRotation = false;
 
-        Vector3 leftLegAngle = leftLeg.localEulerAngles;
-        Vector3 rightLegAngle = rightLeg.localEulerAngles;
-        // print("old : " + leftLegAngle);
-        leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier);
-        rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier);
-        // print("new : " + leftLegAngle);
-        leftLeg.localRotation = Quaternion.Euler(leftLegAngle);
-        rightLeg.localRotation = Quaternion.Euler(rightLegAngle);
-        currentStepTime += stepSpeed * Time.fixedDeltaTime;
+        LegPos();
 
         float forwardMovement = moveDir.y * movementSpeed;
         float strafeMovement = moveDir.x * movementSpeed;
 
-        rb.velocity = transform.forward * forwardMovement + transform.right * strafeMovement;
+        float camRot = cam.transform.localEulerAngles.y;
+        
+        Debug.Log(camRot);
+        rb.velocity = Quaternion.Euler(0f, camRot, 0f) * transform.forward * forwardMovement
+                    + Quaternion.Euler(0f, camRot, 0f) * transform.right * strafeMovement;
 
-        float targetAngle = Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg;
+        float targetAngle = 360 - (Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg + camRot);
 
-        if(targetAngle < 0)
-        {
-            targetAngle += 360f;
-        }
+        Debug.Log("T " + targetAngle);
 
         float currentAngle = hipJoint.targetRotation.eulerAngles.y;
 
@@ -146,7 +120,7 @@ public class PlayerController : MonoBehaviour
         float distance;
         if (passZeroDegree)
         {
-            if(currentAngle > 180)
+            if (currentAngle > 180)
             {
                 distance = targetAngle - currentAngle + 360f;
             }
@@ -170,6 +144,35 @@ public class PlayerController : MonoBehaviour
         hipJoint.targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
     }
 
+    void CheckFall()
+    {
+        if (Time.time - lastFallTime > lastfallDuration)
+        {
+            isFall = false;
+            JointDrive jointXDrive = hipJoint.angularXDrive;
+            jointXDrive.positionSpring = 1500f;
+            hipJoint.angularXDrive = jointXDrive;
+
+            JointDrive jointYZDrive = hipJoint.angularYZDrive;
+            jointYZDrive.positionSpring = 1500f;
+            hipJoint.angularYZDrive = jointYZDrive;
+            interactInput.action.started += Interact;
+        }
+    }
+
+    void LegPos()
+    {
+        Vector3 leftLegAngle = leftLeg.localEulerAngles;
+        Vector3 rightLegAngle = rightLeg.localEulerAngles;
+        // print("old : " + leftLegAngle);
+        leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier);
+        rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier);
+        // print("new : " + leftLegAngle);
+        leftLeg.localRotation = Quaternion.Euler(leftLegAngle);
+        rightLeg.localRotation = Quaternion.Euler(rightLegAngle);
+        currentStepTime += stepSpeed * Time.fixedDeltaTime;
+    }
+
     void Interact(InputAction.CallbackContext c)
     {
         if (holdingObject == null)
@@ -178,21 +181,31 @@ public class PlayerController : MonoBehaviour
             if (Physics.Raycast(interactPoint.transform.position, interactPoint.transform.forward, out hit, interactRange))
             {
                 PickableObject obj = hit.collider.GetComponent<PickableObject>();
-                if (obj != null)
-                {
-                    obj.Hold(this);
-                    holdingObject = obj;
-                }
+                PickObject(obj);
             }
         }
         else
         {
-            holdingObject.Drop();
-            holdingObject = null;
+            DropObject();
         }
     }
 
-    public void Fall(float fallDuration)
+    void PickObject(PickableObject obj)
+    {
+        if (obj != null)
+        {
+            obj.Hold(this);
+            holdingObject = obj;
+        }
+    }
+
+    void DropObject()
+    {
+        holdingObject.Drop();
+        holdingObject = null;
+    }
+
+    void Fall(float fallDuration)
     {
         isFall = true;
         interactInput.action.started -= Interact;
@@ -213,62 +226,5 @@ public class PlayerController : MonoBehaviour
 
         lastfallDuration = fallDuration;
         lastFallTime = Time.time;
-    }
-
-    void OldMovement()
-    {
-        float forwardMovement = Input.GetAxis("Vertical") * movementSpeed;
-        float strafeMovement = Input.GetAxis("Horizontal") * movementSpeed;
-
-        Vector3 movement = transform.forward * forwardMovement + transform.right * strafeMovement;
-        characterController.Move(movement * Time.deltaTime);
-
-        // Player rotation (looking around)
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-        verticalRotation -= mouseY;
-        verticalRotation = Mathf.Clamp(verticalRotation, -90, 90); // Limit vertical rotation to prevent flipping
-
-        transform.Rotate(Vector3.up * mouseX);
-        cam.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
-
-        if (characterController.isGrounded && Input.GetButtonDown("Jump"))
-        {
-            characterController.Move(Vector3.up * jumpForce);
-        }
-
-    }
-
-    void OldInteract()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (holdingObject == null)
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, interactRange))
-                {
-                    PickableObject obj = hit.collider.GetComponent<PickableObject>();
-                    if (obj != null)
-                    {
-                        obj.Hold(this);
-                        holdingObject = obj;
-                    }
-                }
-            }
-            else
-            {
-                holdingObject.Drop();
-                holdingObject = null;
-            }
-        }
-
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(interactPoint.transform.position, transform.forward * interactRange);
     }
 }
