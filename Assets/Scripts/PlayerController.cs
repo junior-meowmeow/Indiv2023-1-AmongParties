@@ -9,7 +9,9 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 1.0f;
     public float mouseSensitivity = 2.0f;
     public float interactRange = 3.0f;
+    public float rotationSpeed = 1.0f;
 
+    public bool holdRotation = false;
 
     private Camera cam;
     private float verticalRotation = 0;
@@ -50,12 +52,73 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
 
+        //print(moveDir);
+        //print(hipJoint.transform.localEulerAngles);
+        if (moveDir == Vector2.zero)
+        {
+            if (!holdRotation)
+            {
+                float currentAngleY = hipJoint.transform.localEulerAngles.y;
+                //print(currentAngleY);
+                if (currentAngleY < 0)
+                {
+                    currentAngleY *= -1;
+                }
+                else
+                {
+                    currentAngleY = 360f - currentAngleY;
+                }
+                //print(currentAngleY);
+                Vector3 currentRotation = new Vector3(0f, currentAngleY, 0f);
+                //print(currentRotation);
+                hipJoint.targetRotation = Quaternion.Euler(currentRotation);
+                holdRotation = true;
+            }
+            return;
+        }
+
+        holdRotation = false;
+
         float forwardMovement = moveDir.y * movementSpeed;
         float strafeMovement = moveDir.x * movementSpeed;
 
         rb.velocity = transform.forward * forwardMovement + transform.right * strafeMovement;
 
         float targetAngle = Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg;
+
+        if(targetAngle < 0)
+        {
+            targetAngle += 360f;
+        }
+
+        float currentAngle = hipJoint.targetRotation.eulerAngles.y;
+
+        bool passZeroDegree = Mathf.Abs(targetAngle - currentAngle) > 180f;
+
+        float distance;
+        if (passZeroDegree)
+        {
+            if(currentAngle > 180)
+            {
+                distance = targetAngle - currentAngle + 360f;
+            }
+            else
+            {
+                distance = targetAngle - currentAngle - 360f;
+            }
+        }
+        else
+        {
+            distance = targetAngle - currentAngle;
+        }
+
+        print("before :"+currentAngle + " -> " + targetAngle);
+        if(Mathf.Abs(distance) > rotationSpeed)
+        {
+            targetAngle = currentAngle + rotationSpeed * Mathf.Sign(distance);
+        }
+        print("after :"+targetAngle);
+
         hipJoint.targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
     }
 
