@@ -112,12 +112,12 @@ public class PlayerController : MonoBehaviour
             distance = targetAngle - currentAngle;
         }
 
-        print("before :"+currentAngle + " -> " + targetAngle);
+        //print("before :"+currentAngle + " -> " + targetAngle);
         if(Mathf.Abs(distance) > rotationSpeed)
         {
             targetAngle = currentAngle + rotationSpeed * Mathf.Sign(distance);
         }
-        print("after :"+targetAngle);
+        //print("after :"+targetAngle);
 
         hipJoint.targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
     }
