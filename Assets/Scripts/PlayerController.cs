@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float interactRange = 3.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
     [SerializeField] private float stepMultiplier = 0.01f;
-    private float stepSpeed = 0.5f;
+    private float stepSpeed = 20f;
     private float currentStepTime;
 
     private bool isFall = false;
@@ -109,7 +109,11 @@ public class PlayerController : MonoBehaviour
         rb.velocity = Quaternion.Euler(0f, camRot, 0f) * transform.forward * forwardMovement
                     + Quaternion.Euler(0f, camRot, 0f) * transform.right * strafeMovement;
 
-        float targetAngle = 360 - (Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg + camRot);
+        float targetAngle = (Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg - camRot);
+        if(targetAngle < 0)
+        {
+            targetAngle += 360f;
+        }
 
         Debug.Log("T " + targetAngle);
 
