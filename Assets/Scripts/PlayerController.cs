@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour
     public PickableObject holdingObject;
     public Transform holdPos;
     public Transform interactPoint;
+    public Transform groundPoint;
 
     void Start()
     {
@@ -66,6 +67,7 @@ public class PlayerController : MonoBehaviour
     void OnEnable()
     {
         interactInput.action.started += Interact;
+        jumpInput.action.started += Jump;
     }
 
     void Movement()
@@ -84,16 +86,11 @@ public class PlayerController : MonoBehaviour
                     + Quaternion.Euler(0f, camRotY, 0f) * transform.right * strafeMovement;
 
         float targetAngle = Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg - camRotY;
-        if (targetAngle < 0)
-        {
-            targetAngle += 720f;
-        }
-        targetAngle %= 360f;
+        targetAngle = (targetAngle + 720f) % 360f;
 
 
         float currentAngle = hipJoint.targetRotation.eulerAngles.y;
         float distance = targetAngle - currentAngle;
-        Debug.Log(currentAngle + " -> " + targetAngle);
         //Pass Zero Degree
         if (Mathf.Abs(targetAngle - currentAngle) > 180f)
         {
@@ -150,6 +147,15 @@ public class PlayerController : MonoBehaviour
         else
         {
             DropObject();
+        }
+    }
+
+    void Jump(InputAction.CallbackContext c)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(groundPoint.position, -transform.up, out hit, 0.3f))
+        {
+            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
     }
 

@@ -637,7 +637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 5
-  jumpForce: 1
+  jumpForce: 100
   interactRange: 3
   rotationSpeed: 200
   stepSpeed: 20
@@ -655,6 +655,7 @@ MonoBehaviour:
   holdingObject: {fileID: 0}
   holdPos: {fileID: 1129180802}
   interactPoint: {fileID: 1601908414}
+  groundPoint: {fileID: 711697196}
 --- !u!136 &200854483
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1847,7 +1848,7 @@ GameObject:
   m_Component:
   - component: {fileID: 711697196}
   m_Layer: 6
-  m_Name: CheckGroundPoint
+  m_Name: GroundPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
