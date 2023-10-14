@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 1.0f;
     [SerializeField] private float interactRange = 3.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
-    [SerializeField] private float stepMultiplier = 0.01f;
-    private float stepSpeed = 20f;
+    [SerializeField] private float stepSpeed = 20f;
+    private float stepMultiplier = 0.5f;
     private float currentStepTime;
 
     private bool isFall = false;
@@ -20,12 +20,11 @@ public class PlayerController : MonoBehaviour
     private float lastfallDuration;
     private float lastFallTime;
 
-    public bool holdRotation = false;
-
     private CharacterController characterController;
 
     [Header ("Input Action")]
     public InputActionReference moveInput;
+    public InputActionReference jumpInput;
     public InputActionReference interactInput;
 
     [Header ("Body")]
@@ -43,8 +42,10 @@ public class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         cam = GetComponentInChildren<CameraController>();
-        currentStepTime = 0f;
+
         Cursor.lockState = CursorLockMode.Locked;
+
+        currentStepTime = 0f;
     }
 
     private void Update()
@@ -71,80 +72,38 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
 
-        //print(moveDir);
-        //print(hipJoint.transform.localEulerAngles);
-        if (moveDir == Vector2.zero)
-        {
-
-            if (!holdRotation)
-            {
-                float currentAngleY = hipJoint.transform.localEulerAngles.y;
-                //print(currentAngleY);
-                if (currentAngleY < 0)
-                {
-                    currentAngleY *= -1;
-                }
-                else
-                {
-                    currentAngleY = 360f - currentAngleY;
-                }
-                //print(currentAngleY);
-                Vector3 currentRotation = new Vector3(0f, currentAngleY, 0f);
-                //print(currentRotation);
-                hipJoint.targetRotation = Quaternion.Euler(currentRotation);
-                holdRotation = true;
-            }
-            return;
-        }
-        holdRotation = false;
-
+        if (moveDir == Vector2.zero) return;
+        
         LegPos();
 
         float forwardMovement = moveDir.y * movementSpeed;
         float strafeMovement = moveDir.x * movementSpeed;
+        float camRotY = cam.transform.localEulerAngles.y;
+ 
+        rb.velocity = Quaternion.Euler(0f, camRotY, 0f) * transform.forward * forwardMovement
+                    + Quaternion.Euler(0f, camRotY, 0f) * transform.right * strafeMovement;
 
-        float camRot = cam.transform.localEulerAngles.y;
-        
-        Debug.Log(camRot);
-        rb.velocity = Quaternion.Euler(0f, camRot, 0f) * transform.forward * forwardMovement
-                    + Quaternion.Euler(0f, camRot, 0f) * transform.right * strafeMovement;
-
-        float targetAngle = (Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg - camRot);
-        if(targetAngle < 0)
+        float targetAngle = Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg - camRotY;
+        if (targetAngle < 0)
         {
-            targetAngle += 360f;
+            targetAngle += 720f;
         }
+        targetAngle %= 360f;
 
-        Debug.Log("T " + targetAngle);
 
         float currentAngle = hipJoint.targetRotation.eulerAngles.y;
-
-        bool passZeroDegree = Mathf.Abs(targetAngle - currentAngle) > 180f;
-
-        float distance;
-        if (passZeroDegree)
+        float distance = targetAngle - currentAngle;
+        Debug.Log(currentAngle + " -> " + targetAngle);
+        //Pass Zero Degree
+        if (Mathf.Abs(targetAngle - currentAngle) > 180f)
         {
-            if (currentAngle > 180)
-            {
-                distance = targetAngle - currentAngle + 360f;
-            }
-            else
-            {
-                distance = targetAngle - currentAngle - 360f;
-            }
-        }
-        else
-        {
-            distance = targetAngle - currentAngle;
+            distance = targetAngle - currentAngle + (currentAngle > 180? 360f : -360f);
         }
 
-        //print("before :"+currentAngle + " -> " + targetAngle);
         if(Mathf.Abs(distance) > rotationSpeed * Time.fixedDeltaTime)
         {
             targetAngle = currentAngle + rotationSpeed * Mathf.Sign(distance) * Time.fixedDeltaTime;
         }
-        //print("after :"+targetAngle);
-
         hipJoint.targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
     }
 

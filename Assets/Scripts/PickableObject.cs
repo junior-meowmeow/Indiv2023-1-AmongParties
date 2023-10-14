@@ -5,7 +5,7 @@ using UnityEngine;
 public class PickableObject : MonoBehaviour
 {
     public float movementSpeed = 8.0f;
-    public bool hasRigidbody = false;
+    public bool hasRigidbody = true;
 
     private Rigidbody rb;
     private PlayerController holdPlayer;
