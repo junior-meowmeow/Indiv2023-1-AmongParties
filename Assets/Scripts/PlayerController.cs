@@ -15,6 +15,11 @@ public class PlayerController : MonoBehaviour
     public float stepSpeed = 0.5f;
     public float currentStepTime;
 
+    public bool isFall = false;
+    public float defaultFallDuration = 3f;
+    public float lastfallDuration;
+    private float lastFallTime;
+
     public bool holdRotation = false;
 
     private Camera cam;
@@ -44,6 +49,14 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Fall(defaultFallDuration);
+        }
+    }
+
     void FixedUpdate()
     {
         Movement();
@@ -57,6 +70,23 @@ public class PlayerController : MonoBehaviour
 
     void Movement()
     {
+        if (isFall)
+        {
+            if(Time.time - lastFallTime > lastfallDuration)
+            {
+                isFall = false;
+                JointDrive jointXDrive = hipJoint.angularXDrive;
+                jointXDrive.positionSpring = 1500f;
+                hipJoint.angularXDrive = jointXDrive;
+
+                JointDrive jointYZDrive = hipJoint.angularYZDrive;
+                jointYZDrive.positionSpring = 1500f;
+                hipJoint.angularYZDrive = jointYZDrive;
+                interactInput.action.started += Interact;
+            }
+            return;
+        }
+
         Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
 
         //print(moveDir);
@@ -89,10 +119,10 @@ public class PlayerController : MonoBehaviour
 
         Vector3 leftLegAngle = leftLeg.localEulerAngles;
         Vector3 rightLegAngle = rightLeg.localEulerAngles;
-        print("old : " + leftLegAngle);
+        // print("old : " + leftLegAngle);
         leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier);
         rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier);
-        print("new : " + leftLegAngle);
+        // print("new : " + leftLegAngle);
         leftLeg.localRotation = Quaternion.Euler(leftLegAngle);
         rightLeg.localRotation = Quaternion.Euler(rightLegAngle);
         currentStepTime += stepSpeed * Time.fixedDeltaTime;
@@ -160,6 +190,29 @@ public class PlayerController : MonoBehaviour
             holdingObject.Drop();
             holdingObject = null;
         }
+    }
+
+    public void Fall(float fallDuration)
+    {
+        isFall = true;
+        interactInput.action.started -= Interact;
+
+        JointDrive jointXDrive = hipJoint.angularXDrive;
+        jointXDrive.positionSpring = 0f;
+        hipJoint.angularXDrive = jointXDrive;
+
+        if(holdingObject != null)
+        {
+            holdingObject.Drop();
+            holdingObject = null;
+        }
+
+        JointDrive jointYZDrive = hipJoint.angularYZDrive;
+        jointYZDrive.positionSpring = 0f;
+        hipJoint.angularYZDrive = jointYZDrive;
+
+        lastfallDuration = fallDuration;
+        lastFallTime = Time.time;
     }
 
     void OldMovement()
