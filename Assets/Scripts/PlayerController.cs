@@ -81,8 +81,10 @@ public class PlayerController : MonoBehaviour
         {
             if (!stopped)
             {
-                float lastStep = (currentStepTime * stepMultiplier * speedMultiplier) % (2 * Mathf.PI);
-                currentStepTime = (lastStep < Mathf.PI) ? (Mathf.PI / (stepMultiplier * speedMultiplier)) : 0f;
+                // last step by degree (radian)
+                float lastStep = (currentStepTime * stepMultiplier) % (2 * Mathf.PI);
+                // go to next leg
+                currentStepTime = (lastStep < Mathf.PI) ? (Mathf.PI / stepMultiplier) : 0f;
                 stopped = true;
             }
             return;
@@ -141,12 +143,12 @@ public class PlayerController : MonoBehaviour
         Vector3 leftLegAngle = leftLeg.localEulerAngles;
         Vector3 rightLegAngle = rightLeg.localEulerAngles;
         // print("old : " + leftLegAngle);
-        leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier * speedMultiplier);
-        rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier * speedMultiplier);
+        leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier);
+        rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier);
         // print("new : " + leftLegAngle);
         leftLeg.localRotation = Quaternion.Euler(leftLegAngle);
         rightLeg.localRotation = Quaternion.Euler(rightLegAngle);
-        currentStepTime += stepSpeed * Time.fixedDeltaTime;
+        currentStepTime += stepSpeed * speedMultiplier * Time.fixedDeltaTime;
     }
 
     void Interact(InputAction.CallbackContext c)
