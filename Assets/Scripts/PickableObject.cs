@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PickableObject : MonoBehaviour
 {
-    public float movementSpeed = 8.0f;
+    public float movingSpeed = 8.0f;
+    public float weight = 1f;
     public bool hasRigidbody = true;
 
     private Rigidbody rb;
@@ -37,7 +38,7 @@ public class PickableObject : MonoBehaviour
     private void UpdatePositionRB()
     {
         Vector3 targetPosition = holdPlayer.holdPos.position;
-        rb.velocity = (targetPosition - transform.position) * movementSpeed;
+        rb.velocity = (targetPosition - transform.position) * movingSpeed;
     }
 
     private void UpdatePositionNoRB()

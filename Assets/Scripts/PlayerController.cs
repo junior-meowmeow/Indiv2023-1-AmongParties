@@ -12,8 +12,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float interactRange = 3.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
     [SerializeField] private float stepSpeed = 20f;
+    [SerializeField] private float speedMultiplier = 1f;
+    [SerializeField] private float jumpMultiplier = 1f;
     private float stepMultiplier = 0.5f;
     private float currentStepTime;
+    private bool stopped = false;
 
     private bool isFall = false;
     [SerializeField] private float defaultFallDuration = 3f;
@@ -74,20 +77,33 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
 
-        if (moveDir == Vector2.zero) return;
+        if (moveDir == Vector2.zero)
+        {
+            if (!stopped)
+            {
+                float lastStep = (currentStepTime * stepMultiplier * speedMultiplier) % (2 * Mathf.PI);
+                currentStepTime = (lastStep < Mathf.PI) ? (Mathf.PI / (stepMultiplier * speedMultiplier)) : 0f;
+                stopped = true;
+            }
+            return;
+        }
+        stopped = false;
         
         LegPos();
 
-        float forwardMovement = moveDir.y * movementSpeed;
-        float strafeMovement = moveDir.x * movementSpeed;
+        /* Movement */
+
+        float forwardMovement = moveDir.y * movementSpeed * speedMultiplier;
+        float strafeMovement = moveDir.x * movementSpeed * speedMultiplier;
         float camRotY = cam.transform.localEulerAngles.y;
  
         rb.velocity = Quaternion.Euler(0f, camRotY, 0f) * transform.forward * forwardMovement
                     + Quaternion.Euler(0f, camRotY, 0f) * transform.right * strafeMovement;
 
+        /* Rotation */
+
         float targetAngle = Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg - camRotY;
         targetAngle = (targetAngle + 720f) % 360f;
-
 
         float currentAngle = hipJoint.targetRotation.eulerAngles.y;
         float distance = targetAngle - currentAngle;
@@ -97,9 +113,9 @@ public class PlayerController : MonoBehaviour
             distance = targetAngle - currentAngle + (currentAngle > 180? 360f : -360f);
         }
 
-        if(Mathf.Abs(distance) > rotationSpeed * Time.fixedDeltaTime)
+        if(Mathf.Abs(distance) > rotationSpeed * speedMultiplier * Time.fixedDeltaTime)
         {
-            targetAngle = currentAngle + rotationSpeed * Mathf.Sign(distance) * Time.fixedDeltaTime;
+            targetAngle = currentAngle + rotationSpeed * speedMultiplier * Mathf.Sign(distance) * Time.fixedDeltaTime;
         }
         hipJoint.targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
     }
@@ -125,8 +141,8 @@ public class PlayerController : MonoBehaviour
         Vector3 leftLegAngle = leftLeg.localEulerAngles;
         Vector3 rightLegAngle = rightLeg.localEulerAngles;
         // print("old : " + leftLegAngle);
-        leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier);
-        rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier);
+        leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier * speedMultiplier);
+        rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier * speedMultiplier);
         // print("new : " + leftLegAngle);
         leftLeg.localRotation = Quaternion.Euler(leftLegAngle);
         rightLeg.localRotation = Quaternion.Euler(rightLegAngle);
@@ -155,7 +171,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(groundPoint.position, -transform.up, out hit, 0.3f))
         {
-            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            rb.AddForce(transform.up * jumpForce * jumpMultiplier, ForceMode.Impulse);
         }
     }
 
@@ -165,6 +181,8 @@ public class PlayerController : MonoBehaviour
         {
             obj.Hold(this);
             holdingObject = obj;
+            speedMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
+            jumpMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
         }
     }
 
@@ -172,6 +190,8 @@ public class PlayerController : MonoBehaviour
     {
         holdingObject.Drop();
         holdingObject = null;
+        speedMultiplier = 1f;
+        jumpMultiplier = 1f;
     }
 
     void Fall(float fallDuration)

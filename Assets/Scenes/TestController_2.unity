@@ -274,7 +274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 8
+  movingSpeed: 8
+  weight: 20
   hasRigidbody: 1
 --- !u!65 &20933307
 BoxCollider:
@@ -522,7 +523,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 8
+  movingSpeed: 8
+  weight: 20
   hasRigidbody: 1
 --- !u!65 &128256889
 BoxCollider:
@@ -641,6 +643,8 @@ MonoBehaviour:
   interactRange: 3
   rotationSpeed: 200
   stepSpeed: 20
+  speedMultiplier: 1
+  jumpMultiplier: 1
   defaultFallDuration: 3
   moveInput: {fileID: -6320487089797257092, guid: ad95213d430093d4d8d5d252b89f4d39,
     type: 3}
@@ -1078,7 +1082,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSensitivity: 2
-  offset: {x: 0, y: 0, z: 0}
+  defaultFOV: 40
+  minFOV: 20
+  maxFOV: 60
+  scrollSpeed: 50
+  zoomSpeed: 50
 --- !u!1 &397641903 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8356538690890272372, guid: a0362a453023a03448c4331e73839e14,
@@ -2216,7 +2224,7 @@ Camera:
     height: 1
   near clip plane: 0.4
   far clip plane: 1000
-  field of view: 60
+  field of view: 40
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -3419,7 +3427,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 8
+  movingSpeed: 8
+  weight: 20
   hasRigidbody: 1
 --- !u!65 &1502579274
 BoxCollider:
@@ -3548,7 +3557,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 8
+  movingSpeed: 8
+  weight: 20
   hasRigidbody: 1
 --- !u!65 &1506375658
 BoxCollider:
@@ -3970,7 +3980,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 8
+  movingSpeed: 8
+  weight: 20
   hasRigidbody: 1
 --- !u!65 &1736150697
 BoxCollider:

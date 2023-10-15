@@ -4,9 +4,20 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [Header("Rotation")]
     [SerializeField] private float mouseSensitivity = 2.0f;
-    [SerializeField] private Vector3 offset;
-    
+
+    [Header("Zoom")]
+    [SerializeField] private float defaultFOV = 40f;
+    [SerializeField] private float minFOV = 20f;
+    [SerializeField] private float maxFOV = 60f;
+    [SerializeField] private float scrollSpeed = 10f;
+    [SerializeField] private float zoomSpeed = 5f;
+    //[SerializeField] private Vector3 offset;
+
+    private Camera mainCamera;
+    private float currentFOV = 40f;
+
     private PlayerController player;
     private float verticalRotation = 0;
     private float horizontalRotation = 0;
@@ -14,14 +25,33 @@ public class CameraController : MonoBehaviour
     void Awake()
     {
         player = GetComponentInParent<PlayerController>();
-        offset = transform.position - transform.position;
+        mainCamera = Camera.main;
+        currentFOV = defaultFOV;
+        mainCamera.fieldOfView = currentFOV;
+        //offset = transform.position - transform.position;
     }
 
     void Update()
     {
         if (player == null) return;
 
-        transform.position = Vector3.MoveTowards(transform.position, player.rb.transform.position - offset, 10 * Time.deltaTime);
+        /* Camera Position */
+
+        //transform.position = Vector3.MoveTowards(transform.position, player.rb.transform.position - offset, 10 * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, player.rb.transform.position, 10 * Time.deltaTime);
+
+        /* Camera Zoom */
+
+        float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
+
+        currentFOV -= mouseScroll * scrollSpeed;
+        currentFOV = Mathf.Clamp(currentFOV, minFOV, maxFOV);
+        if (mainCamera.fieldOfView != currentFOV)
+        {
+            mainCamera.fieldOfView = Mathf.MoveTowards(mainCamera.fieldOfView, currentFOV, zoomSpeed * Time.deltaTime);
+        }
+
+        /* Camera Rotation */
 
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
