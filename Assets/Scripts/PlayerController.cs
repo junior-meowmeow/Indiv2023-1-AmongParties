@@ -1,27 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     [Header ("Movement")]
     [SerializeField] private float movementSpeed = 5.0f;
-    [SerializeField] private float jumpForce = 1.0f;
-    [SerializeField] private float interactRange = 3.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
-    [SerializeField] private float stepSpeed = 20f;
+    [SerializeField] private float jumpForce = 100f;
     [SerializeField] private float speedMultiplier = 1f;
     [SerializeField] private float jumpMultiplier = 1f;
+    [SerializeField] private float stepSpeed = 20f;
     private float stepMultiplier = 0.5f;
     private float currentStepTime;
     private bool stopped = false;
 
-    private bool isFall = false;
-    [SerializeField] private float defaultFallDuration = 3f;
+    [Header ("Object Interact")]
+    [SerializeField] private float interactRange = 3.0f;
+    [SerializeField] private float maxThrowForce = 600f;
+    [SerializeField] private float startThrowForce = 300f;
+    [SerializeField] private float throwChargeSpeed = 300f;
+    [SerializeField] private float throwForce;
+
+    [SerializeField] private float fallDuration = 3f;
     private float lastfallDuration;
     private float lastFallTime;
+    private bool isFall = false;
+
+    private float scrollAxis = 0f;
 
     private CharacterController characterController;
 
@@ -29,6 +39,9 @@ public class PlayerController : MonoBehaviour
     public InputActionReference moveInput;
     public InputActionReference jumpInput;
     public InputActionReference interactInput;
+    public InputActionReference throwInput;
+    public InputActionReference scrollInput;
+    public InputActionReference playDeadInput;
 
     [Header ("Body")]
     public Rigidbody rb;
@@ -54,10 +67,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Fall(defaultFallDuration);
-        }
+        CameraControl();
+        CheckThrow();
     }
 
     void FixedUpdate()
@@ -70,7 +81,10 @@ public class PlayerController : MonoBehaviour
     void OnEnable()
     {
         interactInput.action.started += Interact;
-        jumpInput.action.started += Jump;
+        jumpInput.action.started += _ => { Jump(); };
+        throwInput.action.started += _ => { ChargeThrowObject(true); };
+        throwInput.action.canceled += _ => { ChargeThrowObject(false); };
+        playDeadInput.action.started += _ => { Fall(fallDuration); };
     }
 
     void Movement()
@@ -151,6 +165,16 @@ public class PlayerController : MonoBehaviour
         currentStepTime += stepSpeed * speedMultiplier * Time.fixedDeltaTime;
     }
 
+    void CameraControl()
+    {
+        float axis = scrollInput.action.ReadValue<Vector2>().normalized.y;
+        if (scrollAxis != axis)
+        {
+            cam.setScrollAxis(axis);
+            scrollAxis = axis;
+        } 
+    }
+
     void Interact(InputAction.CallbackContext c)
     {
         if (holdingObject == null)
@@ -168,7 +192,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void Jump(InputAction.CallbackContext c)
+    void Jump()
     {
         RaycastHit hit;
         if (Physics.Raycast(groundPoint.position, -transform.up, out hit, 0.3f))
@@ -188,12 +212,37 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void DropObject()
+    PickableObject DropObject()
     {
         holdingObject.Drop();
+        var toReturn = holdingObject;
         holdingObject = null;
         speedMultiplier = 1f;
         jumpMultiplier = 1f;
+
+        return toReturn;
+    }
+
+    void ChargeThrowObject(bool isCharge)
+    {
+        if (holdingObject == null) return;
+        if (isCharge)
+        {
+            throwForce = startThrowForce;
+        }
+        else
+        {
+            DropObject().GetComponent<Rigidbody>().AddForce(rb.transform.forward * -throwForce);
+            throwForce = 0;
+        }
+    }
+
+    void CheckThrow()
+    {
+        if (throwForce == 0 || throwForce >= maxThrowForce) return;
+        
+        throwForce += Time.deltaTime * throwChargeSpeed;
+        if (throwForce > maxThrowForce) throwForce = maxThrowForce;
     }
 
     void Fall(float fallDuration)

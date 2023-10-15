@@ -16,11 +16,12 @@ public class CameraController : MonoBehaviour
     //[SerializeField] private Vector3 offset;
 
     private Camera mainCamera;
-    private float currentFOV = 40f;
+    [SerializeField] private float currentFOV = 40f;
 
     private PlayerController player;
     private float verticalRotation = 0;
     private float horizontalRotation = 0;
+    private float mouseScroll = 0;
 
     void Awake()
     {
@@ -28,7 +29,6 @@ public class CameraController : MonoBehaviour
         mainCamera = Camera.main;
         currentFOV = defaultFOV;
         mainCamera.fieldOfView = currentFOV;
-        //offset = transform.position - transform.position;
     }
 
     void Update()
@@ -37,12 +37,11 @@ public class CameraController : MonoBehaviour
 
         /* Camera Position */
 
-        //transform.position = Vector3.MoveTowards(transform.position, player.rb.transform.position - offset, 10 * Time.deltaTime);
         transform.position = Vector3.MoveTowards(transform.position, player.rb.transform.position, 10 * Time.deltaTime);
 
         /* Camera Zoom */
 
-        float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
+        // float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
 
         currentFOV -= mouseScroll * scrollSpeed;
         currentFOV = Mathf.Clamp(currentFOV, minFOV, maxFOV);
@@ -62,5 +61,10 @@ public class CameraController : MonoBehaviour
 
         transform.Rotate(Vector3.up * mouseX);
         transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0);
+    }
+
+    public void setScrollAxis(float axis)
+    {
+        mouseScroll = axis;
     }
 }
