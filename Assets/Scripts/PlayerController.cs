@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
 
     private CameraController cam;
     public PickableObject holdingObject;
+    public Vector3 defaultHoldPos = new(0f, 0.006f, -0.014f);
     public Transform holdPos;
     public Transform interactPoint;
     public Transform groundPoint;
@@ -207,6 +208,7 @@ public class PlayerController : MonoBehaviour
         {
             obj.Hold(this);
             holdingObject = obj;
+            holdPos.localPosition = obj.holdPos;
             speedMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
             jumpMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
         }
@@ -216,6 +218,7 @@ public class PlayerController : MonoBehaviour
     {
         holdingObject.Drop();
         var toReturn = holdingObject;
+        holdPos.localPosition = defaultHoldPos;
         holdingObject = null;
         speedMultiplier = 1f;
         jumpMultiplier = 1f;

@@ -274,6 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdPos: {x: 0, y: 0.006, z: -0.014}
   movingSpeed: 8
   weight: 20
   hasRigidbody: 1
@@ -523,6 +524,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdPos: {x: 0, y: 0.006, z: -0.014}
   movingSpeed: 8
   weight: 20
   hasRigidbody: 1
@@ -667,6 +669,7 @@ MonoBehaviour:
   leftLeg: {fileID: 1891441694}
   rightLeg: {fileID: 1016042804}
   holdingObject: {fileID: 0}
+  defaultHoldPos: {x: 0, y: 0.006, z: -0.014}
   holdPos: {fileID: 1129180802}
   interactPoint: {fileID: 1601908414}
   groundPoint: {fileID: 711697196}
@@ -2430,7 +2433,7 @@ Transform:
   m_GameObject: {fileID: 1129180801}
   m_LocalRotation: {x: 0.00000003359499, y: -0.9920531, z: -0.12581973, w: 0.00000033551765}
   m_LocalPosition: {x: -0.00006694659, y: 0.006667485, z: -0.013651589}
-  m_LocalScale: {x: 0.028452251, y: 0.028452242, z: 0.028452242}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 629780966}
@@ -3438,6 +3441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdPos: {x: 0, y: 0.006, z: -0.014}
   movingSpeed: 8
   weight: 20
   hasRigidbody: 1
@@ -3568,6 +3572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdPos: {x: 0, y: 0.006, z: -0.014}
   movingSpeed: 8
   weight: 20
   hasRigidbody: 1
@@ -3936,7 +3941,7 @@ Transform:
   m_GameObject: {fileID: 1601908413}
   m_LocalRotation: {x: 0.00000003359499, y: -0.9920531, z: -0.12581973, w: 0.00000033551765}
   m_LocalPosition: {x: -0, y: 0, z: -0.00395}
-  m_LocalScale: {x: 0.028452251, y: 0.028452242, z: 0.028452242}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 629780966}
@@ -3991,6 +3996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdPos: {x: 0, y: 0.006, z: -0.014}
   movingSpeed: 8
   weight: 20
   hasRigidbody: 1

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PickableObject : MonoBehaviour
 {
+    public Vector3 holdPos = new(0f, 0.006f, -0.14f);
     public float movingSpeed = 8.0f;
     public float weight = 1f;
     public bool hasRigidbody = true;
