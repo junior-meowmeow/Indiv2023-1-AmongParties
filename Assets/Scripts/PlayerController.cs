@@ -33,8 +33,6 @@ public class PlayerController : MonoBehaviour
 
     private float scrollAxis = 0f;
 
-    private CharacterController characterController;
-
     [Header ("Input Action")]
     public InputActionReference moveInput;
     public InputActionReference jumpInput;
@@ -58,7 +56,6 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
         cam = GetComponentInChildren<CameraController>();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -195,10 +192,9 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(groundPoint.position, -transform.up, out hit, 0.3f))
+        if (Physics.Raycast(groundPoint.position, -transform.up, out _, 0.3f))
         {
-            rb.AddForce(transform.up * jumpForce * jumpMultiplier, ForceMode.Impulse);
+            rb.AddForce(jumpForce * jumpMultiplier * Vector3.up, ForceMode.Impulse);
         }
     }
 
