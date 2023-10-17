@@ -1094,11 +1094,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f4d2d5717c68c442b2c7179c91b45b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 4
   mouseSensitivity: 2
   defaultFOV: 40
   minFOV: 20
   maxFOV: 60
-  scrollSpeed: 50
+  scrollSpeed: 5
   zoomSpeed: 50
   currentFOV: 40
 --- !u!1 &397641903 stripped

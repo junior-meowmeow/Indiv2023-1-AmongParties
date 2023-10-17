@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 5.0f;
+
     [Header("Rotation")]
     [SerializeField] private float mouseSensitivity = 2.0f;
 
@@ -37,7 +40,7 @@ public class CameraController : MonoBehaviour
 
         /* Camera Position */
 
-        transform.position = Vector3.MoveTowards(transform.position, player.rb.transform.position, 10 * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, player.rb.transform.position, moveSpeed * Time.deltaTime);
 
         /* Camera Zoom */
 

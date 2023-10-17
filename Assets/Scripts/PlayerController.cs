@@ -139,7 +139,7 @@ public class PlayerController : MonoBehaviour
 
     void CheckFall()
     {
-        if (Time.time - lastFallTime > lastfallDuration)
+        if (isFall && Time.time - lastFallTime > lastfallDuration)
         {
             isFall = false;
             JointDrive jointXDrive = hipJoint.angularXDrive;
