@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
     void OnEnable()
     {
         interactInput.action.started += Interact;
-        jumpInput.action.started += _ => { Jump(); };
+        jumpInput.action.started += Jump;
         throwInput.action.started += _ => { ChargeThrowObject(true); };
         throwInput.action.canceled += _ => { ChargeThrowObject(false); };
         playDeadInput.action.started += _ => { Fall(fallDuration); };
@@ -147,6 +147,7 @@ public class PlayerController : MonoBehaviour
             jointYZDrive.positionSpring = 1500f;
             hipJoint.angularYZDrive = jointYZDrive;
             interactInput.action.started += Interact;
+            jumpInput.action.started += Jump;
         }
     }
 
@@ -190,7 +191,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void Jump()
+    void Jump(InputAction.CallbackContext c)
     {
         if (Physics.Raycast(groundPoint.position, -transform.up, out _, 0.3f))
         {
@@ -248,6 +249,7 @@ public class PlayerController : MonoBehaviour
     {
         isFall = true;
         interactInput.action.started -= Interact;
+        jumpInput.action.started -= Jump;
 
         JointDrive jointXDrive = hipJoint.angularXDrive;
         jointXDrive.positionSpring = 0f;
