@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 defaultHoldPos = new(0f, 0.006f, -0.014f);
     public Transform holdPos;
     public Transform interactPoint;
+    public InteractionCollider interactionCollider;
     public Transform groundPoint;
 
     void Start()
@@ -206,11 +207,17 @@ public class PlayerController : MonoBehaviour
     {
         if (holdingObject == null)
         {
+            if (interactionCollider.HasObjectNearby)
+            {
+                PickObject(interactionCollider.GetNearestObject());
+            }
+            /*
             if (Physics.Raycast(interactPoint.transform.position, interactPoint.transform.forward, out RaycastHit hit, interactRange))
             {
                 PickableObject obj = hit.collider.GetComponent<PickableObject>();
                 PickObject(obj);
             }
+            */
         }
         else
         {
