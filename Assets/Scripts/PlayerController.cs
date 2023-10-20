@@ -197,7 +197,7 @@ public class PlayerController : MonoBehaviour
         float axis = scrollInput.action.ReadValue<Vector2>().normalized.y;
         if (scrollAxis != axis)
         {
-            cam.setScrollAxis(axis);
+            cam.SetScrollAxis(axis);
             scrollAxis = axis;
         } 
     }
@@ -206,8 +206,7 @@ public class PlayerController : MonoBehaviour
     {
         if (holdingObject == null)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(interactPoint.transform.position, interactPoint.transform.forward, out hit, interactRange))
+            if (Physics.Raycast(interactPoint.transform.position, interactPoint.transform.forward, out RaycastHit hit, interactRange))
             {
                 PickableObject obj = hit.collider.GetComponent<PickableObject>();
                 PickObject(obj);

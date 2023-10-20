@@ -78,7 +78,7 @@ public class CameraController : MonoBehaviour
         transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0);
     }
 
-    public void setScrollAxis(float axis)
+    public void SetScrollAxis(float axis)
     {
         mouseScroll = axis;
     }
