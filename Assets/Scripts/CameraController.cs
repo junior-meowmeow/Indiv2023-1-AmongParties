@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5.0f;
+    [SerializeField] private float verticalThreshold = 0.1f;
 
     [Header("Rotation")]
     [SerializeField] private float mouseSensitivity = 2.0f;
@@ -40,7 +41,17 @@ public class CameraController : MonoBehaviour
 
         /* Camera Position */
 
-        transform.position = Vector3.MoveTowards(transform.position, player.rb.transform.position, moveSpeed * Time.deltaTime);
+        Vector3 targetPosition = player.rb.transform.position;
+        
+        /*
+        if(Mathf.Abs(targetPosition.y - transform.position.y) < verticalThreshold)
+        {
+            targetPosition.y = transform.position.y;
+        }
+        */
+
+        //transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
         /* Camera Zoom */
 
@@ -50,7 +61,8 @@ public class CameraController : MonoBehaviour
         currentFOV = Mathf.Clamp(currentFOV, minFOV, maxFOV);
         if (mainCamera.fieldOfView != currentFOV)
         {
-            mainCamera.fieldOfView = Mathf.MoveTowards(mainCamera.fieldOfView, currentFOV, zoomSpeed * Time.deltaTime);
+            //mainCamera.fieldOfView = Mathf.MoveTowards(mainCamera.fieldOfView, currentFOV, zoomSpeed * Time.deltaTime);
+            mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, currentFOV, zoomSpeed * Time.deltaTime);
         }
 
         /* Camera Rotation */

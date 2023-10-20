@@ -44,8 +44,8 @@ public class PlayerController : MonoBehaviour
     [Header ("Body")]
     public Rigidbody rb;
     public ConfigurableJoint hipJoint;
-    public Transform leftLeg;
-    public Transform rightLeg;
+    public ConfigurableJoint leftLeg;
+    public ConfigurableJoint rightLeg;
 
     private CameraController cam;
     public PickableObject holdingObject;
@@ -97,6 +97,9 @@ public class PlayerController : MonoBehaviour
                 float lastStep = (currentStepTime * stepMultiplier) % (2 * Mathf.PI);
                 // go to next leg
                 currentStepTime = (lastStep < Mathf.PI) ? (Mathf.PI / stepMultiplier) : 0f;
+                // reset leg rotation
+                leftLeg.targetRotation = Quaternion.identity;
+                rightLeg.targetRotation = Quaternion.identity;
                 stopped = true;
             }
             return;
@@ -148,11 +151,29 @@ public class PlayerController : MonoBehaviour
             hipJoint.angularYZDrive = jointYZDrive;
             interactInput.action.started += Interact;
             jumpInput.action.started += Jump;
+
+            /* Get current direction */
+            float currentAngleY = hipJoint.transform.localEulerAngles.y;
+            //print(currentAngleY);
+            if (currentAngleY < 0)
+            {
+                currentAngleY *= -1;
+            }
+            else
+            {
+                currentAngleY = 360f - currentAngleY;
+            }
+            //print(currentAngleY);
+            Vector3 currentRotation = new(0f, currentAngleY, 0f);
+            //print(currentRotation);
+            hipJoint.targetRotation = Quaternion.Euler(currentRotation);
+
         }
     }
 
     void LegPos()
     {
+        /* old (use Transform)
         Vector3 leftLegAngle = leftLeg.localEulerAngles;
         Vector3 rightLegAngle = rightLeg.localEulerAngles;
         // print("old : " + leftLegAngle);
@@ -161,6 +182,13 @@ public class PlayerController : MonoBehaviour
         // print("new : " + leftLegAngle);
         leftLeg.localRotation = Quaternion.Euler(leftLegAngle);
         rightLeg.localRotation = Quaternion.Euler(rightLegAngle);
+        currentStepTime += stepSpeed * speedMultiplier * Time.fixedDeltaTime;
+        */
+
+        float leftLegAngle = 25f * Mathf.Sin(currentStepTime * stepMultiplier);
+        float rightLegAngle = -25f * Mathf.Sin(currentStepTime * stepMultiplier);
+        leftLeg.targetRotation = Quaternion.Euler(leftLegAngle, 0f, 0f);
+        rightLeg.targetRotation = Quaternion.Euler(rightLegAngle, 0f, 0f);
         currentStepTime += stepSpeed * speedMultiplier * Time.fixedDeltaTime;
     }
 

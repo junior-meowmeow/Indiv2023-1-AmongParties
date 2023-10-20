@@ -156,8 +156,8 @@ MonoBehaviour:
     type: 3}
   rb: {fileID: 6458680499627158704}
   hipJoint: {fileID: 6458680499627158711}
-  leftLeg: {fileID: 7726855110808604947}
-  rightLeg: {fileID: 4969897927828958983}
+  leftLeg: {fileID: 6458680498908578127}
+  rightLeg: {fileID: 6458680500046448741}
   holdingObject: {fileID: 0}
   defaultHoldPos: {x: 0, y: 0.006, z: -0.014}
   holdPos: {fileID: 6458680498062406614}
@@ -239,7 +239,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f4d2d5717c68c442b2c7179c91b45b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
+  moveSpeed: 6
+  verticalThreshold: 0.1
   mouseSensitivity: 2
   defaultFOV: 40
   minFOV: 20
@@ -1823,12 +1824,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!4 &4969897927828958983 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -7108570938456118424, guid: a0362a453023a03448c4331e73839e14,
-    type: 3}
-  m_PrefabInstance: {fileID: 6458680498496046191}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5644149502404195564 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1726527512867401859, guid: a0362a453023a03448c4331e73839e14,
@@ -1936,12 +1931,12 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 3
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
   m_AngularYZDrive:
     serializedVersion: 3
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
   m_SlerpDrive:
@@ -2093,12 +2088,12 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 3
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
   m_AngularYZDrive:
     serializedVersion: 3
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
   m_SlerpDrive:
@@ -2778,12 +2773,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!4 &7726855110808604947 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3646396693868516732, guid: a0362a453023a03448c4331e73839e14,
-    type: 3}
-  m_PrefabInstance: {fileID: 6458680498496046191}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8930408713684417889 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2472186858389371150, guid: a0362a453023a03448c4331e73839e14,
