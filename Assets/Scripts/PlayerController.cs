@@ -1,12 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     [Header ("Movement")]
     [SerializeField] private float movementSpeed = 5.0f;
@@ -58,6 +56,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         cam = GetComponentInChildren<CameraController>();
+        if (!IsOwner) cam.Disable();
 
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -66,19 +65,23 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         CameraControl();
         CheckThrow();
     }
 
     void FixedUpdate()
     {
+        if (!IsOwner) return;
+
         CheckFall();
         if (isFall) return;
         Movement();
     }
 
     void OnEnable()
-    {
+    {      
         interactInput.action.started += Interact;
         jumpInput.action.started += Jump;
         throwInput.action.started += _ => { ChargeThrowObject(true); };

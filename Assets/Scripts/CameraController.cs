@@ -82,4 +82,9 @@ public class CameraController : MonoBehaviour
     {
         mouseScroll = axis;
     }
+
+    public void Disable()
+    {
+        gameObject.SetActive(false);
+    }
 }
