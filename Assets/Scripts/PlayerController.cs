@@ -61,6 +61,12 @@ public class PlayerController : NetworkBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         currentStepTime = 0f;
+
+        interactInput.action.started += Interact;
+        jumpInput.action.started += Jump;
+        throwInput.action.started += _ => { ChargeThrowObject(true); };
+        throwInput.action.canceled += _ => { ChargeThrowObject(false); };
+        playDeadInput.action.started += _ => { Fall(fallDuration); };
     }
 
     private void Update()
@@ -78,15 +84,6 @@ public class PlayerController : NetworkBehaviour
         CheckFall();
         if (isFall) return;
         Movement();
-    }
-
-    void OnEnable()
-    {      
-        interactInput.action.started += Interact;
-        jumpInput.action.started += Jump;
-        throwInput.action.started += _ => { ChargeThrowObject(true); };
-        throwInput.action.canceled += _ => { ChargeThrowObject(false); };
-        playDeadInput.action.started += _ => { Fall(fallDuration); };
     }
 
     void Movement()
