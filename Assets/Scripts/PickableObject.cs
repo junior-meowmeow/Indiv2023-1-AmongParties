@@ -5,7 +5,9 @@ using UnityEngine;
 public class PickableObject : MonoBehaviour
 {
     public Vector3 holdPos = new(0f, 0.006f, -0.14f);
+    public Vector3 holdRotation = new(0f, 0f, 0f);
     public float movingSpeed = 8.0f;
+    public float rotatingSpeed = 8.0f;
     public float weight = 1f;
     public bool hasRigidbody = true;
 
@@ -32,7 +34,6 @@ public class PickableObject : MonoBehaviour
             {
                 UpdatePositionNoRB();
             }
-            transform.rotation = holdPlayer.holdPos.rotation;
         }
     }
 
@@ -40,11 +41,15 @@ public class PickableObject : MonoBehaviour
     {
         Vector3 targetPosition = holdPlayer.holdPos.position;
         rb.velocity = (targetPosition - transform.position) * movingSpeed;
+        //transform.rotation = holdPlayer.holdPos.rotation;
+        Quaternion targetRotation = holdPlayer.holdPos.rotation;
+        rb.MoveRotation(targetRotation); //Quaternion.Lerp(transform.rotation, targetRotation, rotatingSpeed * Time.deltaTime);
     }
 
     private void UpdatePositionNoRB()
     {
         transform.position = holdPlayer.holdPos.position;
+        transform.rotation = holdPlayer.holdPos.rotation;
     }
 
     public void Hold(PlayerController player)

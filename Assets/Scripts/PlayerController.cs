@@ -240,6 +240,7 @@ public class PlayerController : NetworkBehaviour
             obj.Hold(this);
             holdingObject = obj;
             holdPos.localPosition = obj.holdPos;
+            holdPos.localRotation = Quaternion.Euler(obj.holdRotation);
             speedMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
             jumpMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
         }
@@ -250,6 +251,7 @@ public class PlayerController : NetworkBehaviour
         holdingObject.Drop();
         var toReturn = holdingObject;
         holdPos.localPosition = defaultHoldPos;
+        holdPos.rotation = Quaternion.identity;
         holdingObject = null;
         speedMultiplier = 1f;
         jumpMultiplier = 1f;
