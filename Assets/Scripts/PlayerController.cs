@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
+using Mono.Cecil;
+using Unity.Netcode.Components;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -16,6 +18,7 @@ public class PlayerController : NetworkBehaviour
     private float stepMultiplier = 0.5f;
     private float currentStepTime;
     private bool stopped = false;
+    private bool isMoving = false;
 
     [Header ("Object Interact")]
     [SerializeField] private float interactRange = 3.0f;
@@ -53,6 +56,16 @@ public class PlayerController : NetworkBehaviour
     public InteractionCollider interactionCollider;
     public Transform groundPoint;
 
+    /*
+    private void Awake()
+    {
+        if(IsOwner)
+        {
+            SyncNetworkObjectServerRPC();
+        }
+    }
+    */
+
     void Start()
     {
         cam = GetComponentInChildren<CameraController>();
@@ -67,6 +80,8 @@ public class PlayerController : NetworkBehaviour
         throwInput.action.started += _ => { ChargeThrowObject(true); };
         throwInput.action.canceled += _ => { ChargeThrowObject(false); };
         playDeadInput.action.started += _ => { Fall(fallDuration); };
+
+        //hipJoint.GetComponent<NetworkTransform>().enabled = false;
     }
 
     private void Update()
@@ -79,11 +94,16 @@ public class PlayerController : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (isMoving)
+        {
+            LegPos();
+        }
         if (!IsOwner) return;
 
         CheckFall();
         if (isFall) return;
-        Movement();
+        //Movement();
+        MoveServer();
     }
 
     void Movement()
@@ -137,6 +157,146 @@ public class PlayerController : NetworkBehaviour
         }
         hipJoint.targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
     }
+
+    void MoveServer()
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+
+        Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
+
+        if (moveDir == Vector2.zero)
+        {
+            if (!stopped)
+            {
+                SetMoveServerRPC(false);
+                stopped = true;
+            }
+            return;
+        }
+        if(stopped)
+        {
+            SetMoveServerRPC(true);
+            stopped = false;
+        }
+
+        float camRotY = cam.transform.localEulerAngles.y;
+        float targetAngle = Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg - camRotY;
+        targetAngle = (targetAngle + 720f) % 360f;
+
+        MoveServerRPC(camRotY, moveDir.x, moveDir.y, targetAngle);
+
+    }
+
+    [ServerRpc]
+    void MoveServerRPC(float camRotY, float moveX, float moveY, float targetAngle)
+    {
+        float forwardMovement = moveY * movementSpeed * speedMultiplier;
+        float strafeMovement = moveX * movementSpeed * speedMultiplier;
+
+        Vector3 targetVelocity = Quaternion.Euler(0f, camRotY, 0f) * transform.forward * forwardMovement
+                    + Quaternion.Euler(0f, camRotY, 0f) * transform.right * strafeMovement;
+
+        float currentAngle = hipJoint.targetRotation.eulerAngles.y;
+        float distance = targetAngle - currentAngle;
+        //Pass Zero Degree
+        if (Mathf.Abs(targetAngle - currentAngle) > 180f)
+        {
+            distance = targetAngle - currentAngle + (currentAngle > 180 ? 360f : -360f);
+        }
+
+        if (Mathf.Abs(distance) > rotationSpeed * speedMultiplier * Time.fixedDeltaTime)
+        {
+            targetAngle = currentAngle + rotationSpeed * speedMultiplier * Mathf.Sign(distance) * Time.fixedDeltaTime;
+        }
+
+        Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
+
+        MoveClientRPC(targetVelocity, targetRotation);
+
+        /* position */
+        //client sent camRot + forward movement + strafe movement
+        //server get camrot(int)
+        //vv
+
+        //1. use NetworkVariable byte (0-255) but *2 when use 0-500+
+        //2. update this variable only when trying to move + delta targetangle more than 2
+        //3. set delay to about 0.1 sec per request
+
+        //^^
+        //server set rb.velocity
+
+        /* rotation */
+        //server know current angle
+        //client send targetAngle
+        //vv
+
+        //1. use NetworkVariable byte (0-255) but *2 when use 0-500+
+        //2. update this variable only when trying to move + delta targetangle more than 2
+        //3. set delay to about 0.1 sec per request
+
+        //^^
+        //server calculate targetRotation
+
+        /* leg rotation */
+        //clientRpc when start moving
+        //clientRpc when stop moving
+        //server send signal to client move leg between this
+        //bool movingLeg
+    }
+
+    [ClientRpc]
+    void MoveClientRPC(Vector3 targetVelocity, Quaternion targetRotation)
+    {
+        rb.velocity = targetVelocity;
+        hipJoint.targetRotation = targetRotation;
+    }
+
+    [ServerRpc]
+    void SetMoveServerRPC(bool isMove)
+    {
+        SetMoveClientRPC(isMove);
+    }
+
+    [ClientRpc]
+    void SetMoveClientRPC(bool isMove)
+    {
+        if(isMove)
+        {
+            isMoving = true;
+        }
+        else
+        {
+            // last step by degree (radian)
+            float lastStep = (currentStepTime * stepMultiplier) % (2 * Mathf.PI);
+            // go to next leg
+            currentStepTime = (lastStep < Mathf.PI) ? (Mathf.PI / stepMultiplier) : 0f;
+            // reset leg rotation
+            leftLeg.targetRotation = Quaternion.identity;
+            rightLeg.targetRotation = Quaternion.identity;
+            isMoving = false;
+        }
+    }
+
+    /*
+    [ServerRpc]
+    void SyncNetworkObjectServerRPC()
+    {
+        foreach (NetworkObject obj in FindObjectsOfType<NetworkObject>())
+        {
+            SyncNetworkObjectClientRPC(obj.transform, obj.transform.position, obj.transform.rotation, obj.transform.localScale);
+        }
+    }
+
+    [ClientRpc]
+    void SyncNetworkObjectClientRPC( Transform transform, Vector3 position, Quaternion rotation, Vector3 localScale)
+    {
+        transform.SetPositionAndRotation(position, rotation);
+        transform.localScale = localScale;
+    }
+    */
 
     void CheckFall()
     {
