@@ -132,7 +132,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdPos: {x: 0, y: 0.006, z: -0.014}
+  holdRotation: {x: 0, y: -180, z: 0}
   movingSpeed: 8
+  rotatingSpeed: 8
   weight: 20
   hasRigidbody: 1
   hands:
@@ -361,6 +363,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: R Hand
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 369f5b3083ae8c445a36b42cc088ddaa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4037713960562059349, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -582,6 +589,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: L Hand
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 369f5b3083ae8c445a36b42cc088ddaa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4037713960562059349, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}

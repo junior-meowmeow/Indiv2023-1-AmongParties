@@ -251,7 +251,7 @@ public class PlayerController : NetworkBehaviour
         holdingObject.Drop();
         var toReturn = holdingObject;
         holdPos.localPosition = defaultHoldPos;
-        holdPos.rotation = Quaternion.identity;
+        holdPos.localRotation = Quaternion.identity;
         holdingObject = null;
         speedMultiplier = 1f;
         jumpMultiplier = 1f;
