@@ -159,7 +159,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdPos: {x: 0, y: 0.006, z: -0.014}
+  holdRotation: {x: 0, y: 0.006, z: -0.14}
   movingSpeed: 8
+  rotatingSpeed: 8
   weight: 20
   hasRigidbody: 1
 --- !u!65 &20933307
@@ -573,7 +575,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdPos: {x: 0, y: 0.006, z: -0.014}
+  holdRotation: {x: 0, y: 0.006, z: -0.14}
   movingSpeed: 8
+  rotatingSpeed: 8
   weight: 20
   hasRigidbody: 1
 --- !u!65 &128256889
@@ -6118,7 +6122,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdPos: {x: 0, y: 0.006, z: -0.014}
+  holdRotation: {x: 10, y: 20, z: 60}
   movingSpeed: 8
+  rotatingSpeed: 8
   weight: 1
   hasRigidbody: 1
 --- !u!54 &1409746913
@@ -6826,7 +6832,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdPos: {x: 0, y: 0.006, z: -0.014}
+  holdRotation: {x: 0, y: 0.006, z: -0.14}
   movingSpeed: 8
+  rotatingSpeed: 8
   weight: 20
   hasRigidbody: 1
 --- !u!65 &1502579274
@@ -7009,7 +7017,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdPos: {x: 0, y: 0.006, z: -0.014}
+  holdRotation: {x: 0, y: 0.006, z: -0.14}
   movingSpeed: 8
+  rotatingSpeed: 8
   weight: 20
   hasRigidbody: 1
 --- !u!65 &1506375658
@@ -7931,7 +7941,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdPos: {x: 0, y: 0.006, z: -0.014}
+  holdRotation: {x: 0, y: 0.006, z: -0.14}
   movingSpeed: 8
+  rotatingSpeed: 8
   weight: 20
   hasRigidbody: 1
 --- !u!65 &1736150697
@@ -9327,7 +9339,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8164078559297847580}
-  m_LocalRotation: {x: 0.10388685, y: -0.16966088, z: -0.51176286, w: 0.835776}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.66, y: 0.8, z: 4.46}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
