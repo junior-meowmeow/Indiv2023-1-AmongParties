@@ -12,12 +12,16 @@ public class PickableObject : MonoBehaviour
     private Rigidbody rb;
     private PlayerController holdPlayer;
 
+    [SerializeField] private GameObject[] hands;
+
     private void Start()
     {
         if (hasRigidbody)
         {
             rb = GetComponent<Rigidbody>();
         }
+
+        ShowHand(false);
     }
 
     void FixedUpdate()
@@ -50,10 +54,21 @@ public class PickableObject : MonoBehaviour
     public void Hold(PlayerController player)
     {
         holdPlayer = player;
+        ShowHand(true);
     }
 
     public void Drop()
     {
         holdPlayer = null;
+        ShowHand(false);
+    }
+
+    void ShowHand(bool show)
+    {
+        if (hands.Length == 0) return;
+        foreach (GameObject hand in hands)
+        {
+            hand.SetActive(show);
+        }
     }
 }
