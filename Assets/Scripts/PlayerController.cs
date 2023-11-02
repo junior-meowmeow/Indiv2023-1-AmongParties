@@ -5,9 +5,11 @@ using UnityEngine.InputSystem;
 using Unity.Netcode;
 using Mono.Cecil;
 using Unity.Netcode.Components;
+using static UnityEngine.GraphicsBuffer;
 
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField] private NetworkObject[] allObjects;
     [Header ("Movement")]
     [SerializeField] private float movementSpeed = 5.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
@@ -75,8 +77,13 @@ public class PlayerController : NetworkBehaviour
 
         currentStepTime = 0f;
 
+        if(!IsOwner)
+        {
+            return;
+        }
         interactInput.action.started += Interact;
-        jumpInput.action.started += Jump;
+        //jumpInput.action.started += Jump;
+        jumpInput.action.started += JumpServer;
         throwInput.action.started += _ => { ChargeThrowObject(true); };
         throwInput.action.canceled += _ => { ChargeThrowObject(false); };
         playDeadInput.action.started += _ => { Fall(fallDuration); };
@@ -100,71 +107,20 @@ public class PlayerController : NetworkBehaviour
         }
         if (!IsOwner) return;
 
+        /*
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            SyncNetworkObjectServerRPC();
+        }
+        */
+
         CheckFall();
         if (isFall) return;
-        //Movement();
         MoveServer();
-    }
-
-    void Movement()
-    {
-        Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
-
-        if (moveDir == Vector2.zero)
-        {
-            if (!stopped)
-            {
-                // last step by degree (radian)
-                float lastStep = (currentStepTime * stepMultiplier) % (2 * Mathf.PI);
-                // go to next leg
-                currentStepTime = (lastStep < Mathf.PI) ? (Mathf.PI / stepMultiplier) : 0f;
-                // reset leg rotation
-                leftLeg.targetRotation = Quaternion.identity;
-                rightLeg.targetRotation = Quaternion.identity;
-                stopped = true;
-            }
-            return;
-        }
-        stopped = false;
-        
-        LegPos();
-
-        /* Movement */
-
-        float forwardMovement = moveDir.y * movementSpeed * speedMultiplier;
-        float strafeMovement = moveDir.x * movementSpeed * speedMultiplier;
-        float camRotY = cam.transform.localEulerAngles.y;
- 
-        rb.velocity = Quaternion.Euler(0f, camRotY, 0f) * transform.forward * forwardMovement
-                    + Quaternion.Euler(0f, camRotY, 0f) * transform.right * strafeMovement;
-
-        /* Rotation */
-
-        float targetAngle = Mathf.Atan2(-moveDir.x, moveDir.y) * Mathf.Rad2Deg - camRotY;
-        targetAngle = (targetAngle + 720f) % 360f;
-
-        float currentAngle = hipJoint.targetRotation.eulerAngles.y;
-        float distance = targetAngle - currentAngle;
-        //Pass Zero Degree
-        if (Mathf.Abs(targetAngle - currentAngle) > 180f)
-        {
-            distance = targetAngle - currentAngle + (currentAngle > 180? 360f : -360f);
-        }
-
-        if(Mathf.Abs(distance) > rotationSpeed * speedMultiplier * Time.fixedDeltaTime)
-        {
-            targetAngle = currentAngle + rotationSpeed * speedMultiplier * Mathf.Sign(distance) * Time.fixedDeltaTime;
-        }
-        hipJoint.targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
     }
 
     void MoveServer()
     {
-        if (!IsOwner)
-        {
-            return;
-        }
-
         Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
 
         if (moveDir == Vector2.zero)
@@ -193,6 +149,8 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     void MoveServerRPC(float camRotY, float moveX, float moveY, float targetAngle)
     {
+        if (isFall) return;
+
         float forwardMovement = moveY * movementSpeed * speedMultiplier;
         float strafeMovement = moveX * movementSpeed * speedMultiplier;
 
@@ -284,19 +242,124 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     void SyncNetworkObjectServerRPC()
     {
-        foreach (NetworkObject obj in FindObjectsOfType<NetworkObject>())
+        allObjects = FindObjectsOfType<NetworkObject>();
+        foreach (NetworkObject obj in allObjects)
         {
-            SyncNetworkObjectClientRPC(obj.transform, obj.transform.position, obj.transform.rotation, obj.transform.localScale);
+            SyncNetworkObjectClientRPC(obj, obj.transform.position, obj.transform.rotation, obj.transform.localScale);
         }
     }
 
     [ClientRpc]
-    void SyncNetworkObjectClientRPC( Transform transform, Vector3 position, Quaternion rotation, Vector3 localScale)
+    private void SyncNetworkObjectClientRPC(NetworkObjectReference obj, Vector3 position, Quaternion rotation, Vector3 localScale)
     {
-        transform.SetPositionAndRotation(position, rotation);
-        transform.localScale = localScale;
+        if (obj.TryGet(out NetworkObject targetObject))
+        {
+            targetObject.transform.SetPositionAndRotation(position, rotation);
+            targetObject.transform.localScale = localScale;
+        }
+        else
+        {
+            // Object not found on server, likely because it already has been destroyed/despawned.
+        }
     }
     */
+
+    void Interact(InputAction.CallbackContext c)
+    {
+        if (holdingObject == null)
+        {
+            if (interactionCollider.HasObjectNearby)
+            {
+                //PickObject(interactionCollider.GetNearestObject());
+                PickObjectServerRPC();
+            }
+            /*
+            if (Physics.Raycast(interactPoint.transform.position, interactPoint.transform.forward, out RaycastHit hit, interactRange))
+            {
+                PickableObject obj = hit.collider.GetComponent<PickableObject>();
+                PickObject(obj);
+            }
+            */
+        }
+        else
+        {
+            DropObjectServerRPC();
+        }
+    }
+
+    [ServerRpc]
+    void PickObjectServerRPC()
+    {
+        if (interactionCollider.HasObjectNearby)
+        {
+            if(interactionCollider.GetNearestObject().TryGetComponent(out NetworkObject obj_ref))
+            {
+                PickObjectClientRPC(obj_ref);
+            }
+        }
+    }
+
+    [ClientRpc]
+    void PickObjectClientRPC(NetworkObjectReference obj_ref)
+    {
+        PickableObject obj; 
+        if(obj_ref.TryGet(out NetworkObject targetObject))
+        {
+            obj = targetObject.GetComponent<PickableObject>();
+            obj.Hold(this);
+            holdingObject = obj;
+            holdPos.localPosition = obj.holdPos;
+            holdPos.localRotation = Quaternion.Euler(obj.holdRotation);
+            speedMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
+            jumpMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
+        }
+    }
+
+    [ServerRpc]
+    void DropObjectServerRPC()
+    {
+        if (holdingObject != null)
+        {
+            DropObjectClientRPC();
+        }
+    }
+
+    [ClientRpc]
+    void DropObjectClientRPC()
+    {
+        if (holdingObject != null)
+        {
+            holdingObject.Drop();
+            holdPos.localPosition = defaultHoldPos;
+            holdPos.localRotation = Quaternion.identity;
+            holdingObject = null;
+            speedMultiplier = 1f;
+            jumpMultiplier = 1f;
+        }
+    }
+
+    void JumpServer(InputAction.CallbackContext c)
+    {
+        if (IsOwner && Physics.Raycast(groundPoint.position, -transform.up, out _, 0.3f))
+        {
+            JumpServerRPC();
+        }
+    }
+
+    [ServerRpc]
+    void JumpServerRPC()
+    {
+        if (Physics.Raycast(groundPoint.position, -transform.up, out _, 0.3f))
+        {
+            JumpClientRPC();
+        }
+    }
+
+    [ClientRpc]
+    void JumpClientRPC()
+    {
+        rb.AddForce(jumpForce * jumpMultiplier * Vector3.up, ForceMode.Impulse);
+    }
 
     void CheckFall()
     {
@@ -311,7 +374,8 @@ public class PlayerController : NetworkBehaviour
             jointYZDrive.positionSpring = 1500f;
             hipJoint.angularYZDrive = jointYZDrive;
             interactInput.action.started += Interact;
-            jumpInput.action.started += Jump;
+            //jumpInput.action.started += Jump;
+            jumpInput.action.started += JumpServer;
 
             /* Get current direction */
             float currentAngleY = hipJoint.transform.localEulerAngles.y;
@@ -363,62 +427,6 @@ public class PlayerController : NetworkBehaviour
         } 
     }
 
-    void Interact(InputAction.CallbackContext c)
-    {
-        if (holdingObject == null)
-        {
-            if (interactionCollider.HasObjectNearby)
-            {
-                PickObject(interactionCollider.GetNearestObject());
-            }
-            /*
-            if (Physics.Raycast(interactPoint.transform.position, interactPoint.transform.forward, out RaycastHit hit, interactRange))
-            {
-                PickableObject obj = hit.collider.GetComponent<PickableObject>();
-                PickObject(obj);
-            }
-            */
-        }
-        else
-        {
-            DropObject();
-        }
-    }
-
-    void Jump(InputAction.CallbackContext c)
-    {
-        if (Physics.Raycast(groundPoint.position, -transform.up, out _, 0.3f))
-        {
-            rb.AddForce(jumpForce * jumpMultiplier * Vector3.up, ForceMode.Impulse);
-        }
-    }
-
-    void PickObject(PickableObject obj)
-    {
-        if (obj != null)
-        {
-            obj.Hold(this);
-            holdingObject = obj;
-            holdPos.localPosition = obj.holdPos;
-            holdPos.localRotation = Quaternion.Euler(obj.holdRotation);
-            speedMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
-            jumpMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
-        }
-    }
-
-    PickableObject DropObject()
-    {
-        holdingObject.Drop();
-        var toReturn = holdingObject;
-        holdPos.localPosition = defaultHoldPos;
-        holdPos.localRotation = Quaternion.identity;
-        holdingObject = null;
-        speedMultiplier = 1f;
-        jumpMultiplier = 1f;
-
-        return toReturn;
-    }
-
     void ChargeThrowObject(bool isCharge)
     {
         if (holdingObject == null) return;
@@ -428,7 +436,7 @@ public class PlayerController : NetworkBehaviour
         }
         else
         {
-            DropObject().GetComponent<Rigidbody>().AddForce(rb.transform.forward * -throwForce);
+            //DropObject().GetComponent<Rigidbody>().AddForce(rb.transform.forward * -throwForce);
             throwForce = 0;
         }
     }
@@ -445,7 +453,8 @@ public class PlayerController : NetworkBehaviour
     {
         isFall = true;
         interactInput.action.started -= Interact;
-        jumpInput.action.started -= Jump;
+        //jumpInput.action.started -= Jump;
+        jumpInput.action.started -= JumpServer;
 
         JointDrive jointXDrive = hipJoint.angularXDrive;
         jointXDrive.positionSpring = 0f;
@@ -464,4 +473,5 @@ public class PlayerController : NetworkBehaviour
         lastfallDuration = fallDuration;
         lastFallTime = Time.time;
     }
+
 }
