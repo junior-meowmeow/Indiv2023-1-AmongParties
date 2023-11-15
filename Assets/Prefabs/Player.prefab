@@ -198,6 +198,7 @@ MonoBehaviour:
   speedMultiplier: 1
   jumpMultiplier: 1
   stepSpeed: 20
+  slopeMultiplier: -60
   interactRange: 3
   maxThrowForce: 600
   startThrowForce: 300
@@ -220,8 +221,6 @@ MonoBehaviour:
   hipJoint: {fileID: 6458680499627158711}
   leftLeg: {fileID: 6458680498908578127}
   rightLeg: {fileID: 6458680500046448741}
-  leftLegTransform: {fileID: 7726855110808604947}
-  rightLegTransform: {fileID: 4969897927828958983}
   holdingObject: {fileID: 0}
   defaultHoldPos: {x: 0, y: 0.006, z: -0.014}
   holdPos: {fileID: 6458680498062406614}
@@ -312,6 +311,7 @@ MonoBehaviour:
   maxFOV: 60
   scrollSpeed: 5
   zoomSpeed: 6
+  mainCamera: {fileID: 6458680500111255228}
   currentFOV: 40
 --- !u!1 &6458680499826523775
 GameObject:
@@ -1889,12 +1889,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!4 &4969897927828958983 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -7108570938456118424, guid: a0362a453023a03448c4331e73839e14,
-    type: 3}
-  m_PrefabInstance: {fileID: 6458680498496046191}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5644149502404195564 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1726527512867401859, guid: a0362a453023a03448c4331e73839e14,
@@ -2874,12 +2868,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!4 &7726855110808604947 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3646396693868516732, guid: a0362a453023a03448c4331e73839e14,
-    type: 3}
-  m_PrefabInstance: {fileID: 6458680498496046191}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8930408713684417889 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2472186858389371150, guid: a0362a453023a03448c4331e73839e14,

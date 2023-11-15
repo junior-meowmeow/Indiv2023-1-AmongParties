@@ -290,7 +290,8 @@ public class PlayerController : NetworkBehaviour
     {
         if (interactionCollider.HasObjectNearby)
         {
-            if(interactionCollider.GetNearestObject().TryGetComponent(out NetworkObject obj_ref))
+            PickableObject obj = interactionCollider.GetNearestObject();
+            if (obj.IsPickable() && obj.TryGetComponent(out NetworkObject obj_ref))
             {
                 PickObjectClientRPC(obj_ref);
             }
@@ -452,6 +453,7 @@ public class PlayerController : NetworkBehaviour
             cam.SetScrollAxis(axis);
             scrollAxis = axis;
         } 
+        
     }
 
     void ChargeThrowObject(bool isCharge)

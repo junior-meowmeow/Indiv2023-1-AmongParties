@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float zoomSpeed = 5f;
     //[SerializeField] private Vector3 offset;
 
-    private Camera mainCamera;
+    [SerializeField] private Camera mainCamera;
     [SerializeField] private float currentFOV = 40f;
 
     private PlayerController player;
@@ -30,7 +30,7 @@ public class CameraController : MonoBehaviour
     void Awake()
     {
         player = GetComponentInParent<PlayerController>();
-        mainCamera = Camera.main;
+        //mainCamera = Camera.main;
         currentFOV = defaultFOV;
         mainCamera.fieldOfView = currentFOV;
     }
@@ -56,6 +56,10 @@ public class CameraController : MonoBehaviour
         /* Camera Zoom */
 
         // float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
+        if(mouseScroll != 0)
+        {
+            print(mouseScroll);
+        }
 
         currentFOV -= mouseScroll * scrollSpeed;
         currentFOV = Mathf.Clamp(currentFOV, minFOV, maxFOV);

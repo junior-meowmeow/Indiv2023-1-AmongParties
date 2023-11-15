@@ -68,6 +68,11 @@ public class PickableObject : MonoBehaviour
         ShowHand(false);
     }
 
+    public bool IsPickable()
+    {
+        return holdPlayer == null;
+    }
+
     void ShowHand(bool show)
     {
         if (hands.Length == 0) return;
