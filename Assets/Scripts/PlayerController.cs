@@ -14,6 +14,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float speedMultiplier = 1f;
     [SerializeField] private float jumpMultiplier = 1f;
     [SerializeField] private float stepSpeed = 20f;
+    [SerializeField] private float slopeMultiplier = -60f;
     private float stepMultiplier = 0.5f;
     private float currentStepTime;
     private bool stopped = false;
@@ -407,10 +408,39 @@ public class PlayerController : NetworkBehaviour
         currentStepTime += stepSpeed * speedMultiplier * Time.fixedDeltaTime;
         */
 
-        float leftLegAngle = 25f * Mathf.Sin(currentStepTime * stepMultiplier);
-        float rightLegAngle = -25f * Mathf.Sin(currentStepTime * stepMultiplier);
+        float offset = 0f;
+
+        float distance = 1f;
+        Ray ray = new Ray(hipJoint.transform.position, Vector3.down);
+
+        //Debug.DrawRay(ray.origin, ray.direction * distance, Color.red);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, distance))
+        {
+            /*
+            Debug.Log("Hit collider " + hit.collider + ", at " + hit.point + ", normal " + hit.normal);
+            Debug.DrawRay(hit.point, hit.normal * 2f, Color.blue);
+            */
+            /*
+            float angle = Vector3.Angle(hit.normal, Vector3.up);
+            Quaternion rotation = Quaternion.LookRotation(hit.normal, Vector3.up);
+            */
+            float dotProduct = Vector3.Dot(hit.normal, hipJoint.transform.forward);
+            offset = dotProduct * slopeMultiplier;
+            //Debug.Log("angle " + angle);
+
+            //if (angle > 30)...
+        }
+        else // is not colliding
+        {
+
+        }
+
+        float leftLegAngle = offset + 25f * Mathf.Sin(currentStepTime * stepMultiplier);
+        float rightLegAngle = offset + -25f * Mathf.Sin(currentStepTime * stepMultiplier);
         leftLeg.targetRotation = Quaternion.Euler(leftLegAngle, 0f, 0f);
         rightLeg.targetRotation = Quaternion.Euler(rightLegAngle, 0f, 0f);
+
         currentStepTime += stepSpeed * speedMultiplier * Time.fixedDeltaTime;
     }
 
