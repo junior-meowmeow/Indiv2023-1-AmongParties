@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
-using Mono.Cecil;
-using Unity.Netcode.Components;
-using static UnityEngine.GraphicsBuffer;
 
 public class PlayerController : NetworkBehaviour
 {
