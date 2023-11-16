@@ -10,6 +10,7 @@ public class PickableObject : MonoBehaviour
     public float rotatingSpeed = 8.0f;
     public float weight = 1f;
     public bool hasRigidbody = true;
+    public bool isDroppedAfterUse = true;
 
     private Rigidbody rb;
     private PlayerController holdPlayer;
@@ -54,6 +55,11 @@ public class PickableObject : MonoBehaviour
     {
         transform.position = holdPlayer.holdPos.position;
         transform.rotation = holdPlayer.holdPos.rotation;
+    }
+
+    public void Use(bool isHolding)
+    {
+        rb.AddForce(holdPlayer.hipJoint.transform.forward * -10, ForceMode.Impulse);
     }
 
     public void Hold(PlayerController player)

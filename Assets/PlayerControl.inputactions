@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Throw",
+                    "name": "UseItem",
                     "type": "Button",
                     "id": "9c158c34-07f6-4625-987a-39ce9b46abc1",
                     "expectedControlType": "Button",
@@ -167,7 +167,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Throw",
+                    "action": "UseItem",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

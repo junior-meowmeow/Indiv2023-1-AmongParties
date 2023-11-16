@@ -22,10 +22,6 @@ public class PlayerController : NetworkBehaviour
 
     [Header ("Object Interact")]
     [SerializeField] private float interactRange = 3.0f;
-    [SerializeField] private float maxThrowForce = 600f;
-    [SerializeField] private float startThrowForce = 300f;
-    [SerializeField] private float throwChargeSpeed = 300f;
-    [SerializeField] private float throwForce;
 
     [SerializeField] private float fallDuration = 3f;
     private float lastfallDuration;
@@ -38,7 +34,7 @@ public class PlayerController : NetworkBehaviour
     public InputActionReference moveInput;
     public InputActionReference jumpInput;
     public InputActionReference interactInput;
-    public InputActionReference throwInput;
+    public InputActionReference useItemInput;
     public InputActionReference scrollInput;
     public InputActionReference playDeadInput;
 
@@ -82,8 +78,8 @@ public class PlayerController : NetworkBehaviour
         interactInput.action.started += Interact;
         //jumpInput.action.started += Jump;
         jumpInput.action.started += JumpServer;
-        throwInput.action.started += _ => { ChargeThrowObject(true); };
-        throwInput.action.canceled += _ => { ChargeThrowObject(false); };
+        useItemInput.action.started += _ => { UseItemServerRPC(true); };
+        useItemInput.action.canceled += _ => { UseItemServerRPC(false); };
         playDeadInput.action.started += _ => { Fall(fallDuration); };
 
         //hipJoint.GetComponent<NetworkTransform>().enabled = false;
@@ -94,7 +90,6 @@ public class PlayerController : NetworkBehaviour
         if (!IsOwner) return;
 
         CameraControl();
-        CheckThrow();
     }
 
     void FixedUpdate()
@@ -337,9 +332,46 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    void UseItem(bool isHolding)
+    {
+        if (holdingObject == null) return;
+        if(holdingObject.isDroppedAfterUse)
+        {
+            holdingObject.Drop();
+            holdPos.localPosition = defaultHoldPos;
+            holdPos.localRotation = Quaternion.identity;
+            holdingObject = null;
+            speedMultiplier = 1f;
+            jumpMultiplier = 1f;
+        }
+    }
+
+    [ServerRpc]
+    void UseItemServerRPC(bool isHolding)
+    {
+        if (holdingObject == null) return;
+        UseItemClientRPC(isHolding);
+    }
+
+    [ClientRpc]
+    void UseItemClientRPC(bool isHolding)
+    {
+        if (holdingObject == null) return;
+        holdingObject.Use(isHolding);
+        if (holdingObject.isDroppedAfterUse)
+        {
+            holdingObject.Drop();
+            holdPos.localPosition = defaultHoldPos;
+            holdPos.localRotation = Quaternion.identity;
+            holdingObject = null;
+            speedMultiplier = 1f;
+            jumpMultiplier = 1f;
+        }
+    }
+
     void JumpServer(InputAction.CallbackContext c)
     {
-        if (IsOwner && Physics.Raycast(groundPoint.position, -transform.up, out _, 0.3f))
+        if (IsOwner && Physics.Raycast(groundPoint.position, -hipJoint.transform.up, out _, 0.15f))
         {
             JumpServerRPC();
         }
@@ -348,7 +380,7 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     void JumpServerRPC()
     {
-        if (Physics.Raycast(groundPoint.position, -transform.up, out _, 0.3f))
+        if (Physics.Raycast(groundPoint.position, -hipJoint.transform.up, out _, 0.15f))
         {
             JumpClientRPC();
         }
@@ -397,18 +429,6 @@ public class PlayerController : NetworkBehaviour
 
     void LegPos()
     {
-        /* old (use Transform)
-        Vector3 leftLegAngle = leftLeg.localEulerAngles;
-        Vector3 rightLegAngle = rightLeg.localEulerAngles;
-        // print("old : " + leftLegAngle);
-        leftLegAngle.x = 350f + 30f * Mathf.Sin(currentStepTime * stepMultiplier);
-        rightLegAngle.x = 350f - 30f * Mathf.Sin(currentStepTime * stepMultiplier);
-        // print("new : " + leftLegAngle);
-        leftLeg.localRotation = Quaternion.Euler(leftLegAngle);
-        rightLeg.localRotation = Quaternion.Euler(rightLegAngle);
-        currentStepTime += stepSpeed * speedMultiplier * Time.fixedDeltaTime;
-        */
-
         float offset = 0f;
 
         float distance = 1f;
@@ -429,12 +449,6 @@ public class PlayerController : NetworkBehaviour
             float dotProduct = Vector3.Dot(hit.normal, hipJoint.transform.forward);
             offset = dotProduct * slopeMultiplier;
             //Debug.Log("angle " + angle);
-
-            //if (angle > 30)...
-        }
-        else // is not colliding
-        {
-
         }
 
         float leftLegAngle = offset + 25f * Mathf.Sin(currentStepTime * stepMultiplier);
@@ -454,28 +468,6 @@ public class PlayerController : NetworkBehaviour
             scrollAxis = axis;
         } 
         
-    }
-
-    void ChargeThrowObject(bool isCharge)
-    {
-        if (holdingObject == null) return;
-        if (isCharge)
-        {
-            throwForce = startThrowForce;
-        }
-        else
-        {
-            //DropObject().GetComponent<Rigidbody>().AddForce(rb.transform.forward * -throwForce);
-            throwForce = 0;
-        }
-    }
-
-    void CheckThrow()
-    {
-        if (throwForce == 0 || throwForce >= maxThrowForce) return;
-        
-        throwForce += Time.deltaTime * throwChargeSpeed;
-        if (throwForce > maxThrowForce) throwForce = maxThrowForce;
     }
 
     void Fall(float fallDuration)

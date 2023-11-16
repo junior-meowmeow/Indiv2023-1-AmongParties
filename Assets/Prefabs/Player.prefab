@@ -211,7 +211,7 @@ MonoBehaviour:
     type: 3}
   interactInput: {fileID: 1866602912016619406, guid: ad95213d430093d4d8d5d252b89f4d39,
     type: 3}
-  throwInput: {fileID: 5697698410709055499, guid: ad95213d430093d4d8d5d252b89f4d39,
+  useItemInput: {fileID: 5697698410709055499, guid: ad95213d430093d4d8d5d252b89f4d39,
     type: 3}
   scrollInput: {fileID: 404610109585943753, guid: ad95213d430093d4d8d5d252b89f4d39,
     type: 3}
