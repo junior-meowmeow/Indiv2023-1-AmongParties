@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class Detector : MonoBehaviour
+public class ObjectDetector : MonoBehaviour
 {
     private Collider col;
 
-    void Start()
+    void Awake()
     {
         col = GetComponent<Collider>();
     }
@@ -16,7 +16,7 @@ public class Detector : MonoBehaviour
     {
         if (col.TryGetComponent<PickableObject>(out PickableObject obj))
         {
-            Debug.Log(obj.gameObject);
+            GameManager.instance.GetScore(1);
         }
     }
 }
