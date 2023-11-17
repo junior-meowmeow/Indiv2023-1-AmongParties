@@ -45,6 +45,7 @@ public class PlayerController : NetworkBehaviour
     public ConfigurableJoint rightLeg;
 
     private CameraController cam;
+    private PlayerSetting playerSetting;
     public PickableObject holdingObject;
     public Vector3 defaultHoldPos = new(0f, 0.006f, -0.014f);
     public Transform holdPos;
@@ -65,6 +66,7 @@ public class PlayerController : NetworkBehaviour
     void Start()
     {
         cam = GetComponentInChildren<CameraController>();
+        playerSetting = GetComponent<PlayerSetting>();
         if (!IsOwner) cam.Disable();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -495,4 +497,8 @@ public class PlayerController : NetworkBehaviour
         lastFallTime = Time.time;
     }
 
+    public PlayerSetting GetPlayerSetting()
+    {
+        return playerSetting;
+    }
 }

@@ -56,10 +56,10 @@ public class CameraController : MonoBehaviour
         /* Camera Zoom */
 
         // float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
-        if(mouseScroll != 0)
-        {
-            print(mouseScroll);
-        }
+        // if(mouseScroll != 0)
+        // {
+        //     print(mouseScroll);
+        // }
 
         currentFOV -= mouseScroll * scrollSpeed;
         currentFOV = Mathf.Clamp(currentFOV, minFOV, maxFOV);

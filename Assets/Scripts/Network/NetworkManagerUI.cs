@@ -7,12 +7,19 @@ using UnityEngine.UI;
 
 public class NetworkManagerUI : MonoBehaviour
 {
-    [Header ("Lobby")]
+    [Header ("Menu")]
     [SerializeField] private Button serverBtn;
     [SerializeField] private Button hostBtn;
     [SerializeField] private Button clientBtn;
+    [SerializeField] private Canvas menuCanvas;
+    [SerializeField] private Camera menuCam;
+
+    [Header ("Lobby")]
     [SerializeField] private Canvas lobbyCanvas;
-    [SerializeField] private Camera lobbyCam;
+    [SerializeField] private Button startGameBtn;
+    [SerializeField] private GameObject colorButtonList;
+    [SerializeField] private Color[] colorList;
+    [SerializeField] private TMP_Text playerListText;
 
     [Header ("Ingame")]
     [SerializeField] private Canvas ingameCanvas;
@@ -23,27 +30,13 @@ public class NetworkManagerUI : MonoBehaviour
 
     void Awake()
     {
-        serverBtn.onClick.AddListener(() => {
-            NetworkManager.Singleton.StartServer();
-            ToggleLobbyCanvas(false);
-            GameManager.instance.GameStart();
-        });
-        hostBtn.onClick.AddListener(() => {
-            NetworkManager.Singleton.StartHost();
-            ToggleLobbyCanvas(false);
-            GameManager.instance.GameStart();
-        });
-        clientBtn.onClick.AddListener(() => {
-            NetworkManager.Singleton.StartClient();
-            ToggleLobbyCanvas(false);
-            GameManager.instance.GameStart();
-        });
+        InitButton();
     }
 
     void Start()
     {
         instance = this;
-        ToggleLobbyCanvas(true);
+        UpdateCanvas(GameManager.instance.GetGameState());
     }
 
     void Update()
@@ -56,6 +49,35 @@ public class NetworkManagerUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
+        }
+    }
+
+    void InitButton()
+    {
+        serverBtn.onClick.AddListener(() => {
+            NetworkManager.Singleton.StartServer();
+            GameManager.instance.JoinLobby();
+            UpdateCanvas(GameManager.instance.GetGameState());
+        });
+        hostBtn.onClick.AddListener(() => {
+            NetworkManager.Singleton.StartHost();
+            GameManager.instance.JoinLobby();
+            UpdateCanvas(GameManager.instance.GetGameState());
+        });
+        clientBtn.onClick.AddListener(() => {
+            NetworkManager.Singleton.StartClient();
+            GameManager.instance.JoinLobby();
+            UpdateCanvas(GameManager.instance.GetGameState());
+        });
+        startGameBtn.onClick.AddListener(() => {
+            GameManager.instance.StartGame();
+            UpdateCanvas(GameManager.instance.GetGameState());
+        });
+
+        Button[] btnList = colorButtonList.GetComponentsInChildren<Button>();
+        for(int idx = 0; idx < btnList.Length; idx++)
+        {
+            btnList[idx].GetComponent<PlayerColorButtonUI>().Init(colorList[idx]);
         }
     }
 
@@ -72,10 +94,25 @@ public class NetworkManagerUI : MonoBehaviour
         objectiveText.text = "Objective : " + score.ToString() + "/" + targetScore.ToString();
     }
 
-    void ToggleLobbyCanvas(bool isLobby)
+    public void UpdatePlayerList()
     {
-        lobbyCanvas.gameObject.SetActive(isLobby);
-        lobbyCam.gameObject.SetActive(isLobby);
-        ingameCanvas.gameObject.SetActive(!isLobby);
+        List<PlayerSetting> players = GameManager.instance.GetPlayerList();
+
+        playerListText.text = "";
+
+        foreach(PlayerSetting player in players)
+        {
+            playerListText.text += player.name + "\n";
+        }
+    }
+
+    void UpdateCanvas(GameState gameState)
+    {
+        menuCanvas.gameObject.SetActive(gameState == GameState.MENU);
+        menuCam.gameObject.SetActive(gameState == GameState.MENU);
+        
+        lobbyCanvas.gameObject.SetActive(gameState == GameState.LOBBY);
+
+        ingameCanvas.gameObject.SetActive(gameState == GameState.INGAME);
     }
 }

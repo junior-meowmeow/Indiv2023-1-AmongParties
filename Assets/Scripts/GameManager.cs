@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
+public enum GameState {MENU, LOBBY, INGAME};
 public enum Objective {FIND_OBJECT}
 
 public class GameManager : NetworkBehaviour
 {
+    [SerializeField] private GameState gameState;
     [SerializeField] private Objective objective;
     [SerializeField] private int score;
     [SerializeField] private int targetScore;
     [SerializeField] private float timer;
     [SerializeField] private bool isRelax;
 
+    [SerializeField] private List<PlayerSetting> playerList;
+    
     public static GameManager instance;
 
     void Awake()
@@ -20,12 +24,31 @@ public class GameManager : NetworkBehaviour
         instance = this;
     }
 
-    public void GameStart()
+    public void JoinLobby()
+    {
+        gameState += 1;
+        
+    }
+
+    public void StartGame()
     {
         if (!IsServer) return;
 
+        StartGameServerRPC();
         SetTimer(20f, true);
         NextObjective();
+    }
+
+    [ServerRpc]
+    void StartGameServerRPC()
+    {
+        StartGameClientRPC();
+    }
+
+    [ClientRpc]
+    void StartGameClientRPC()
+    {
+        gameState = GameState.INGAME;
     }
 
     void Update()
@@ -97,4 +120,32 @@ public class GameManager : NetworkBehaviour
 
         NetworkManagerUI.instance.UpdateObjective(score, targetScore);
     }
+
+    public GameState GetGameState()
+    {
+        return gameState;
+    }
+
+    public List<PlayerSetting> GetPlayerList()
+    {
+        return playerList;
+    }
+
+    public void AddNewPlayer(PlayerSetting player)
+    {
+        playerList.Add(player);
+        // AddNewPlayerServerRpc(player);
+    }
+
+    // [ServerRpc]
+    // void AddNewPlayerServerRpc(PlayerSetting player)
+    // {
+    //     AddNewPlayerClientRpc(player);
+    // }
+
+    // [ClientRpc]
+    // void AddNewPlayerClientRpc(PlayerSetting player)
+    // {
+    //     playerList.Add(player);
+    // }
 }

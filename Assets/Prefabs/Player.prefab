@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 6458680499265443458}
   - component: {fileID: 5851243904357661245}
   - component: {fileID: 6458680499265443462}
+  - component: {fileID: 5962055662224230344}
   - component: {fileID: 6458680499265443468}
   m_Layer: 6
   m_Name: Player
@@ -200,10 +201,6 @@ MonoBehaviour:
   stepSpeed: 20
   slopeMultiplier: -60
   interactRange: 3
-  maxThrowForce: 600
-  startThrowForce: 300
-  throwChargeSpeed: 300
-  throwForce: 0
   fallDuration: 3
   moveInput: {fileID: -6320487089797257092, guid: ad95213d430093d4d8d5d252b89f4d39,
     type: 3}
@@ -227,6 +224,18 @@ MonoBehaviour:
   interactPoint: {fileID: 6458680498401473514}
   interactionCollider: {fileID: 1420586962}
   groundPoint: {fileID: 6458680499826523768}
+--- !u!114 &5962055662224230344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6458680499265443461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20563b4feb7ae9b4f827cb6e2c84675d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6458680499265443468
 MonoBehaviour:
   m_ObjectHideFlags: 0
