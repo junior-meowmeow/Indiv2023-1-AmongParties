@@ -12,15 +12,16 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float mouseSensitivity = 2.0f;
 
     [Header("Zoom")]
-    [SerializeField] private float defaultFOV = 40f;
-    [SerializeField] private float minFOV = 20f;
-    [SerializeField] private float maxFOV = 60f;
+    [SerializeField] private Vector3 offset;
+    [SerializeField] private float defaultDistance = 10f;
+    [SerializeField] private float minDistance = 5f;
+    [SerializeField] private float maxDistance = 20f;
     [SerializeField] private float scrollSpeed = 10f;
     [SerializeField] private float zoomSpeed = 5f;
     //[SerializeField] private Vector3 offset;
 
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private float currentFOV = 40f;
+    [SerializeField] private float currentDistance = 40f;
 
     private PlayerController player;
     private float verticalRotation = 0;
@@ -31,8 +32,8 @@ public class CameraController : MonoBehaviour
     {
         player = GetComponentInParent<PlayerController>();
         //mainCamera = Camera.main;
-        currentFOV = defaultFOV;
-        mainCamera.fieldOfView = currentFOV;
+        currentDistance = defaultDistance;
+        offset = mainCamera.transform.localPosition;
     }
 
     void Update()
@@ -61,12 +62,24 @@ public class CameraController : MonoBehaviour
         //     print(mouseScroll);
         // }
 
-        currentFOV -= mouseScroll * scrollSpeed;
-        currentFOV = Mathf.Clamp(currentFOV, minFOV, maxFOV);
-        if (mainCamera.fieldOfView != currentFOV)
+        currentDistance -= mouseScroll * scrollSpeed;
+        currentDistance = Mathf.Clamp(currentDistance, minDistance, maxDistance);
+
+        float camDistance = mainCamera.transform.localPosition.magnitude;
+        float newDistance = currentDistance;
+        
+        LayerMask layerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("PlayerWall")); // ignore both layerX and layerY
+        RaycastHit hit;
+        Vector3 displacement = mainCamera.transform.position - player.hipJoint.transform.position;
+        if (Physics.Raycast(player.hipJoint.transform.position, displacement.normalized, out hit, displacement.magnitude * 1.1f, layerMask))
+        {
+            newDistance = hit.distance;
+        }
+        if (camDistance != newDistance)
         {
             //mainCamera.fieldOfView = Mathf.MoveTowards(mainCamera.fieldOfView, currentFOV, zoomSpeed * Time.deltaTime);
-            mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, currentFOV, zoomSpeed * Time.deltaTime);
+            camDistance = Mathf.Lerp(camDistance, newDistance, zoomSpeed * Time.deltaTime);
+            mainCamera.transform.localPosition = offset.normalized*camDistance;
         }
 
         /* Camera Rotation */
@@ -76,7 +89,7 @@ public class CameraController : MonoBehaviour
 
         verticalRotation -= mouseY;
         horizontalRotation += mouseX;
-        verticalRotation = Mathf.Clamp(verticalRotation, -30, 30); // Limit vertical rotation to prevent flipping
+        verticalRotation = Mathf.Clamp(verticalRotation, -45, 45); // Limit vertical rotation to prevent flipping
 
         transform.Rotate(Vector3.up * mouseX);
         transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0);
