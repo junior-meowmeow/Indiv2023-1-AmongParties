@@ -200,7 +200,6 @@ MonoBehaviour:
   jumpMultiplier: 1
   stepSpeed: 20
   slopeMultiplier: -60
-  interactRange: 3
   fallDuration: 3
   moveInput: {fileID: -6320487089797257092, guid: ad95213d430093d4d8d5d252b89f4d39,
     type: 3}
@@ -236,6 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20563b4feb7ae9b4f827cb6e2c84675d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshRenderer: {fileID: 0}
 --- !u!114 &6458680499265443468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,7 +313,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
-  verticalThreshold: 0.1
   mouseSensitivity: 2
   defaultFOV: 40
   minFOV: 20
@@ -346,7 +345,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6458680499826523775}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.00533, z: -0.00071}
+  m_LocalPosition: {x: 0, y: -0.0035, z: -0.00071}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -11,12 +11,14 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float movementSpeed = 5.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
     [SerializeField] private float jumpForce = 100f;
+    [SerializeField] private float jumpCooldown = 1f;
     [SerializeField] private float speedMultiplier = 1f;
     [SerializeField] private float jumpMultiplier = 1f;
     [SerializeField] private float stepSpeed = 20f;
     [SerializeField] private float slopeMultiplier = -60f;
     private float stepMultiplier = 0.5f;
     private float currentStepTime;
+    private float lastJumpTime;
     private bool stopped = false;
     private bool isMoving = false;
 
@@ -373,7 +375,15 @@ public class PlayerController : NetworkBehaviour
 
     void JumpServer(InputAction.CallbackContext c)
     {
-        if (IsOwner && Physics.Raycast(groundPoint.position, -hipJoint.transform.up, out _, 0.15f))
+        if(!IsOwner)
+        {
+            return;
+        }    
+        if(Time.time - lastJumpTime < jumpCooldown)
+        {
+            return;
+        }
+        if (Physics.Raycast(groundPoint.position, Vector3.down, out _, 0.25f))
         {
             JumpServerRPC();
         }
@@ -382,7 +392,11 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     void JumpServerRPC()
     {
-        if (Physics.Raycast(groundPoint.position, -hipJoint.transform.up, out _, 0.15f))
+        if (Time.time - lastJumpTime < jumpCooldown)
+        {
+            return;
+        }
+        if (Physics.Raycast(groundPoint.position, Vector3.down, out _, 0.25f))
         {
             JumpClientRPC();
         }
@@ -392,6 +406,7 @@ public class PlayerController : NetworkBehaviour
     void JumpClientRPC()
     {
         rb.AddForce(jumpForce * jumpMultiplier * Vector3.up, ForceMode.Impulse);
+        lastJumpTime = Time.time;
     }
 
     void CheckFall()
