@@ -68,7 +68,7 @@ public class CameraController : MonoBehaviour
         float camDistance = mainCamera.transform.localPosition.magnitude;
         float newDistance = currentDistance;
         
-        LayerMask layerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("PlayerWall")); // ignore both layerX and layerY
+        LayerMask layerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("PlayerWall") | 1 << LayerMask.NameToLayer("Item")); // ignore both layerX and layerY
         RaycastHit hit;
         Vector3 displacement = mainCamera.transform.position - player.hipJoint.transform.position;
         if (Physics.Raycast(player.hipJoint.transform.position, displacement.normalized, out hit, displacement.magnitude * 1.1f, layerMask))
