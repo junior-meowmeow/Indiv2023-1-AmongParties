@@ -125,7 +125,7 @@ public class NetworkManagerUI : MonoBehaviour
         }
     }
 
-    void UpdateCanvas(GameState gameState)
+    public void UpdateCanvas(GameState gameState)
     {
         menuCanvas.gameObject.SetActive(gameState == GameState.MENU);
         menuCam.gameObject.SetActive(gameState == GameState.MENU);

@@ -50,6 +50,7 @@ public class GameManager : NetworkBehaviour
     void StartGameClientRPC()
     {
         gameState = GameState.INGAME;
+        UpdateUI();
     }
 
     void Update()
@@ -130,6 +131,7 @@ public class GameManager : NetworkBehaviour
     {
         NetworkManagerUI.instance.UpdateTimer(timer, isRelax);
         NetworkManagerUI.instance.UpdateObjective(objective);
+        NetworkManagerUI.instance.UpdateCanvas(gameState);
     }
 
     public GameState GetGameState()
