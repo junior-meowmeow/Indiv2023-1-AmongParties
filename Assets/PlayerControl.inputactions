@@ -140,17 +140,6 @@
                 },
                 {
                     "name": "",
-                    "id": "ef092567-6a25-4e5c-b588-05eadb7fdc8d",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Interact",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "4f93982a-faaa-4694-bd33-0b165783babc",
                     "path": "<Mouse>/scroll",
                     "interactions": "",
@@ -163,7 +152,7 @@
                 {
                     "name": "",
                     "id": "32237bf6-d3bd-42d1-9376-ffc0bca98a66",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
