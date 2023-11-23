@@ -13,10 +13,12 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Button clientBtn;
     [SerializeField] private Canvas menuCanvas;
     [SerializeField] private Camera menuCam;
+    [SerializeField] private TMP_InputField usernameInput;
 
     [Header ("Lobby")]
     [SerializeField] private Canvas lobbyCanvas;
     [SerializeField] private Button startGameBtn;
+    [SerializeField] private GameObject lobbyWaitText;
     [SerializeField] private GameObject colorButtonList;
     [SerializeField] private Color[] colorList;
     [SerializeField] private TMP_Text playerListText;
@@ -25,6 +27,8 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Canvas ingameCanvas;
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private TMP_Text objectiveText;
+    [SerializeField] private GameObject objectiveDoneText;
+    [SerializeField] private GameObject objectiveFailText;
 
     public static NetworkManagerUI instance;
 
@@ -89,9 +93,24 @@ public class NetworkManagerUI : MonoBehaviour
         timerText.text = ((int)time/60).ToString() + ":" + ((int)time%60).ToString();
     }
 
-    public void UpdateObjective(int score, int targetScore)
+    public void UpdateObjective(Objective objective)
     {
-        objectiveText.text = "Objective : " + score.ToString() + "/" + targetScore.ToString();
+        string objectName = "";
+        if (objective.id == 0)
+        {
+            if (objective.type == ObjectType.Box) objectName = "Box";
+            if (objective.type == ObjectType.Sphere) objectName = "Sphere";
+        }
+        else
+        {
+            if (objective.color == ObjectColor.RED) objectName = "Red object";
+            if (objective.color == ObjectColor.BLUE) objectName = "Blue object";
+        }
+        objectiveText.text = "Objective : Deliver " + objectName + " " + objective.score.ToString() + "/" + objective.targetScore.ToString();
+
+        objectiveDoneText.SetActive(objective.isComplete);
+        objectiveFailText.SetActive(false);
+        // objectiveFailText.SetActive(!objective.isComplete);
     }
 
     public void UpdatePlayerList()
@@ -110,6 +129,8 @@ public class NetworkManagerUI : MonoBehaviour
     {
         menuCanvas.gameObject.SetActive(gameState == GameState.MENU);
         menuCam.gameObject.SetActive(gameState == GameState.MENU);
+        startGameBtn.gameObject.SetActive(GameManager.instance.IsPlayerHost());
+        lobbyWaitText.gameObject.SetActive(!GameManager.instance.IsPlayerHost());
         
         lobbyCanvas.gameObject.SetActive(gameState == GameState.LOBBY);
 

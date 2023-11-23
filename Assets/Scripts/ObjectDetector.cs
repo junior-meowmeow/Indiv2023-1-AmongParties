@@ -16,7 +16,7 @@ public class ObjectDetector : MonoBehaviour
     {
         if (col.TryGetComponent<PickableObject>(out PickableObject obj))
         {
-            GameManager.instance.GetScore(1);
+            GameManager.instance.GetObject(obj);
         }
     }
 }

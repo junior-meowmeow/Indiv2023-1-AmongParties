@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PickableObject : MonoBehaviour
 {
+    public ObjectType type;
+    public ObjectColor color;
+
     public Vector3 holdPos = new(0f, 0.006f, -0.14f);
     public Vector3 holdRotation = new(0f, 0f, 0f);
     public float movingSpeed = 8.0f;

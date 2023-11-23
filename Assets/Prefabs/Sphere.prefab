@@ -12,12 +12,12 @@ GameObject:
   - component: {fileID: 1922091604512361715}
   - component: {fileID: 1922091604512361714}
   - component: {fileID: 1922091604512361713}
-  - component: {fileID: 1922091604512361717}
+  - component: {fileID: 343590691793790428}
   - component: {fileID: 1922091604512361716}
   - component: {fileID: 1922091604512361614}
   - component: {fileID: 1922091604512361615}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1922091604512361719}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 1141411432980370904, guid: 84453fa00b2308243961ffeaab15824c, type: 3}
 --- !u!23 &1922091604512361714
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -68,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7b16647fc4a13f94fbc00d44d51ba2a7, type: 2}
+  - {fileID: 2100000, guid: e7ac828d99e554d48b12990eac0e687d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,8 +106,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &1922091604512361717
-BoxCollider:
+--- !u!136 &343590691793790428
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -116,9 +116,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.49429083
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0.000000014901161, y: 0.000000029802322, z: 0.000000014901161}
 --- !u!114 &1922091604512361716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,8 +132,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
-  color: 0
+  type: 1
+  color: 1
   holdPos: {x: 0, y: 0.006, z: -0.014}
   holdRotation: {x: 0, y: -180, z: 0}
   movingSpeed: 8
@@ -233,7 +234,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.7
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
@@ -243,7 +244,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.46
+      value: 3.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
@@ -460,7 +461,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.7
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
@@ -470,7 +471,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.46
+      value: 3.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}

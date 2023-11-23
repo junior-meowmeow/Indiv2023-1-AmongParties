@@ -4,12 +4,13 @@ using Unity.Netcode;
 using UnityEngine;
 
 public enum GameState {MENU, LOBBY, INGAME};
-public enum Objective {FIND_OBJECT}
 
 public class GameManager : NetworkBehaviour
 {
     [SerializeField] private GameState gameState;
     [SerializeField] private Objective objective;
+
+    [Header ("Find Object")]
     [SerializeField] private int score;
     [SerializeField] private int targetScore;
     [SerializeField] private float timer;
@@ -28,6 +29,7 @@ public class GameManager : NetworkBehaviour
     {
         gameState += 1;
         
+        UpdateUI();
     }
 
     public void StartGame()
@@ -35,8 +37,7 @@ public class GameManager : NetworkBehaviour
         if (!IsServer) return;
 
         StartGameServerRPC();
-        SetTimer(20f, true);
-        NextObjective();
+        SetTimer(10f, true);
     }
 
     [ServerRpc]
@@ -65,6 +66,7 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
+            NetworkManagerUI.instance.UpdateObjective(objective);
             if (isRelax) NextObjective();
             else SetTimer(5f, true);
         }
@@ -86,39 +88,47 @@ public class GameManager : NetworkBehaviour
         NetworkManagerUI.instance.UpdateTimer(time, isRelax);
     }
 
-    public void GetScore(int a)
+    public void GetObject(PickableObject obj)
     {
         if (!IsServer) return;
-        score += a;
-        SetScoreClientRPC(score);
+        if (isRelax) return;
+        
+        if (objective.ScoreObject(obj))
+        {
+            UpdateObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
+        }
     }
 
     [ClientRpc]
-    void SetScoreClientRPC(int score)
+    void UpdateObjectiveClientRPC(int id, int score, int targetScore)
     {
-        this.score = score;
-        NetworkManagerUI.instance.UpdateObjective(score, targetScore);
+        objective.Update(id, score, targetScore);
+        NetworkManagerUI.instance.UpdateObjective(objective);
     }
 
     void NextObjective()
     {
         if (!IsServer) return;
-        NextObjectiveClientRPC(
-            (Objective)Random.Range(0, 1),
-            Random.Range(3, 5)
-        );
+
+        objective = new Objective();
+
+        NextObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
     }
 
     [ClientRpc]
-    void NextObjectiveClientRPC(Objective objective, int targetScore)
+    void NextObjectiveClientRPC(int id, int score, int targetScore)
     {
-        this.objective = objective;
-        this.targetScore = targetScore;
-        score = 0;
+        this.objective.Update(id, score, targetScore);
         isRelax = false;
         SetTimer(Random.Range(20f, 25f), isRelax);
 
-        NetworkManagerUI.instance.UpdateObjective(score, targetScore);
+        NetworkManagerUI.instance.UpdateObjective(objective);
+    }
+
+    void UpdateUI()
+    {
+        NetworkManagerUI.instance.UpdateTimer(timer, isRelax);
+        NetworkManagerUI.instance.UpdateObjective(objective);
     }
 
     public GameState GetGameState()
@@ -135,6 +145,11 @@ public class GameManager : NetworkBehaviour
     {
         playerList.Add(player);
         // AddNewPlayerServerRpc(player);
+    }
+
+    public bool IsPlayerHost()
+    {
+        return IsServer;
     }
 
     // [ServerRpc]

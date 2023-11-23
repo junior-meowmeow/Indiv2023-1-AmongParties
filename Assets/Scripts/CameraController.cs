@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5.0f;
-    [SerializeField] private float verticalThreshold = 0.1f;
+    // [SerializeField] private float verticalThreshold = 0.1f;
 
     [Header("Rotation")]
     [SerializeField] private float mouseSensitivity = 2.0f;

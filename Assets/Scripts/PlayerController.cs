@@ -21,7 +21,7 @@ public class PlayerController : NetworkBehaviour
     private bool isMoving = false;
 
     [Header ("Object Interact")]
-    [SerializeField] private float interactRange = 3.0f;
+    // [SerializeField] private float interactRange = 3.0f;
 
     [SerializeField] private float fallDuration = 3f;
     private float lastfallDuration;
