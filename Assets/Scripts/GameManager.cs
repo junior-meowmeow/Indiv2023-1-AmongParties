@@ -111,6 +111,7 @@ public class GameManager : NetworkBehaviour
         if (!IsServer) return;
 
         objective = new Objective();
+        objective.SetUp();
 
         NextObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
     }

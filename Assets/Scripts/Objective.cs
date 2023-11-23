@@ -18,7 +18,7 @@ public class Objective : INetworkSerializeByMemcpy
     public int score;
     public int targetScore;
 
-    public Objective()
+    public void SetUp()
     {
         id = Random.Range(0, 2);
         type = (ObjectType)Random.Range(0, 2);
