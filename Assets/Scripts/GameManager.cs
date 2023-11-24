@@ -11,8 +11,6 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private Objective objective;
 
     [Header ("Find Object")]
-    [SerializeField] private int score;
-    [SerializeField] private int targetScore;
     [SerializeField] private float timer;
     [SerializeField] private bool isRelax;
 
@@ -28,7 +26,8 @@ public class GameManager : NetworkBehaviour
     public void JoinLobby()
     {
         gameState += 1;
-        
+
+        UpdateGameStateServerRPC();
         UpdateUI();
     }
 
@@ -74,21 +73,6 @@ public class GameManager : NetworkBehaviour
         
     }
 
-    public void SetTimer(float time, bool isRelax)
-    {
-        if (!IsServer) return;
-
-        SetTimerClientRPC(time, isRelax);
-    }
-
-    [ClientRpc]
-    void SetTimerClientRPC(float time, bool isRelax)
-    {
-        timer = time;
-        this.isRelax = isRelax;
-        NetworkManagerUI.instance.UpdateTimer(time, isRelax);
-    }
-
     public void GetObject(PickableObject obj)
     {
         if (!IsServer) return;
@@ -98,6 +82,37 @@ public class GameManager : NetworkBehaviour
         {
             UpdateObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
         }
+    }
+
+    public void SetTimer(float time, bool isRelax)
+    {
+        if (!IsServer) return;
+
+        SetTimerClientRPC(time, isRelax);
+    }
+
+    [ServerRpc]
+    void UpdateGameStateServerRPC()
+    {
+        Debug.Log("Server");
+        UpdateGameStateClientRPC((int)gameState);
+    }
+
+    [ClientRpc]
+    void UpdateGameStateClientRPC(int state)
+    {
+        Debug.Log("Client");
+        gameState = (GameState)state;
+        UpdateObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
+        SetTimerClientRPC(timer, isRelax);
+    }
+
+    [ClientRpc]
+    void SetTimerClientRPC(float time, bool isRelax)
+    {
+        timer = time;
+        this.isRelax = isRelax;
+        NetworkManagerUI.instance.UpdateTimer(time, isRelax);
     }
 
     [ClientRpc]
@@ -115,14 +130,13 @@ public class GameManager : NetworkBehaviour
         objective.SetUp();
 
         NextObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
+        SetTimerClientRPC(objective.duration, false);
     }
 
     [ClientRpc]
     void NextObjectiveClientRPC(int id, int score, int targetScore)
     {
-        this.objective.Update(id, score, targetScore);
-        isRelax = false;
-        SetTimer(Random.Range(20f, 25f), isRelax);
+        objective.Update(id, score, targetScore);
 
         NetworkManagerUI.instance.UpdateObjective(objective);
     }
