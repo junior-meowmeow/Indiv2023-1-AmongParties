@@ -4,23 +4,26 @@ using UnityEngine;
 
 public class PickableObject : MonoBehaviour
 {
+    [Header("Base Property")]
     public ObjectType type;
     public ObjectColor color;
 
-    public Vector3 holdPos = new(0f, 0.006f, -0.14f);
+    public Vector3 holdPos = new(0f, 0.006f, -0.014f);
     public Vector3 holdRotation = new(0f, 0f, 0f);
     public float movingSpeed = 8.0f;
     public float rotatingSpeed = 8.0f;
     public float weight = 1f;
     public bool hasRigidbody = true;
     public bool isDroppedAfterUse = true;
+    public bool hasAltUse = false;
+    public bool isDroppedAfterAltUse = true;
 
-    private Rigidbody rb;
-    private PlayerController holdPlayer;
+    protected Rigidbody rb;
+    protected PlayerController holdPlayer;
 
     [SerializeField] private GameObject[] hands;
 
-    private void Start()
+    protected virtual void Start()
     {
         if (hasRigidbody)
         {
@@ -30,7 +33,7 @@ public class PickableObject : MonoBehaviour
         ShowHand(false);
     }
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (holdPlayer)
         {
@@ -60,9 +63,14 @@ public class PickableObject : MonoBehaviour
         transform.rotation = holdPlayer.holdPos.rotation;
     }
 
-    public void Use(bool isHolding)
+    public virtual void Use(bool isHolding)
     {
-        rb.AddForce(holdPlayer.hipJoint.transform.forward * -10, ForceMode.Impulse);
+        return;
+    }
+
+    public virtual void AltUse(bool isHolding)
+    {
+        return;
     }
 
     public void Hold(PlayerController player)

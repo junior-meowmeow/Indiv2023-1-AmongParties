@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 
-public enum ObjectType {Box, Sphere}
+public enum ObjectType {Box, Sphere, Weapon}
 public enum ObjectColor {RED, BLUE} 
 
 [System.Serializable]

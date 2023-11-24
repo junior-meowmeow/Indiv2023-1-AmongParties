@@ -42,6 +42,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "UseItemAlt",
+                    "type": "Button",
+                    "id": "cec67515-b687-4c1d-a6e7-e4f4fbdbfc39",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Scroll",
                     "type": "PassThrough",
                     "id": "f9368168-4012-471a-a690-27db8173e3ec",
@@ -168,6 +177,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "PlayDead",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2cafb7b5-c0f2-4a0d-9e5d-6e0f8c9d8cac",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "UseItemAlt",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

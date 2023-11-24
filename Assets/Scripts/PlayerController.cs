@@ -35,6 +35,7 @@ public class PlayerController : NetworkBehaviour
     public InputActionReference jumpInput;
     public InputActionReference interactInput;
     public InputActionReference useItemInput;
+    public InputActionReference useItemAltInput;
     public InputActionReference scrollInput;
     public InputActionReference playDeadInput;
 
@@ -82,6 +83,8 @@ public class PlayerController : NetworkBehaviour
         jumpInput.action.started += JumpServer;
         useItemInput.action.started += _ => { UseItemServerRPC(true); };
         useItemInput.action.canceled += _ => { UseItemServerRPC(false); };
+        useItemAltInput.action.started += _ => { UseItemAltServerRPC(true); };
+        useItemAltInput.action.canceled += _ => { UseItemAltServerRPC(false); };
         playDeadInput.action.started += _ => { Fall(fallDuration); };
 
         //hipJoint.GetComponent<NetworkTransform>().enabled = false;
@@ -361,6 +364,30 @@ public class PlayerController : NetworkBehaviour
         if (holdingObject == null) return;
         holdingObject.Use(isHolding);
         if (holdingObject.isDroppedAfterUse)
+        {
+            holdingObject.Drop();
+            holdPos.localPosition = defaultHoldPos;
+            holdPos.localRotation = Quaternion.identity;
+            holdingObject = null;
+            speedMultiplier = 1f;
+            jumpMultiplier = 1f;
+        }
+    }
+
+    [ServerRpc]
+    void UseItemAltServerRPC(bool isHolding)
+    {
+        if (holdingObject == null) return;
+        if (!holdingObject.hasAltUse) return;
+        UseItemAltClientRPC(isHolding);
+    }
+
+    [ClientRpc]
+    void UseItemAltClientRPC(bool isHolding)
+    {
+        if (holdingObject == null) return;
+        holdingObject.AltUse(isHolding);
+        if (holdingObject.isDroppedAfterAltUse)
         {
             holdingObject.Drop();
             holdPos.localPosition = defaultHoldPos;
