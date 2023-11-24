@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,8 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Canvas menuCanvas;
     [SerializeField] private Camera menuCam;
     [SerializeField] private TMP_InputField usernameInput;
+    [SerializeField] private TMP_InputField inputField;
+    private string address = "127.0.0.1";
 
     [Header ("Lobby")]
     [SerializeField] private Canvas lobbyCanvas;
@@ -41,6 +44,10 @@ public class NetworkManagerUI : MonoBehaviour
     {
         instance = this;
         UpdateCanvas(GameManager.instance.GetGameState());
+        if (inputField != null)
+        {
+            inputField.onEndEdit.AddListener(delegate { AddressChanged(inputField); });
+        }
     }
 
     void Update()
@@ -131,5 +138,15 @@ public class NetworkManagerUI : MonoBehaviour
         lobbyCanvas.gameObject.SetActive(gameState == GameState.LOBBY);
 
         ingameCanvas.gameObject.SetActive(gameState == GameState.INGAME);
+    }
+
+    void AddressChanged(TMP_InputField input)
+    {
+        address = input.text;
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(
+            address,  // The IP address is a string
+            (ushort)12345 // The port number is an unsigned short
+            );
+        Debug.Log("New Address : " + address);
     }
 }
