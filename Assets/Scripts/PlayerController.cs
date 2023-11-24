@@ -99,6 +99,7 @@ public class PlayerController : NetworkBehaviour
 
     void FixedUpdate()
     {
+        CheckFallServer();
         if (isMoving)
         {
             LegPos();
@@ -112,7 +113,6 @@ public class PlayerController : NetworkBehaviour
         }
         */
 
-        CheckFall();
         if (isFall) return;
         MoveServer();
     }
@@ -411,39 +411,66 @@ public class PlayerController : NetworkBehaviour
         rb.AddForce(jumpForce * jumpMultiplier * Vector3.up, ForceMode.Impulse);
     }
 
-    void CheckFall()
+
+    [ClientRpc]
+    public void FallClientRPC(float fallDuration)
+    {
+        Fall(fallDuration);
+    }
+
+    void CheckFallServer()
     {
         if (isFall && Time.time - lastFallTime > lastfallDuration)
         {
-            isFall = false;
-            JointDrive jointXDrive = hipJoint.angularXDrive;
-            jointXDrive.positionSpring = 1500f;
-            hipJoint.angularXDrive = jointXDrive;
 
-            JointDrive jointYZDrive = hipJoint.angularYZDrive;
-            jointYZDrive.positionSpring = 1500f;
-            hipJoint.angularYZDrive = jointYZDrive;
-            interactInput.action.started += Interact;
-            //jumpInput.action.started += Jump;
-            jumpInput.action.started += JumpServer;
-
-            /* Get current direction */
-            float currentAngleY = hipJoint.transform.localEulerAngles.y;
-            //print(currentAngleY);
-            if (currentAngleY < 0)
-            {
-                currentAngleY *= -1;
-            }
-            else
-            {
-                currentAngleY = 360f - currentAngleY;
-            }
-            //print(currentAngleY);
-            Vector3 currentRotation = new(0f, currentAngleY, 0f);
-            //print(currentRotation);
-            hipJoint.targetRotation = Quaternion.Euler(currentRotation);
-
+            GetUpServerRPC();
         }
+    }
+
+    [ServerRpc]
+    void GetUpServerRPC()
+    {
+        if (isFall && Time.time - lastFallTime > lastfallDuration)
+        {
+            GetUpClientRPC();
+        }
+    }
+
+    [ClientRpc]
+    void GetUpClientRPC()
+    {
+        GetUp();
+    }
+
+    void GetUp()
+    {
+        isFall = false;
+        JointDrive jointXDrive = hipJoint.angularXDrive;
+        jointXDrive.positionSpring = 1500f;
+        hipJoint.angularXDrive = jointXDrive;
+
+        JointDrive jointYZDrive = hipJoint.angularYZDrive;
+        jointYZDrive.positionSpring = 1500f;
+        hipJoint.angularYZDrive = jointYZDrive;
+        interactInput.action.started += Interact;
+        //jumpInput.action.started += Jump;
+        jumpInput.action.started += JumpServer;
+
+        /* Get current direction */
+        float currentAngleY = hipJoint.transform.localEulerAngles.y;
+        //print(currentAngleY);
+        if (currentAngleY < 0)
+        {
+            currentAngleY *= -1;
+        }
+        else
+        {
+            currentAngleY = 360f - currentAngleY;
+        }
+        //print(currentAngleY);
+        Vector3 currentRotation = new(0f, currentAngleY, 0f);
+        //print(currentRotation);
+        hipJoint.targetRotation = Quaternion.Euler(currentRotation);
     }
 
     void LegPos()
@@ -518,4 +545,5 @@ public class PlayerController : NetworkBehaviour
     {
         return playerSetting;
     }
+
 }

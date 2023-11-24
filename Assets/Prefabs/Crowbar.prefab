@@ -149,6 +149,7 @@ MonoBehaviour:
   isAttacking: 0
   attackDuration: 0
   miminumDamage: 10
+  attackAnimation: {fileID: 7400000, guid: df07bdee5c6791749818137c6e08dece, type: 2}
 --- !u!114 &623940299015568903
 MonoBehaviour:
   m_ObjectHideFlags: 0

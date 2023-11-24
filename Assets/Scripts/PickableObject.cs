@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class PickableObject : MonoBehaviour
@@ -19,7 +20,7 @@ public class PickableObject : MonoBehaviour
     public bool isDroppedAfterAltUse = true;
 
     protected Rigidbody rb;
-    protected PlayerController holdPlayer;
+    public PlayerController holdPlayer;
 
     [SerializeField] private GameObject[] hands;
 
