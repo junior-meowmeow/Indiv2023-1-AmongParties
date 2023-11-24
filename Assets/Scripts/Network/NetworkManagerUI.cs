@@ -61,21 +61,17 @@ public class NetworkManagerUI : MonoBehaviour
         serverBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartServer();
             GameManager.instance.JoinLobby();
-            UpdateCanvas(GameManager.instance.GetGameState());
         });
         hostBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartHost();
             GameManager.instance.JoinLobby();
-            UpdateCanvas(GameManager.instance.GetGameState());
         });
         clientBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartClient();
             GameManager.instance.JoinLobby();
-            UpdateCanvas(GameManager.instance.GetGameState());
         });
         startGameBtn.onClick.AddListener(() => {
             GameManager.instance.StartGame();
-            UpdateCanvas(GameManager.instance.GetGameState());
         });
 
         Button[] btnList = colorButtonList.GetComponentsInChildren<Button>();
