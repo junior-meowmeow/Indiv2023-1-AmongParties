@@ -65,6 +65,7 @@ public class PickableObject : MonoBehaviour
 
     public virtual void Use(bool isHolding)
     {
+        isDroppedAfterUse = isHolding;
         return;
     }
 

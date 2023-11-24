@@ -134,7 +134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 2
   color: 0
-  holdPos: {x: 0, y: 0.005, z: -0.011}
+  holdPos: {x: 0.005, y: 0.005, z: -0.01}
   holdRotation: {x: 30, y: -180, z: 0}
   movingSpeed: 8
   rotatingSpeed: 8
@@ -143,8 +143,12 @@ MonoBehaviour:
   isDroppedAfterUse: 0
   hasAltUse: 1
   isDroppedAfterAltUse: 1
-  hands: []
+  hands:
+  - {fileID: 4777874046653545778}
   throwForce: 10
+  isAttacking: 0
+  attackDuration: 0
+  miminumDamage: 10
 --- !u!114 &623940299015568903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -890,6 +894,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 369f5b3083ae8c445a36b42cc088ddaa, type: 3}
+--- !u!1 &4777874046653545778 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 369f5b3083ae8c445a36b42cc088ddaa,
+    type: 3}
+  m_PrefabInstance: {fileID: 5660746488328388707}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5261817954167154568 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 369f5b3083ae8c445a36b42cc088ddaa,

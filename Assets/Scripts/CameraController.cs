@@ -23,8 +23,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float zoomSpeed = 5f;
 
     [Header("Camera Blocking")]
-    [SerializeField] private LayerMask[] layersToExclude;
-    [SerializeField] private LayerMask processedLayer;
+    [SerializeField] private LayerMask layersToExclude;
+    private LayerMask processedLayer;
 
     [Header("Debug")]
     [SerializeField] private Camera mainCamera;
@@ -41,13 +41,7 @@ public class CameraController : MonoBehaviour
         //mainCamera = Camera.main;
         currentDistance = defaultDistance;
         offset = mainCamera.transform.localPosition;
-        int tempLayer = 0;
-        foreach(LayerMask lm in layersToExclude)
-        {
-            tempLayer |= lm;
-        }
-        //Debug.Log("layer: " + Convert.ToString(~tempLayer, toBase: 2));
-        processedLayer = ~tempLayer;
+        processedLayer = ~layersToExclude;
     }
 
     void Update()
@@ -85,7 +79,7 @@ public class CameraController : MonoBehaviour
         Vector3 displacement = mainCamera.transform.position - targetPosition;
         if (Physics.Raycast(targetPosition, displacement.normalized, out RaycastHit hit, currentDistance, processedLayer))
         {
-            newDistance = hit.distance * 0.8f;
+            newDistance = hit.distance;
         }
 
         float camDistance = mainCamera.transform.localPosition.magnitude;

@@ -11,6 +11,7 @@ public class ThrowableObject : PickableObject
     [SerializeField] private float maxThrowForce = 15f;
     [SerializeField] private float throwChargeSpeed = 10f;
     [SerializeField] private float startThrowTime;
+    [SerializeField] private bool isCharging = false;
 
     protected override void Start()
     {
@@ -19,6 +20,7 @@ public class ThrowableObject : PickableObject
         if(isChargeable)
         {
             isDroppedAfterAltUse = false;
+            isCharging = false;
         }
     }
 
@@ -31,19 +33,23 @@ public class ThrowableObject : PickableObject
                 isDroppedAfterAltUse = false;
                 StartCharge();
             }
-            else
+            else if(isCharging)
             {
                 isDroppedAfterAltUse = true;
                 ChargeThrow();
             }
             return;
         }
-        rb.AddForce(holdPlayer.hipJoint.transform.forward * -throwForce, ForceMode.Impulse);
+        if(isHolding)
+        {
+            rb.AddForce(holdPlayer.hipJoint.transform.forward * -throwForce, ForceMode.Impulse);
+        }
     }
 
     private void StartCharge()
     {
         startThrowTime = Time.time;
+        isCharging = true;
     }
 
     private void ChargeThrow()

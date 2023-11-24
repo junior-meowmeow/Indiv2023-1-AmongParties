@@ -337,20 +337,6 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    void UseItem(bool isHolding)
-    {
-        if (holdingObject == null) return;
-        if(holdingObject.isDroppedAfterUse)
-        {
-            holdingObject.Drop();
-            holdPos.localPosition = defaultHoldPos;
-            holdPos.localRotation = Quaternion.identity;
-            holdingObject = null;
-            speedMultiplier = 1f;
-            jumpMultiplier = 1f;
-        }
-    }
-
     [ServerRpc]
     void UseItemServerRPC(bool isHolding)
     {

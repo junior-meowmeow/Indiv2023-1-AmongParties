@@ -325,15 +325,8 @@ MonoBehaviour:
   scrollSpeed: 5
   zoomSpeed: 6
   layersToExclude:
-  - serializedVersion: 2
-    m_Bits: 64
-  - serializedVersion: 2
-    m_Bits: 128
-  - serializedVersion: 2
-    m_Bits: 256
-  processedLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 448
   mainCamera: {fileID: 6458680500111255228}
   currentDistance: 40
 --- !u!1 &6458680499826523775
