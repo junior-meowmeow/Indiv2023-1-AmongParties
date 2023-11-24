@@ -6,6 +6,7 @@ using Unity.Netcode;
 public class PlayerSetting : NetworkBehaviour
 {
     [SerializeField] private SkinnedMeshRenderer meshRenderer;
+    public PlayerController player;
 
     void Awake()
     {
@@ -15,6 +16,7 @@ public class PlayerSetting : NetworkBehaviour
     void Start()
     {
         GameManager.instance.AddNewPlayer(this);
+        player = gameObject.GetComponent<PlayerController>();
     }
 
     public void SetPlayerColor(Color color)

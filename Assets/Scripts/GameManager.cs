@@ -15,7 +15,9 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private bool isRelax;
 
     [SerializeField] private List<PlayerSetting> playerList;
-    
+    public Transform lobbyLocation;
+    public Transform gameplayLocation;
+
     public static GameManager instance;
 
     void Awake()
@@ -49,6 +51,10 @@ public class GameManager : NetworkBehaviour
     void StartGameClientRPC()
     {
         gameState = GameState.INGAME;
+        foreach(PlayerSetting ps in playerList)
+        {
+            ps.player.rb.transform.position = gameplayLocation.position;
+        }
         UpdateUI();
     }
 

@@ -88,6 +88,7 @@ public class PlayerController : NetworkBehaviour
         playDeadInput.action.started += _ => { Fall(fallDuration); };
 
         //hipJoint.GetComponent<NetworkTransform>().enabled = false;
+        WarpServerRPC(GameManager.instance.lobbyLocation.position);
     }
 
     private void Update()
@@ -544,6 +545,18 @@ public class PlayerController : NetworkBehaviour
     public PlayerSetting GetPlayerSetting()
     {
         return playerSetting;
+    }
+
+    [ServerRpc]
+    void WarpServerRPC(Vector3 destination)
+    {
+        WarpClientRPC(destination);
+    }
+
+    [ClientRpc]
+    void WarpClientRPC(Vector3 destination)
+    {
+        rb.transform.position = destination;
     }
 
 }
