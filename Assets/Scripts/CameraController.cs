@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,16 +11,22 @@ public class CameraController : MonoBehaviour
 
     [Header("Rotation")]
     [SerializeField] private float mouseSensitivity = 2.0f;
+    [SerializeField] private float maxVerticalAngle = 60f;
 
     [Header("Zoom")]
+    [SerializeField] private Vector3 flatOffset = new(0f,0.35f,0f);
     [SerializeField] private Vector3 offset;
     [SerializeField] private float defaultDistance = 10f;
     [SerializeField] private float minDistance = 5f;
     [SerializeField] private float maxDistance = 20f;
     [SerializeField] private float scrollSpeed = 10f;
     [SerializeField] private float zoomSpeed = 5f;
-    //[SerializeField] private Vector3 offset;
 
+    [Header("Camera Blocking")]
+    [SerializeField] private LayerMask[] layersToExclude;
+    [SerializeField] private LayerMask processedLayer;
+
+    [Header("Debug")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float currentDistance = 40f;
 
@@ -34,6 +41,13 @@ public class CameraController : MonoBehaviour
         //mainCamera = Camera.main;
         currentDistance = defaultDistance;
         offset = mainCamera.transform.localPosition;
+        int tempLayer = 0;
+        foreach(LayerMask lm in layersToExclude)
+        {
+            tempLayer |= lm;
+        }
+        //Debug.Log("layer: " + Convert.ToString(~tempLayer, toBase: 2));
+        processedLayer = ~tempLayer;
     }
 
     void Update()
@@ -42,8 +56,7 @@ public class CameraController : MonoBehaviour
 
         /* Camera Position */
 
-        Vector3 targetPosition = player.rb.transform.position;
-        targetPosition.y += 0.35f;
+        Vector3 targetPosition = player.rb.transform.position + flatOffset;
         
         /*
         if(Mathf.Abs(targetPosition.y - transform.position.y) < verticalThreshold)
@@ -68,9 +81,9 @@ public class CameraController : MonoBehaviour
 
         float newDistance = currentDistance;
         
-        LayerMask layerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("PlayerWall") | 1 << LayerMask.NameToLayer("Item")); // ignore both layerX and layerY
-        Vector3 displacement = mainCamera.transform.position - player.hipJoint.transform.position;
-        if (Physics.Raycast(player.hipJoint.transform.position, displacement.normalized, out RaycastHit hit, currentDistance, layerMask))
+        //LayerMask layerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("PlayerWall") | 1 << LayerMask.NameToLayer("Item")); // ignore both layerX and layerY
+        Vector3 displacement = mainCamera.transform.position - targetPosition;
+        if (Physics.Raycast(targetPosition, displacement.normalized, out RaycastHit hit, currentDistance, processedLayer))
         {
             newDistance = hit.distance * 0.8f;
         }
@@ -90,7 +103,7 @@ public class CameraController : MonoBehaviour
 
         verticalRotation -= mouseY;
         horizontalRotation += mouseX;
-        verticalRotation = Mathf.Clamp(verticalRotation, -45, 45); // Limit vertical rotation to prevent flipping
+        verticalRotation = Mathf.Clamp(verticalRotation, -maxVerticalAngle, maxVerticalAngle); // Limit vertical rotation to prevent flipping
 
         transform.Rotate(Vector3.up * mouseX);
         transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0);

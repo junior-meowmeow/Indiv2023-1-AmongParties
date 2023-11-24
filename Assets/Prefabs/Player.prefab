@@ -314,14 +314,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f4d2d5717c68c442b2c7179c91b45b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 6
+  moveSpeed: 8
   mouseSensitivity: 2
+  maxVerticalAngle: 60
+  flatOffset: {x: 0, y: 0.75, z: 0}
   offset: {x: 0, y: 0, z: 0}
   defaultDistance: 10
   minDistance: 5
   maxDistance: 20
   scrollSpeed: 5
   zoomSpeed: 6
+  layersToExclude:
+  - serializedVersion: 2
+    m_Bits: 64
+  - serializedVersion: 2
+    m_Bits: 128
+  - serializedVersion: 2
+    m_Bits: 256
+  processedLayer:
+    serializedVersion: 2
+    m_Bits: 0
   mainCamera: {fileID: 6458680500111255228}
   currentDistance: 40
 --- !u!1 &6458680499826523775
