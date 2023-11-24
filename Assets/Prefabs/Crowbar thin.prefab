@@ -132,12 +132,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
+  color: 0
   holdPos: {x: 0, y: 0.006, z: -0.014}
   holdRotation: {x: 0, y: -180, z: 0}
   movingSpeed: 8
   rotatingSpeed: 8
   weight: 1
   hasRigidbody: 1
+  isDroppedAfterUse: 1
+  hasAltUse: 0
+  isDroppedAfterAltUse: 1
+  holdPlayer: {fileID: 0}
   hands:
   - {fileID: 460976711251894661}
 --- !u!114 &5158362822202224931
@@ -181,12 +187,12 @@ MonoBehaviour:
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
+  PositionThreshold: 0.004
+  RotAngleThreshold: 0.05
   ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
+  UseHalfFloatPrecision: 1
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0

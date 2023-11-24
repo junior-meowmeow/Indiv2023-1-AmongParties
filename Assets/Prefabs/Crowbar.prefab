@@ -143,12 +143,13 @@ MonoBehaviour:
   isDroppedAfterUse: 0
   hasAltUse: 1
   isDroppedAfterAltUse: 1
+  holdPlayer: {fileID: 0}
   hands:
   - {fileID: 4777874046653545778}
-  throwForce: 10
   isAttacking: 0
-  attackDuration: 0
   miminumDamage: 10
+  throwForce: 10
+  attackDuration: 0
   attackAnimation: {fileID: 7400000, guid: df07bdee5c6791749818137c6e08dece, type: 2}
 --- !u!114 &623940299015568903
 MonoBehaviour:
@@ -191,12 +192,12 @@ MonoBehaviour:
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
+  PositionThreshold: 0.004
+  RotAngleThreshold: 0.05
   ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
+  UseHalfFloatPrecision: 1
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0

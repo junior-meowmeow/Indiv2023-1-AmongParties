@@ -143,6 +143,7 @@ MonoBehaviour:
   isDroppedAfterUse: 1
   hasAltUse: 1
   isDroppedAfterAltUse: 0
+  holdPlayer: {fileID: 0}
   hands:
   - {fileID: 7378805289834704279}
   - {fileID: 1891763659418390835}
@@ -194,12 +195,12 @@ MonoBehaviour:
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
+  PositionThreshold: 0.004
+  RotAngleThreshold: 0.05
   ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
+  UseHalfFloatPrecision: 1
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
