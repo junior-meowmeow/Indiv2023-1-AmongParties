@@ -43,6 +43,7 @@ public class CameraController : MonoBehaviour
         /* Camera Position */
 
         Vector3 targetPosition = player.rb.transform.position;
+        targetPosition.y += 0.35f;
         
         /*
         if(Mathf.Abs(targetPosition.y - transform.position.y) < verticalThreshold)
@@ -65,16 +66,16 @@ public class CameraController : MonoBehaviour
         currentDistance -= mouseScroll * scrollSpeed;
         currentDistance = Mathf.Clamp(currentDistance, minDistance, maxDistance);
 
-        float camDistance = mainCamera.transform.localPosition.magnitude;
         float newDistance = currentDistance;
         
         LayerMask layerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("PlayerWall") | 1 << LayerMask.NameToLayer("Item")); // ignore both layerX and layerY
-        RaycastHit hit;
         Vector3 displacement = mainCamera.transform.position - player.hipJoint.transform.position;
-        if (Physics.Raycast(player.hipJoint.transform.position, displacement.normalized, out hit, displacement.magnitude * 1.1f, layerMask))
+        if (Physics.Raycast(player.hipJoint.transform.position, displacement.normalized, out RaycastHit hit, currentDistance, layerMask))
         {
-            newDistance = hit.distance;
+            newDistance = hit.distance * 0.8f;
         }
+
+        float camDistance = mainCamera.transform.localPosition.magnitude;
         if (camDistance != newDistance)
         {
             //mainCamera.fieldOfView = Mathf.MoveTowards(mainCamera.fieldOfView, currentFOV, zoomSpeed * Time.deltaTime);
