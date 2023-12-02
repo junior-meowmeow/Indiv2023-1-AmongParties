@@ -55,7 +55,9 @@ public class GameManager : NetworkBehaviour
         {
             ps.player.rb.transform.position = gameplayLocation.position;
         }
-        UpdateUI();
+        ObjectPool.instance.PrewarmSpawn();
+      
+        UpdateUI();  
     }
 
     void Update()
@@ -136,6 +138,7 @@ public class GameManager : NetworkBehaviour
         objective.SetUp();
 
         NextObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
+        ObjectSpawner.instance.StartObjectiveServerRPC(objective);
         SetTimerClientRPC(objective.duration, false);
     }
 
