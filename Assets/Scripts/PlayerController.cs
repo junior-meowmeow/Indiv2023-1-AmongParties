@@ -412,7 +412,6 @@ public class PlayerController : NetworkBehaviour
         rb.AddForce(jumpForce * jumpMultiplier * Vector3.up, ForceMode.Impulse);
     }
 
-
     [ClientRpc]
     public void FallClientRPC(float fallDuration)
     {
@@ -423,7 +422,6 @@ public class PlayerController : NetworkBehaviour
     {
         if (isFall && Time.time - lastFallTime > lastfallDuration)
         {
-
             GetUpServerRPC();
         }
     }

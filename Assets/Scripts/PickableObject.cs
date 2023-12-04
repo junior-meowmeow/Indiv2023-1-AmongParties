@@ -22,6 +22,7 @@ public class PickableObject : MonoBehaviour
     protected Rigidbody rb;
     public PlayerController holdPlayer;
 
+    [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private GameObject[] hands;
 
     protected virtual void Start()
@@ -73,6 +74,12 @@ public class PickableObject : MonoBehaviour
     public virtual void AltUse(bool isHolding)
     {
         return;
+    }
+
+    public void SetUp(Color color)
+    {
+        if (meshRenderer == null) return;
+        meshRenderer.material.color = color;
     }
 
     public void Hold(PlayerController player)

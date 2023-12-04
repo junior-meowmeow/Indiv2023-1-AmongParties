@@ -6,6 +6,7 @@ using Unity.Netcode;
 public class ObjectSpawner : MonoBehaviour
 {
     [SerializeField] private Transform[] spawnPos;
+    [SerializeField] private Color[] colorList;
 
     public static ObjectSpawner instance;
 
@@ -19,14 +20,17 @@ public class ObjectSpawner : MonoBehaviour
     {
         for (int i = 0; i < objective.targetScore; i++)
         {
-            int rand = Random.Range(0, spawnPos.Length);
-            SpawnObjectClientRPC("Cube", rand);
+            int spawnIdx = 0;
+            if (objective.locationId == 0) spawnIdx = Random.Range(1, spawnPos.Length);
+            SpawnObjectClientRPC(objective.GetObjectType(), objective.GetObjectColorId(), spawnIdx);
         }
     }
 
     [ClientRpc]
-    public void SpawnObjectClientRPC(string tag, int spawnIdx)
+    public void SpawnObjectClientRPC(string tag, int colorId, int spawnIdx)
     {
+        // Debug.Log(tag + " " + colorId);
         GameObject obj = ObjectPool.instance.SpawnObject(tag, spawnPos[spawnIdx].position, spawnPos[spawnIdx].rotation);
+        obj.GetComponent<PickableObject>().SetUp(colorList[colorId - 1]);
     }
 }

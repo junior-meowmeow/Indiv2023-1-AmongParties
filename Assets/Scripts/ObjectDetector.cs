@@ -7,16 +7,21 @@ public class ObjectDetector : MonoBehaviour
 {
     private Collider col;
 
+    [SerializeField] private Color baseColor;
+
     void Awake()
     {
         col = GetComponent<Collider>();
+
+        //Not working yet, Check it later :(
+        GetComponent<MeshRenderer>().material.SetColor("_BaseColor", baseColor);
     }
 
     private void OnTriggerEnter(Collider col)
     {
         if (col.TryGetComponent<PickableObject>(out PickableObject obj))
         {
-            GameManager.instance.GetObject(obj);
+            GameManager.instance.GetObject(obj, name);
         }
     }
 }

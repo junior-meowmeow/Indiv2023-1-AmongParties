@@ -67,6 +67,7 @@ public class GameManager : NetworkBehaviour
 
     void TimerCounting()
     {
+        if (gameState != GameState.INGAME) return;
         if (timer > 0)
         {
             timer -= Time.deltaTime;
@@ -81,14 +82,14 @@ public class GameManager : NetworkBehaviour
         
     }
 
-    public void GetObject(PickableObject obj)
+    public void GetObject(PickableObject obj, string location)
     {
         if (!IsServer) return;
         if (isRelax) return;
         
-        if (objective.ScoreObject(obj))
+        if (objective.ScoreObject(obj, location))
         {
-            UpdateObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
+            UpdateObjectiveClientRPC(objective.score, objective.targetScore);
         }
     }
 
@@ -111,7 +112,7 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log("Client");
         gameState = (GameState)state;
-        UpdateObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
+        UpdateObjectiveClientRPC(objective.score, objective.targetScore);
         SetTimerClientRPC(timer, isRelax);
     }
 
@@ -124,9 +125,9 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void UpdateObjectiveClientRPC(int id, int score, int targetScore)
+    void UpdateObjectiveClientRPC(int score, int targetScore)
     {
-        objective.Update(id, score, targetScore);
+        objective.Update(score, targetScore);
         NetworkManagerUI.instance.UpdateObjective(objective);
     }
 

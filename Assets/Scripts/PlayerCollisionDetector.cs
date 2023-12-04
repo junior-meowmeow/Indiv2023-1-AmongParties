@@ -13,10 +13,10 @@ public class PlayerCollisionDetector : NetworkBehaviour
 
         if (collision.gameObject.TryGetComponent(out Weapon w))
         {
-            Debug.Log(collision.gameObject.name);
+            // Debug.Log(collision.gameObject.name);
             if (!w.isAttacking) return;
             if (w.holdPlayer == player) return;
-            Debug.Log("Hit Player");
+            // Debug.Log("Hit Player");
             player.FallClientRPC(3);
         }
 

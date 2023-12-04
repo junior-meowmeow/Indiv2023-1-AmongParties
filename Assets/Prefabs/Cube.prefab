@@ -143,6 +143,7 @@ MonoBehaviour:
   hasAltUse: 0
   isDroppedAfterAltUse: 1
   holdPlayer: {fileID: 0}
+  meshRenderer: {fileID: 0}
   hands:
   - {fileID: 7378805289834704279}
   - {fileID: 1891763659418390835}
@@ -732,7 +733,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1744838484864107018, guid: 369f5b3083ae8c445a36b42cc088ddaa,
         type: 3}

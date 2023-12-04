@@ -98,18 +98,8 @@ public class NetworkManagerUI : MonoBehaviour
 
     public void UpdateObjective(Objective objective)
     {
-        string objectName = "";
-        if (objective.id == 0)
-        {
-            if (objective.type == ObjectType.Box) objectName = "Box";
-            if (objective.type == ObjectType.Sphere) objectName = "Sphere";
-        }
-        else
-        {
-            if (objective.color == ObjectColor.RED) objectName = "Red object";
-            if (objective.color == ObjectColor.BLUE) objectName = "Blue object";
-        }
-        objectiveText.text = "Objective : Deliver " + objectName + " " + objective.score.ToString() + "/" + objective.targetScore.ToString();
+        objectiveText.text = "Objective : " + objective.GetObjectiveDescription()
+            + "\n" + objective.score.ToString() + "/" + objective.targetScore.ToString();
 
         objectiveDoneText.SetActive(objective.isComplete);
         objectiveFailText.SetActive(false);
