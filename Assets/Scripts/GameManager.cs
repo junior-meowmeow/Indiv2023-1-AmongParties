@@ -82,15 +82,17 @@ public class GameManager : NetworkBehaviour
         
     }
 
-    public void GetObject(PickableObject obj, string location)
+    public bool GetObject(PickableObject obj, string location)
     {
-        if (!IsServer) return;
-        if (isRelax) return;
+        if (!IsServer) return false;
+        if (isRelax) return false;
         
         if (objective.ScoreObject(obj, location))
         {
             UpdateObjectiveClientRPC(objective.score, objective.targetScore);
+            return true;
         }
+        return false;
     }
 
     public void SetTimer(float time, bool isRelax)

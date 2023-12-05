@@ -22,15 +22,15 @@ public class ObjectSpawner : MonoBehaviour
         {
             int spawnIdx = 0;
             if (objective.locationId == 0) spawnIdx = Random.Range(1, spawnPos.Length);
-            SpawnObjectClientRPC(objective.GetObjectType(), objective.GetObjectColorId(), spawnIdx);
+            SpawnObjectClientRPC(objective.GetObjectType(), objective.GetObjectTypeId(), objective.GetObjectColorId(), spawnIdx);
         }
     }
 
     [ClientRpc]
-    public void SpawnObjectClientRPC(string tag, int colorId, int spawnIdx)
+    public void SpawnObjectClientRPC(string tag, int typeId, int colorId, int spawnIdx)
     {
         // Debug.Log(tag + " " + colorId);
         GameObject obj = ObjectPool.instance.SpawnObject(tag, spawnPos[spawnIdx].position, spawnPos[spawnIdx].rotation);
-        obj.GetComponent<PickableObject>().SetUp(colorList[colorId - 1]);
+        obj.GetComponent<PickableObject>().SetUp(typeId, colorId, colorList[colorId - 1]);
     }
 }

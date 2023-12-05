@@ -21,7 +21,11 @@ public class ObjectDetector : MonoBehaviour
     {
         if (col.TryGetComponent<PickableObject>(out PickableObject obj))
         {
-            GameManager.instance.GetObject(obj, name);
+            if(GameManager.instance.GetObject(obj, name))
+            {
+                ObjectPool.instance.SpawnObject("Score Particle", obj.transform.position, Quaternion.identity);
+            }
+            obj.gameObject.SetActive(false);
         }
     }
 }

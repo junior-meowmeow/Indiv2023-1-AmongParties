@@ -8,8 +8,8 @@ public enum ObjectColor {ANY, RED, BLUE, YELLOW, ORANGE}
 public class Objective : INetworkSerializeByMemcpy
 {
     public int req; // 0 = specific type, 1 = specific color, 2 = specific both type and color
-    public ObjectType type;
-    public ObjectColor color;
+    public ObjectType objectType;
+    public ObjectColor objectColor;
     public int locationId;
     public bool isComplete;
     [SerializeField] private string[] locationList = {"Base", "Furnace", "Garbage"};
@@ -25,8 +25,8 @@ public class Objective : INetworkSerializeByMemcpy
     public void SetUp()
     {
         req = Random.Range(0, 3);
-        type = req == 1? (ObjectType)Random.Range(1, 3) : 0;
-        color = req == 2? (ObjectColor)Random.Range(1, 4) : 0;
+        objectType = req == 1? (ObjectType)Random.Range(1, 3) : 0;
+        objectColor = req == 2? (ObjectColor)Random.Range(1, 4) : 0;
         locationId = Random.Range(0, locationList.Length);
         startTime = Time.time;
         score = 0;
@@ -52,8 +52,8 @@ public class Objective : INetworkSerializeByMemcpy
 
     public bool ScoreObject(PickableObject obj, string location)
     {
-        if ((obj.type == type || obj.type == ObjectType.ANY) &&
-            (obj.color == color || obj.color == ObjectColor.ANY) &&
+        if ((obj.objectType == objectType || objectType == ObjectType.ANY) &&
+            (obj.objectColor == objectColor || objectColor == ObjectColor.ANY) &&
             locationList[locationId] == location)
         {
             AddScore(1);
@@ -73,33 +73,39 @@ public class Objective : INetworkSerializeByMemcpy
 
     public int GetID()
     {
-        return req * 1000 + (int)type * 100 + (int)color * 10 + locationId;
+        return req * 1000 + (int)objectType * 100 + (int)objectColor * 10 + locationId;
     }
 
     public string GetObjectType()
     {
-        if ((int)type == 0) return typeList[Random.Range(1, typeList.Length)];
-        return typeList[(int)type];
+        if ((int)objectType == 0) return typeList[Random.Range(1, typeList.Length)];
+        return typeList[(int)objectType];
+    }
+
+    public int GetObjectTypeId()
+    {
+        if ((int)objectType == 0) return Random.Range(1, typeList.Length);
+        return (int)objectType;
     }
 
     public int GetObjectColorId()
     {
-        if ((int)color == 0) return Random.Range(1, colorList.Length);
-        return (int)color;
+        if ((int)objectColor == 0) return Random.Range(1, colorList.Length);
+        return (int)objectColor;
     }
 
     public string GetObjectiveDescription()
     {
-        return $"Deliver {colorList[(int)color]} {typeList[(int)type]} to {locationList[locationId]}";
+        return $"Deliver {colorList[(int)objectColor]} {typeList[(int)objectType]} to {locationList[locationId]}";
     }
 
     void SetUp(int id)
     {
         req = id/1000;
         id %= 1000;
-        type = (ObjectType)(id/100);
+        objectType = (ObjectType)(id/100);
         id %= 100;
-        color = (ObjectColor)(id/10);
+        objectColor = (ObjectColor)(id/10);
         id %= 10;
         locationId = id;
 

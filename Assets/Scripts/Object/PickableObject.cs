@@ -6,8 +6,8 @@ using UnityEngine;
 public class PickableObject : MonoBehaviour
 {
     [Header("Base Property")]
-    public ObjectType type;
-    public ObjectColor color;
+    public ObjectType objectType;
+    public ObjectColor objectColor;
 
     public Vector3 holdPos = new(0f, 0.006f, -0.014f);
     public Vector3 holdRotation = new(0f, 0f, 0f);
@@ -76,8 +76,11 @@ public class PickableObject : MonoBehaviour
         return;
     }
 
-    public void SetUp(Color color)
+    public void SetUp(int typeId, int colorId, Color color)
     {
+        objectType = (ObjectType)typeId;
+        objectColor = (ObjectColor)colorId;
+
         if (meshRenderer == null) return;
         meshRenderer.material.color = color;
     }
