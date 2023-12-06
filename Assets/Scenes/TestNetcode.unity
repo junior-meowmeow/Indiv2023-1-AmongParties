@@ -3292,6 +3292,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2095512961}
     m_Modifications:
+    - target: {fileID: -8867297250408800561, guid: 1207a3535a7bc4e4a875ba1a94e01b3a,
+        type: 3}
+      propertyPath: isStealable
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1922091604512361614, guid: 1207a3535a7bc4e4a875ba1a94e01b3a,
         type: 3}
       propertyPath: GlobalObjectIdHash
@@ -3461,6 +3466,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1922091604512361716, guid: 2ff34b1cfd710d64c9b9add45e394fc5,
+        type: 3}
+      propertyPath: isStealable
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1922091604512361719, guid: 2ff34b1cfd710d64c9b9add45e394fc5,
         type: 3}

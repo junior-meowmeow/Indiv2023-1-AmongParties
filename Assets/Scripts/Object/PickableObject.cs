@@ -18,6 +18,7 @@ public class PickableObject : SpawnableObject
     public bool isDroppedAfterUse = true;
     public bool hasAltUse = false;
     public bool isDroppedAfterAltUse = true;
+    public bool isStealable = false;
 
     protected Rigidbody rb;
     public PlayerController holdPlayer;
@@ -88,6 +89,10 @@ public class PickableObject : SpawnableObject
 
     public void Hold(PlayerController player)
     {
+        if (holdPlayer != null)
+        {
+            holdPlayer.DropObjectServerRPC(isSteal: true);
+        }
         holdPlayer = player;
         ShowHand(true);
     }
@@ -100,7 +105,7 @@ public class PickableObject : SpawnableObject
 
     public bool IsPickable()
     {
-        return holdPlayer == null;
+        return holdPlayer == null || isStealable;
     }
 
     void ShowHand(bool show)

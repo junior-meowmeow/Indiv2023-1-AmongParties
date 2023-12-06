@@ -281,7 +281,7 @@ public class PlayerController : NetworkBehaviour
         }
         else
         {
-            DropObjectServerRPC();
+            DropObjectServerRPC(isSteal: false);
         }
     }
 
@@ -315,20 +315,23 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ServerRpc]
-    void DropObjectServerRPC()
+    public void DropObjectServerRPC(bool isSteal)
     {
         if (holdingObject != null)
         {
-            DropObjectClientRPC();
+            DropObjectClientRPC(isSteal);
         }
     }
 
     [ClientRpc]
-    void DropObjectClientRPC()
+    void DropObjectClientRPC(bool isSteal)
     {
         if (holdingObject != null)
         {
-            holdingObject.Drop();
+            if(!isSteal)
+            {
+                holdingObject.Drop();
+            }
             holdPos.localPosition = defaultHoldPos;
             holdPos.localRotation = Quaternion.identity;
             holdingObject = null;
