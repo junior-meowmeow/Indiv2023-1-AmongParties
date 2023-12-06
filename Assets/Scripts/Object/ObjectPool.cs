@@ -37,7 +37,7 @@ public class ObjectPool : NetworkBehaviour
             {
                 GameObject obj = Instantiate(pool.prefab, objectParent);
                 obj.GetComponent<NetworkObject>().Spawn();
-                obj.SetActive(false);
+                obj.GetComponent<SpawnableObject>().SetActiveClientRPC(false);
                 objectPool.Enqueue(obj);
             }
 
@@ -47,11 +47,13 @@ public class ObjectPool : NetworkBehaviour
     
     public GameObject SpawnObject(string tag, Vector3 pos, Quaternion rot)
     {
+        Debug.Log(poolDict.Count);
+
         if (!poolDict.ContainsKey(tag)) return null;
 
         GameObject obj = poolDict[tag].Dequeue();
 
-        obj.SetActive(true);
+        obj.GetComponent<SpawnableObject>().SetActiveClientRPC(true);
         obj.transform.position = pos;
         obj.transform.rotation = rot;
 

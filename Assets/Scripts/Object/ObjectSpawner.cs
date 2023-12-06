@@ -29,7 +29,7 @@ public class ObjectSpawner : MonoBehaviour
     [ClientRpc]
     public void SpawnObjectClientRPC(string tag, int typeId, int colorId, int spawnIdx)
     {
-        // Debug.Log(tag + " " + colorId);
+        Debug.Log("ObjSpawner : " + typeId + " " + colorId);
         GameObject obj = ObjectPool.instance.SpawnObject(tag, spawnPos[spawnIdx].position, spawnPos[spawnIdx].rotation);
         obj.GetComponent<PickableObject>().SetUp(typeId, colorId, colorList[colorId - 1]);
     }

@@ -45,6 +45,7 @@ public class GameManager : NetworkBehaviour
     void StartGameServerRPC()
     {
         StartGameClientRPC();
+        ObjectPool.instance.PrewarmSpawn();
     }
 
     [ClientRpc]
@@ -55,7 +56,6 @@ public class GameManager : NetworkBehaviour
         {
             ps.player.rb.transform.position = gameplayLocation.position;
         }
-        ObjectPool.instance.PrewarmSpawn();
       
         UpdateUI();  
     }
