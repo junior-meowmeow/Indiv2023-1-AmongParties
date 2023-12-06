@@ -23,7 +23,7 @@ public class ObjectManager : NetworkBehaviour
         {
             return;
         }
-        objectList.AddRange(FindObjectsOfType<NetworkObject>());
+        objectList.AddRange(FindObjectsOfType<NetworkObject>(true));
         for (ushort i = count; i < objectList.Count; i++)
         {
             objectToKey[objectList[i]] = i;
@@ -47,7 +47,7 @@ public class ObjectManager : NetworkBehaviour
     [ContextMenu(itemName: "Update Object List")]
     public void UpdateObjectList()
     {
-        objectList.AddRange(FindObjectsOfType<NetworkObject>());
+        objectList.AddRange(FindObjectsOfType<NetworkObject>(true));
         for (ushort i = count; i < objectList.Count; i++)
         {
             objectToKey[objectList[i]] = i;
@@ -107,6 +107,29 @@ public class ObjectManager : NetworkBehaviour
             objectToKey[objectList[i]] = i;
             count++;
         }
+    }
+
+    [ContextMenu(itemName: "Set Exact Position")]
+    private void SetExactPositionAll()
+    {
+        foreach(NetworkObject obj in objectList)
+        {
+            SetExactPositionServerRPC(objectToKey[obj]);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetExactPositionServerRPC(ushort obj_key)
+    {
+        Transform t = objectList[obj_key].transform;
+        SetExactPositionClientRPC(obj_key, t.position,t.rotation);
+    }
+
+    [ClientRpc]
+    private void SetExactPositionClientRPC(ushort obj_key, Vector3 pos, Quaternion rot)
+    {
+        print(pos);
+        objectList[obj_key].transform.SetPositionAndRotation(pos, rot);
     }
 
 }
