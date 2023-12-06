@@ -71,6 +71,18 @@ public class Objective : INetworkSerializeByMemcpy
         }
     }
 
+    public void SetUp(int id)
+    {
+        req = id/1000;
+        id %= 1000;
+        objectType = (ObjectType)(id/100);
+        id %= 100;
+        objectColor = (ObjectColor)(id/10);
+        id %= 10;
+        locationId = id;
+
+    }
+
     public int GetID()
     {
         return req * 1000 + (int)objectType * 100 + (int)objectColor * 10 + locationId;
@@ -97,17 +109,5 @@ public class Objective : INetworkSerializeByMemcpy
     public string GetObjectiveDescription()
     {
         return $"Deliver {colorList[(int)objectColor]} {typeList[(int)objectType]} to {locationList[locationId]}";
-    }
-
-    void SetUp(int id)
-    {
-        req = id/1000;
-        id %= 1000;
-        objectType = (ObjectType)(id/100);
-        id %= 100;
-        objectColor = (ObjectColor)(id/10);
-        id %= 10;
-        locationId = id;
-
     }
 }

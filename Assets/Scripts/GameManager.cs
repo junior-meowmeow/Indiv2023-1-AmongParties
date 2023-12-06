@@ -75,7 +75,6 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
-            NetworkManagerUI.instance.UpdateObjective(objective);
             if (isRelax) NextObjective();
             else SetTimer(5f, true);
         }
@@ -141,8 +140,8 @@ public class GameManager : NetworkBehaviour
         objective.SetUp();
 
         NextObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
-        ObjectSpawner.instance.StartObjectiveServerRPC(objective);
         SetTimerClientRPC(objective.duration, false);
+        ObjectSpawner.instance.StartObjective(objective.GetID(), objective.targetScore);
     }
 
     [ClientRpc]

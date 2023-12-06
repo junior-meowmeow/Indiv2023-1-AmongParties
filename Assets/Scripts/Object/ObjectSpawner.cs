@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class ObjectSpawner : MonoBehaviour
+public class ObjectSpawner : NetworkBehaviour
 {
     [SerializeField] private Transform[] spawnPos;
     [SerializeField] private Color[] colorList;
@@ -15,10 +15,20 @@ public class ObjectSpawner : MonoBehaviour
         instance = this;
     }
 
-    [ServerRpc]
-    public void StartObjectiveServerRPC(Objective objective)
+    public void StartObjective(int id, int targetScore)
     {
-        for (int i = 0; i < objective.targetScore; i++)
+        Debug.Log("1");
+        StartObjectiveServerRPC(id, targetScore);
+        Debug.Log("3");
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void StartObjectiveServerRPC(int id, int targetScore)
+    {
+        Debug.Log("2");
+        Objective objective = new();
+        objective.SetUp(id);
+        for (int i = 0; i < targetScore; i++)
         {
             int spawnIdx = 0;
             if (objective.locationId == 0) spawnIdx = Random.Range(1, spawnPos.Length);
