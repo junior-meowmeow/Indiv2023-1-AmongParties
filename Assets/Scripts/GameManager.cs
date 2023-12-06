@@ -14,7 +14,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private float timer;
     [SerializeField] private bool isRelax;
 
-    [SerializeField] private List<PlayerSetting> playerList;
+    [SerializeField] private List<PlayerData> playerList;
     public Transform lobbyLocation;
     public Transform gameplayLocation;
 
@@ -51,7 +51,7 @@ public class GameManager : NetworkBehaviour
     void StartGameClientRPC()
     {
         gameState = GameState.INGAME;
-        foreach(PlayerSetting ps in playerList)
+        foreach(PlayerData ps in playerList)
         {
             ps.player.rb.transform.position = gameplayLocation.position;
         }
@@ -165,12 +165,12 @@ public class GameManager : NetworkBehaviour
         return gameState;
     }
 
-    public List<PlayerSetting> GetPlayerList()
+    public List<PlayerData> GetPlayerList()
     {
         return playerList;
     }
 
-    public void AddNewPlayer(PlayerSetting player)
+    public void AddNewPlayer(PlayerData player)
     {
         playerList.Add(player);
         // AddNewPlayerServerRpc(player);

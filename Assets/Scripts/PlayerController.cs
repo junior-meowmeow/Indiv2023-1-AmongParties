@@ -6,7 +6,6 @@ using Unity.Netcode;
 
 public class PlayerController : NetworkBehaviour
 {
-    [SerializeField] private NetworkObject[] allObjects;
     [Header ("Movement")]
     [SerializeField] private float movementSpeed = 5.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
@@ -46,7 +45,7 @@ public class PlayerController : NetworkBehaviour
     public ConfigurableJoint rightLeg;
 
     private CameraController cam;
-    private PlayerSetting playerSetting;
+    private PlayerData playerData;
     public PickableObject holdingObject;
     public Vector3 defaultHoldPos = new(0f, 0.006f, -0.014f);
     public Transform holdPos;
@@ -67,7 +66,7 @@ public class PlayerController : NetworkBehaviour
     void Start()
     {
         cam = GetComponentInChildren<CameraController>();
-        playerSetting = GetComponent<PlayerSetting>();
+        playerData = GetComponent<PlayerData>();
         if (!IsOwner) cam.Disable();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -540,9 +539,9 @@ public class PlayerController : NetworkBehaviour
         lastFallTime = Time.time;
     }
 
-    public PlayerSetting GetPlayerSetting()
+    public PlayerData GetPlayerData()
     {
-        return playerSetting;
+        return playerData;
     }
 
     [ServerRpc]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class PlayerSetting : NetworkBehaviour
+public class PlayerData : NetworkBehaviour
 {
     [SerializeField] private SkinnedMeshRenderer meshRenderer;
     public PlayerController player;

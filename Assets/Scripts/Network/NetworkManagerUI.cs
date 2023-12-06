@@ -108,11 +108,11 @@ public class NetworkManagerUI : MonoBehaviour
 
     public void UpdatePlayerList()
     {
-        List<PlayerSetting> players = GameManager.instance.GetPlayerList();
+        List<PlayerData> players = GameManager.instance.GetPlayerList();
 
         playerListText.text = "";
 
-        foreach(PlayerSetting player in players)
+        foreach(PlayerData player in players)
         {
             playerListText.text += player.name + "\n";
         }

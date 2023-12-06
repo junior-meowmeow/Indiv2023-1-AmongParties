@@ -165,7 +165,7 @@ GameObject:
   - component: {fileID: 6458680499265443458}
   - component: {fileID: 5851243904357661245}
   - component: {fileID: 6458680499265443462}
-  - component: {fileID: 5962055662224230344}
+  - component: {fileID: 6723237129342498318}
   - component: {fileID: 6458680499265443468}
   m_Layer: 6
   m_Name: Player
@@ -223,7 +223,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb91e746cdc433447bb183ee30cc5039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allObjects: []
   movementSpeed: 5
   rotationSpeed: 200
   jumpForce: 100
@@ -256,7 +255,7 @@ MonoBehaviour:
   interactPoint: {fileID: 6458680498401473514}
   interactionCollider: {fileID: 1420586962}
   groundPoint: {fileID: 6458680499826523768}
---- !u!114 &5962055662224230344
+--- !u!114 &6723237129342498318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -265,11 +264,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6458680499265443461}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20563b4feb7ae9b4f827cb6e2c84675d, type: 3}
+  m_Script: {fileID: 11500000, guid: 08b71132a473ad5469577ae64b60d884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshRenderer: {fileID: 0}
-  player: {fileID: 0}
+  meshRenderer: {fileID: 8858178835525638267}
+  player: {fileID: 6458680499265443462}
 --- !u!114 &6458680499265443468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2929,6 +2928,12 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!137 &8858178835525638267 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2544328208690060308, guid: a0362a453023a03448c4331e73839e14,
+    type: 3}
+  m_PrefabInstance: {fileID: 6458680498496046191}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8930408713684417889 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2472186858389371150, guid: a0362a453023a03448c4331e73839e14,

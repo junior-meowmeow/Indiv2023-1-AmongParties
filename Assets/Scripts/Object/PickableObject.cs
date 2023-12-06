@@ -108,7 +108,7 @@ public class PickableObject : MonoBehaviour
         foreach (GameObject hand in hands)
         {
             hand.SetActive(show);
-            if (holdPlayer != null) hand.GetComponentInChildren<SkinnedMeshRenderer>().material.color = holdPlayer.GetPlayerSetting().GetColor();
+            if (holdPlayer != null) hand.GetComponentInChildren<SkinnedMeshRenderer>().material.color = holdPlayer.GetPlayerData().GetColor();
         }
     }
 }

@@ -13,7 +13,7 @@ public class PlayerColorButtonUI : MonoBehaviour
         this.color = color;
         GetComponent<Image>().color = color;
         GetComponent<Button>().onClick.AddListener(() => {
-            NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerSetting>().SetPlayerColor(color);
+            NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetPlayerColor(color);
         });
     }
 }
