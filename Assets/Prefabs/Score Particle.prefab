@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9139586280330849736}
   - component: {fileID: 2835141053256612319}
   - component: {fileID: 5191392226011331223}
+  - component: {fileID: 2325490685480923707}
   m_Layer: 0
   m_Name: Score Particle
   m_TagString: Untagged
@@ -4891,3 +4892,15 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &2325490685480923707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7461474639984910727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595d225359c04844d8f82e9a51b73051, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

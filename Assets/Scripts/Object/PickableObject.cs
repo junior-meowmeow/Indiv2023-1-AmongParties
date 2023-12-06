@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PickableObject : MonoBehaviour
+public class PickableObject : SpawnableObject
 {
     [Header("Base Property")]
     public ObjectType objectType;
@@ -78,6 +78,7 @@ public class PickableObject : MonoBehaviour
 
     public void SetUp(int typeId, int colorId, Color color)
     {
+        Debug.Log("PickObj : " + typeId + " " + colorId);
         objectType = (ObjectType)typeId;
         objectColor = (ObjectColor)colorId;
 
