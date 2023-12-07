@@ -60,5 +60,6 @@ public class ThrowableObject : PickableObject
             chargeForce = maxThrowForce;
         }
         rb.AddForce(holdPlayer.hipJoint.transform.forward * -chargeForce, ForceMode.Impulse);
+        isCharging = false;
     }
 }

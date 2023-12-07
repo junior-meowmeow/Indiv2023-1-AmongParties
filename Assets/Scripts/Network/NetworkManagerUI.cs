@@ -9,7 +9,6 @@ using UnityEngine.UI;
 public class NetworkManagerUI : MonoBehaviour
 {
     [Header ("Menu")]
-    [SerializeField] private Button serverBtn;
     [SerializeField] private Button hostBtn;
     [SerializeField] private Button clientBtn;
     [SerializeField] private Canvas menuCanvas;
@@ -65,10 +64,6 @@ public class NetworkManagerUI : MonoBehaviour
 
     void InitButton()
     {
-        serverBtn.onClick.AddListener(() => {
-            NetworkManager.Singleton.StartServer();
-            GameManager.instance.JoinLobby();
-        });
         hostBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartHost();
             GameManager.instance.JoinLobby();
