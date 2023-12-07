@@ -17,9 +17,16 @@ public class InteractableObject : NetworkBehaviour
         {
             if (!w.isAttacking) return;
 
-            anim.Play(interactClip.name);
+            //anim.Play(interactClip.name);
+            InteractionClientRPC();
             if (isOnce) enabled = false;
         }
 
+    }
+
+    [ClientRpc]
+    void InteractionClientRPC()
+    {
+        anim.Play(interactClip.name);
     }
 }

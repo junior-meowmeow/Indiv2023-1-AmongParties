@@ -56,7 +56,7 @@ public class GameManager : NetworkBehaviour
         {
             ps.player.rb.transform.position = gameplayLocation.position;
         }
-      
+
         UpdateUI();  
     }
 

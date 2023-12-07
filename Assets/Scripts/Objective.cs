@@ -13,7 +13,7 @@ public class Objective : INetworkSerializeByMemcpy
     public int locationId;
     public bool isComplete;
     [SerializeField] private string[] locationList = {"Base", "Furnace", "Garbage"};
-    [SerializeField] private string[] typeList = {"Object", "Crate", "Core", "Weapon"};
+    [SerializeField] private string[] typeList = {"Object", "Crate", "Core"};
     [SerializeField] private string[] colorList = {"Any", "Red", "Blue", "Yellow", "Orange"};
 
     [HideInInspector] public float startTime; //not used yet
