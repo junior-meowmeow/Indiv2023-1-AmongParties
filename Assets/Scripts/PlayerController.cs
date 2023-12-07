@@ -422,6 +422,7 @@ public class PlayerController : NetworkBehaviour
 
     void CheckFallServer()
     {
+        if (!IsServer) return;
         if (isFall && Time.time - lastFallTime > lastfallDuration)
         {
             GetUpServerRPC();

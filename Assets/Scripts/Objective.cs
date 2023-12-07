@@ -13,7 +13,7 @@ public class Objective : INetworkSerializeByMemcpy
     public int locationId;
     public bool isComplete;
     [SerializeField] private string[] locationList = {"Base", "Furnace", "Garbage"};
-    [SerializeField] private string[] typeList = {"Object", "Crate", "Core"};
+    [SerializeField] private string[] typeList = {"Object", "Crate", "Core", "Weapon"};
     [SerializeField] private string[] colorList = {"Any", "Red", "Blue", "Yellow", "Orange"};
 
     [HideInInspector] public float startTime; //not used yet
@@ -80,7 +80,11 @@ public class Objective : INetworkSerializeByMemcpy
         objectColor = (ObjectColor)(id/10);
         id %= 10;
         locationId = id;
-
+        startTime = Time.time;
+        score = 0;
+        targetScore = Random.Range(2, 5);
+        duration = 30 + 10 * targetScore;
+        isComplete = score >= targetScore;
     }
 
     public int GetID()

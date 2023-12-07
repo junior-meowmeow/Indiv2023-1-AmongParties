@@ -53,7 +53,7 @@ public class ObjectPool : NetworkBehaviour
 
         GameObject obj = poolDict[tag].Dequeue();
 
-        obj.GetComponent<SpawnableObject>().SetActiveClientRPC(true);
+        obj.SetActive(true);
         obj.transform.position = pos;
         obj.transform.rotation = rot;
 
