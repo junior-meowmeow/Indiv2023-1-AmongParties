@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7669bdb0b1b0f64db32ffdfdde3b661, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 6458680499265443462}
   objectList: []
   nearestObject: {fileID: 0}
   pickable: 0

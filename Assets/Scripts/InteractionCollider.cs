@@ -5,6 +5,7 @@ using UnityEngine;
 public class InteractionCollider : MonoBehaviour
 {
 
+    [SerializeField] private PlayerController player;
     [SerializeField] private List<PickableObject> objectList;
     [SerializeField] private PickableObject nearestObject;
     [SerializeField] private bool pickable;
@@ -15,7 +16,6 @@ public class InteractionCollider : MonoBehaviour
 
     public PickableObject GetNearestObject()
     {
-        UpdateObjectList();
         return nearestObject;
     }
 
@@ -24,7 +24,7 @@ public class InteractionCollider : MonoBehaviour
         if(other.gameObject.TryGetComponent(out PickableObject obj))
         {
             objectList.Add(obj);
-            pickable = true;
+            UpdateObjectList();
         }
     }
 
@@ -33,17 +33,28 @@ public class InteractionCollider : MonoBehaviour
         if (other.gameObject.TryGetComponent(out PickableObject obj))
         {
             objectList.Remove(obj);
-            if(objectList.Count == 0)
-            {
-                pickable = false;
-            }
+            UpdateObjectList();
         }
     }
 
     private void UpdateObjectList()
     {
         objectList.Sort(CompareObjectByDistance);
-        nearestObject = objectList[0];
+        pickable = true;
+        if (objectList.Count == 0)
+        {
+            pickable = false;
+            player.UpdateObjectInfo(false, "");
+        }
+        if(pickable)
+        {
+            nearestObject = objectList[0];
+            player.UpdateObjectInfo(true, objectList[0].objectName);
+        }
+        else
+        {
+            player.UpdateObjectInfo(false,"");
+        }
     }
 
     private int CompareObjectByDistance(PickableObject a, PickableObject b)

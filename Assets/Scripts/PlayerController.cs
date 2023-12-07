@@ -49,16 +49,6 @@ public class PlayerController : NetworkBehaviour
     public InteractionCollider interactionCollider;
     public Transform groundPoint;
 
-    /*
-    private void Awake()
-    {
-        if(IsOwner)
-        {
-            SyncNetworkObjectServerRPC();
-        }
-    }
-    */
-
     void Start()
     {
         cam = GetComponentInChildren<CameraController>();
@@ -101,14 +91,6 @@ public class PlayerController : NetworkBehaviour
             LegPos();
         }
         if (!IsOwner) return;
-
-        /*
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            SyncNetworkObjectServerRPC();
-        }
-        */
-
         if (isFall) return;
         MoveServer();
     }
@@ -232,48 +214,14 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    /*
-    [ServerRpc]
-    void SyncNetworkObjectServerRPC()
-    {
-        allObjects = FindObjectsOfType<NetworkObject>();
-        foreach (NetworkObject obj in allObjects)
-        {
-            SyncNetworkObjectClientRPC(obj, obj.transform.position, obj.transform.rotation, obj.transform.localScale);
-        }
-    }
-
-    [ClientRpc]
-    private void SyncNetworkObjectClientRPC(NetworkObjectReference obj, Vector3 position, Quaternion rotation, Vector3 localScale)
-    {
-        if (obj.TryGet(out NetworkObject targetObject))
-        {
-            targetObject.transform.SetPositionAndRotation(position, rotation);
-            targetObject.transform.localScale = localScale;
-        }
-        else
-        {
-            // Object not found on server, likely because it already has been destroyed/despawned.
-        }
-    }
-    */
-
     void Interact(InputAction.CallbackContext c)
     {
         if (holdingObject == null)
         {
             if (interactionCollider.HasObjectNearby)
             {
-                //PickObject(interactionCollider.GetNearestObject());
                 PickObjectServerRPC();
             }
-            /*
-            if (Physics.Raycast(interactPoint.transform.position, interactPoint.transform.forward, out RaycastHit hit, interactRange))
-            {
-                PickableObject obj = hit.collider.GetComponent<PickableObject>();
-                PickObject(obj);
-            }
-            */
         }
         else
         {
@@ -307,6 +255,11 @@ public class PlayerController : NetworkBehaviour
             holdPos.localRotation = Quaternion.Euler(obj.holdRotation);
             speedMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
             jumpMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
+
+            if(IsOwner)
+            {
+                ObjectInfoController.instance.SetHoldingText(obj.objectName, obj.description);
+            }
         }
     }
 
@@ -328,11 +281,21 @@ public class PlayerController : NetworkBehaviour
             {
                 holdingObject.Drop();
             }
-            holdPos.localPosition = defaultHoldPos;
-            holdPos.localRotation = Quaternion.identity;
-            holdingObject = null;
-            speedMultiplier = 1f;
-            jumpMultiplier = 1f;
+            Drop();
+        }
+    }
+
+    private void Drop()
+    {
+        holdPos.localPosition = defaultHoldPos;
+        holdPos.localRotation = Quaternion.identity;
+        holdingObject = null;
+        speedMultiplier = 1f;
+        jumpMultiplier = 1f;
+
+        if (IsOwner)
+        {
+            ObjectInfoController.instance.ResetHoldingText();
         }
     }
 
@@ -351,11 +314,7 @@ public class PlayerController : NetworkBehaviour
         if (holdingObject.isDroppedAfterUse)
         {
             holdingObject.Drop();
-            holdPos.localPosition = defaultHoldPos;
-            holdPos.localRotation = Quaternion.identity;
-            holdingObject = null;
-            speedMultiplier = 1f;
-            jumpMultiplier = 1f;
+            Drop();
         }
     }
 
@@ -375,11 +334,7 @@ public class PlayerController : NetworkBehaviour
         if (holdingObject.isDroppedAfterAltUse)
         {
             holdingObject.Drop();
-            holdPos.localPosition = defaultHoldPos;
-            holdPos.localRotation = Quaternion.identity;
-            holdingObject = null;
-            speedMultiplier = 1f;
-            jumpMultiplier = 1f;
+            Drop();
         }
     }
 
@@ -476,7 +431,7 @@ public class PlayerController : NetworkBehaviour
         float offset = 0f;
 
         float distance = 1f;
-        Ray ray = new Ray(hipJoint.transform.position, Vector3.down);
+        Ray ray = new(hipJoint.transform.position, Vector3.down);
 
         //Debug.DrawRay(ray.origin, ray.direction * distance, Color.red);
 
@@ -554,6 +509,19 @@ public class PlayerController : NetworkBehaviour
     void WarpClientRPC(Vector3 destination)
     {
         rb.transform.position = destination;
+    }
+
+    public void UpdateObjectInfo(bool isSet, string itemName)
+    {
+        if (!IsOwner) return;
+        if(isSet)
+        {
+            ObjectInfoController.instance.SetItemText(itemName);
+        }
+        else
+        {
+            ObjectInfoController.instance.ResetItemText();
+        }
     }
 
 }

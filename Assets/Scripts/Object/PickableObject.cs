@@ -85,6 +85,11 @@ public class PickableObject : SpawnableObject
         objectType = (ObjectType)typeId;
         objectColor = (ObjectColor)colorId;
 
+        if(objectType != ObjectType.Weapon)
+        {
+            objectName = objectColor.ToString() + " " + objectName;
+        }
+
         if (meshRenderer == null) return;
         meshRenderer.material.color = color;
     }

@@ -99,7 +99,7 @@ Rigidbody:
   m_GameObject: {fileID: 6633045757757680229}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 0.2
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -132,8 +132,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4fd69b555ac5e4693d7773e0c47fa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
-  color: 0
+  objectName: Crowbar
+  description: 'Press E to DROP
+
+    Press MOUSE1 to ATTACK
+
+    Press MOUSE2 to
+    THROW'
+  objectType: 0
+  objectColor: 0
   holdPos: {x: 0.005, y: 0.005, z: -0.01}
   holdRotation: {x: 30, y: -180, z: 0}
   movingSpeed: 8
@@ -143,11 +150,14 @@ MonoBehaviour:
   isDroppedAfterUse: 0
   hasAltUse: 1
   isDroppedAfterAltUse: 1
+  isStealable: 0
   holdPlayer: {fileID: 0}
+  meshRenderer: {fileID: 0}
   hands:
   - {fileID: 4777874046653545778}
   isAttacking: 0
   miminumDamage: 10
+  isThrowing: 0
   throwForce: 10
   attackDuration: 0
   attackAnimation: {fileID: 7400000, guid: df07bdee5c6791749818137c6e08dece, type: 2}

@@ -93,7 +93,7 @@ public class NetworkManagerUI : MonoBehaviour
 
     public void UpdateObjective(Objective objective)
     {
-        objectiveText.text = "Objective : " + objective.GetObjectiveDescription()
+        objectiveText.text = "Objective : \n" + objective.GetObjectiveDescription()
             + "\n" + objective.score.ToString() + "/" + objective.targetScore.ToString();
 
         objectiveDoneText.SetActive(objective.isComplete);
