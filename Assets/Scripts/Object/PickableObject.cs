@@ -82,7 +82,6 @@ public class PickableObject : SpawnableObject
 
     public void SetUp(int typeId, int colorId, Color color)
     {
-        Debug.Log("PickObj : " + typeId + " " + colorId);
         objectType = (ObjectType)typeId;
         objectColor = (ObjectColor)colorId;
 

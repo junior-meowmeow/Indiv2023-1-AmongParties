@@ -88,7 +88,7 @@ public class ObjectPool : NetworkBehaviour
 
         if (!poolDict.ContainsKey(tag))
         {
-            Debug.Log("no tag match");
+            Debug.Log("no tag match : " + tag);
             return null;
         }
 

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Crowbar : Weapon
 {
     [Header("Crowbar Property")]
+    [SerializeField] private bool isThrowing = false;
     [SerializeField] private float throwForce = 10f;
     [SerializeField] private float attackDuration = 0f;
     [SerializeField] private AnimationClip attackAnimation;
@@ -22,7 +23,7 @@ public class Crowbar : Weapon
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        if(Time.time - lastAttackTime > attackDuration)
+        if(Time.time - lastAttackTime > attackDuration && !isThrowing)
         {
             isAttacking = false;
         }
@@ -33,7 +34,6 @@ public class Crowbar : Weapon
         if(isHolding && !isAttacking)
         {
             Attack();
-            Debug.Log("ATTACK!");
         }
     }
 
@@ -42,6 +42,8 @@ public class Crowbar : Weapon
         if(isHolding)
         {
             rb.AddForce(holdPlayer.hipJoint.transform.forward * -throwForce, ForceMode.Impulse);
+            isThrowing = true;
+            isAttacking = true;
         }
     }
 
@@ -52,4 +54,10 @@ public class Crowbar : Weapon
         holdPlayer.holdPos.gameObject.GetComponent<HoldPosController>().PlayAnimation(attackAnimation);
     }
 
+    void OnCollisionEnter(Collision collision)
+    {
+        if (!isThrowing) return;
+        isThrowing = false;
+        isAttacking = false;
+    }
 }

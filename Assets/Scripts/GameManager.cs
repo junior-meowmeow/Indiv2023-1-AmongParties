@@ -104,14 +104,12 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void UpdateGameStateServerRPC()
     {
-        Debug.Log("Server");
         UpdateGameStateClientRPC((int)gameState);
     }
 
     [ClientRpc]
     void UpdateGameStateClientRPC(int state)
     {
-        Debug.Log("Client");
         gameState = (GameState)state;
         UpdateObjectiveClientRPC(objective.score, objective.targetScore);
         SetTimerClientRPC(timer, isRelax);

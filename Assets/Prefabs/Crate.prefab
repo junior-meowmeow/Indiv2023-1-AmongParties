@@ -144,7 +144,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 301bdbcbb276cf446a8c3aec82e99a14, type: 2}
+  - {fileID: 2100000, guid: 7b16647fc4a13f94fbc00d44d51ba2a7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -297,6 +297,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa582f2aeaac3074d81d9a9a665b754d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectName: Pickable Object
+  description: 'Press E to DROP
+
+    Press MOUSE1 to DROP'
   objectType: 0
   objectColor: 0
   holdPos: {x: 0, y: 0.006, z: -0.014}
@@ -308,6 +312,7 @@ MonoBehaviour:
   isDroppedAfterUse: 1
   hasAltUse: 0
   isDroppedAfterAltUse: 1
+  isStealable: 0
   holdPlayer: {fileID: 0}
   meshRenderer: {fileID: 7372799771298261566}
   hands:

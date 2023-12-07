@@ -18,14 +18,10 @@ public class PlayerController : NetworkBehaviour
     private float currentStepTime;
     private bool stopped = false;
     private bool isMoving = false;
-
-    [Header ("Object Interact")]
-    // [SerializeField] private float interactRange = 3.0f;
-
     [SerializeField] private float fallDuration = 3f;
     private float lastfallDuration;
     private float lastFallTime;
-    private bool isFall = false;
+    [SerializeField] private bool isFall = false;
 
     private float scrollAxis = 0f;
 
