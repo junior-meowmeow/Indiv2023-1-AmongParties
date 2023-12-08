@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestNetcode_trysync.unity
     guid: c9ce8cbdf3b63ed4faf3750f59aca144
+  - enabled: 1
+    path: Assets/Scenes/TestNetcode_trysync 1.unity
+    guid: dd4e13e797aa8c149a9c35a97cb6b347
   m_configObjects: {}

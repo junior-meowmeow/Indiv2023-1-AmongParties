@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SyncObjectManager : NetworkBehaviour
 {
+    public List<SyncObject> inSceneObjectList;
     public List<SyncObject> objectList;
     public Dictionary<SyncObject, ushort> objectToKey = new();
     public ushort count = 0;
@@ -14,41 +16,76 @@ public class SyncObjectManager : NetworkBehaviour
     void Awake()
     {
         instance = this;
+        objectList.Clear();
+        objectToKey.Clear();
+        count = 0;
     }
-
     void Start()
     {
-        if(!IsServer)
-        {
-            return;
-        }
-        objectList.AddRange(FindObjectsOfType<SyncObject>(true));
-        for (ushort i = count; i < objectList.Count; i++)
-        {
-            objectToKey[objectList[i]] = i;
-            count++;
-        }
+        inSceneObjectList.AddRange(FindObjectsOfType<SyncObject>(true));
     }
 
-    void Update()
+    public void Initialize()
     {
-        /*
-        objectList.AddRange(FindObjectsOfType<NetworkObject>());
-        for (ushort i = count; i < objectList.Count; i++)
+        if (IsServer)
         {
-            objectToKey[objectList[i]] = i;
-            //objectToKey.Remove(allObjects[i]);
-            count++;
+            foreach(SyncObject obj in inSceneObjectList)
+            {
+                obj.GetComponent<NetworkObject>().Spawn(destroyWithScene: true);
+            }
+            RecreateObjectList();
         }
-        */
+        else
+        {
+            foreach (SyncObject obj in inSceneObjectList)
+            {
+                Destroy(obj);
+            }
+            RequestObjectList();
+        }
     }
 
     [ContextMenu(itemName: "Recreate Object List")]
     public void RecreateObjectList()
     {
+        if (!IsServer) return;
+        objectList.Clear();
+        objectToKey.Clear();
+        count = 0;
         objectList.AddRange(FindObjectsOfType<SyncObject>(true));
+        NetworkObjectReference[] refList = new NetworkObjectReference[objectList.Count];
         for (ushort i = count; i < objectList.Count; i++)
         {
+            objectToKey[objectList[i]] = i;
+            refList[i] = objectList[i].net_obj;
+            count++;
+        }
+        RecreateObjectListClientRPC(refList);
+    }
+
+    [ClientRpc]
+    public void RecreateObjectListClientRPC(NetworkObjectReference[] referenceList)
+    {
+        if (IsServer) return;
+
+        objectList.Clear();
+        objectToKey.Clear();
+        count = 0;
+        foreach (NetworkObjectReference reference in referenceList)
+        {
+            if (reference.TryGet(out NetworkObject obj))
+            {
+                objectList.Add(obj.GetComponent<SyncObject>());
+            }
+            else
+            {
+                print("NO OBJECT FROM REFERENCE!!!");
+                objectList.Add(null);
+            }
+        }
+        for (ushort i = count; i < objectList.Count; i++)
+        {
+            if (objectList[i] == null) return;
             objectToKey[objectList[i]] = i;
             count++;
         }
@@ -113,6 +150,7 @@ public class SyncObjectManager : NetworkBehaviour
             objectToKey[objectList[i]] = i;
             count++;
         }
+        SyncInitialStates();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -163,11 +201,12 @@ public class SyncObjectManager : NetworkBehaviour
     }
 
     [ContextMenu(itemName: "Sync Objects")]
-    private void SyncObjects()
+    private void SyncInitialStates()
     {
         foreach (SyncObject obj in objectList)
         {
             if (obj == null) continue;
+            Debug.Log("Syncing" + obj.name);
             obj.SyncObjectServerRPC(objectToKey[obj]);
         }
     }

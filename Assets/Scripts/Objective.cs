@@ -98,16 +98,16 @@ public class Objective : INetworkSerializeByMemcpy
         return typeList[(int)objectType];
     }
 
-    public int GetObjectTypeId()
+    public byte GetObjectTypeId()
     {
-        if ((int)objectType == 0) return Random.Range(1, typeList.Length);
-        return (int)objectType;
+        if ((byte)objectType == 0) return (byte)Random.Range(1, typeList.Length);
+        return (byte)objectType;
     }
 
-    public int GetObjectColorId()
+    public byte GetObjectColorId()
     {
-        if ((int)objectColor == 0) return Random.Range(1, colorList.Length);
-        return (int)objectColor;
+        if ((byte)objectColor == 0) return (byte)Random.Range(1, colorList.Length);
+        return (byte)objectColor;
     }
 
     public string GetObjectiveDescription()

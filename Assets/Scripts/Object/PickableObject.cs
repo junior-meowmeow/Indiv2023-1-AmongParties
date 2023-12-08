@@ -23,6 +23,7 @@ public class PickableObject : SyncObject
     public bool hasAltUse = false;
     public bool isDroppedAfterAltUse = true;
     public bool isStealable = false;
+    public bool isHandShow = false;
 
     protected Rigidbody rb;
     public PlayerController holdPlayer;
@@ -80,7 +81,7 @@ public class PickableObject : SyncObject
         return;
     }
 
-    public void SetUp(int typeId, int colorId, Color color)
+    public void SetUp(byte typeId, byte colorId, Color color)
     {
         objectType = (ObjectType)typeId;
         objectColor = (ObjectColor)colorId;
@@ -118,10 +119,34 @@ public class PickableObject : SyncObject
     void ShowHand(bool show)
     {
         if (hands.Length == 0) return;
+        isHandShow = show;
         foreach (GameObject hand in hands)
         {
             hand.SetActive(show);
             if (holdPlayer != null) hand.GetComponentInChildren<SkinnedMeshRenderer>().material.color = holdPlayer.GetPlayerData().GetColor();
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public override void SyncObjectServerRPC(ushort obj_key)
+    {
+        base.SyncObjectServerRPC(obj_key);
+        byte[] data = { (byte)objectType, (byte)objectColor };
+        bool[] states = { isDroppedAfterUse, isDroppedAfterAltUse, isStealable, isHandShow };
+        SyncObjectVariableClientRPC(obj_key, SyncObjectManager.instance.objectToKey[holdPlayer], data, states);
+    }
+
+    [ClientRpc]
+    private void SyncObjectVariableClientRPC(ushort obj_key, ushort holdPlayer_key, byte[] data, bool[] states)
+    {
+        if (IsServer) return;
+        PickableObject obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<PickableObject>();
+        obj.objectType = (ObjectType)data[0];
+        obj.objectColor = (ObjectColor)data[1];
+        obj.isDroppedAfterUse = states[0];
+        obj.isDroppedAfterAltUse = states[1];
+        obj.isStealable = states[2];
+        obj.holdPlayer = SyncObjectManager.instance.objectList[holdPlayer_key].GetComponent<PlayerController>();
+        ShowHand(states[3]);
     }
 }

@@ -83,6 +83,8 @@ public class PlayerController : SyncObject
 
         //hipJoint.GetComponent<NetworkTransform>().enabled = false;
         WarpServerRPC(GameManager.instance.lobbyLocation.position);
+
+        SyncObjectManager.instance.Initialize();
     }
 
     private void Update()
@@ -536,30 +538,32 @@ public class PlayerController : SyncObject
     [ServerRpc(RequireOwnership = false)]
     public override void SyncObjectServerRPC(ushort obj_key)
     {
-        SyncTransformClientRPC(obj_key, transform.position, transform.rotation);
+        base.SyncObjectServerRPC(obj_key);
+        SyncPlayerDataClientRPC(obj_key, playerData.playerName, playerData.playerColor);
+        float[] data = {speedMultiplier, jumpMultiplier, lastFallTime, lastfallDuration, hipJoint.targetRotation.eulerAngles.y };
+        SyncPlayerVariableClientRPC(obj_key, data, isFall);
     }
 
     [ClientRpc]
-    protected override void SyncTransformClientRPC(ushort obj_key, Vector3 pos, Quaternion rot)
+    private void SyncPlayerVariableClientRPC(ushort obj_key, float[] data, bool isFall)
     {
-        SyncObjectManager.instance.objectList[obj_key].transform.SetPositionAndRotation(pos, rot);
-    }
-
-    [ClientRpc]
-    private void SyncPlayerVariableClientRPC(ushort obj_key, Vector3 pos, Quaternion rot)
-    {
-        SyncObjectManager.instance.objectList[obj_key].transform.SetPositionAndRotation(pos, rot);
         PlayerController player = SyncObjectManager.instance.objectList[obj_key].GetComponent<PlayerController>();
 
-        speedMultiplier = 1f;
-        jumpMultiplier = 1f;
+        player.speedMultiplier = data[0];
+        player.jumpMultiplier = data[1];
+        player.lastFallTime = data[2];
+        player.lastfallDuration = data[3];
+        player.hipJoint.targetRotation = Quaternion.Euler(0, data[4], 0);
+        player.isFall = isFall;
+    }
 
-
-        /*
-        holdPos;
-        lastfallDuration;
-        lastFallTime;
-        isFall = false;*/
-        }
+    [ClientRpc]
+    private void SyncPlayerDataClientRPC(ushort obj_key, string playerName, Color playerColor)
+    {
+        if (IsServer) return;
+        PlayerData obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<PlayerData>();
+        obj.SetPlayerName(playerName);
+        obj.SetPlayerColor(playerColor);
+    }
 
 }

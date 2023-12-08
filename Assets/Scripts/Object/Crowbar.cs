@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Crowbar : Weapon
@@ -60,5 +62,21 @@ public class Crowbar : Weapon
         if (collision.gameObject.layer != 0) return;
         isThrowing = false;
         isAttacking = false;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public override void SyncObjectServerRPC(ushort obj_key)
+    {
+        base.SyncObjectServerRPC(obj_key);
+        SyncCrowbarClientRPC(obj_key, lastAttackTime, isThrowing);
+    }
+
+    [ClientRpc]
+    private void SyncCrowbarClientRPC(ushort obj_key, float lastAttackTime, bool isThrowing)
+    {
+        if (IsServer) return;
+        Crowbar obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<Crowbar>();
+        obj.lastAttackTime = lastAttackTime;
+        obj.isThrowing = isThrowing;
     }
 }

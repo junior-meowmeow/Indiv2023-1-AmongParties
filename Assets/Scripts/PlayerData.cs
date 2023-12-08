@@ -10,10 +10,12 @@ public class PlayerData : NetworkBehaviour
     public PlayerController player;
     public TMP_Text playerNameText;
     public string playerName;
+    public Color playerColor;
 
     void Awake()
     {
         meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        playerColor = meshRenderer.material.color;
     }
 
     void Start()
@@ -27,16 +29,14 @@ public class PlayerData : NetworkBehaviour
     }
     void Update()
     {
-        playerNameText.rectTransform.position = player.rb.transform.position + Vector3.up * 1.5f;
-    }
-
-    public void SetPlayerColor(Color color)
-    {
-        SetPlayerColorServerRPC(color);
+        if(playerNameText != null)
+        {
+            playerNameText.rectTransform.position = player.rb.transform.position + Vector3.up * 1.5f;
+        }
     }
 
     [ServerRpc]
-    void SetPlayerColorServerRPC(Color color)
+    public void SetPlayerColorServerRPC(Color color)
     {
         SetPlayerColorClientRPC(color);
     }
@@ -44,6 +44,12 @@ public class PlayerData : NetworkBehaviour
     [ClientRpc]
     void SetPlayerColorClientRPC(Color color)
     {
+        SetPlayerColor(color);
+    }
+
+    public void SetPlayerColor(Color color)
+    {
+        playerColor = color;
         meshRenderer.material.color = color;
     }
 
@@ -61,8 +67,14 @@ public class PlayerData : NetworkBehaviour
     [ClientRpc]
     private void SetPlayerNameClientRPC(string name)
     {
+        SetPlayerName(name);
+    }
+
+    public void SetPlayerName(string name)
+    {
         playerName = name;
         playerNameText.text = name;
         NetworkManagerUI.instance.UpdatePlayerList();
     }
+
 }

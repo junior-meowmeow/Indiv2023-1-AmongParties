@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class InteractableObject : NetworkBehaviour
+public class InteractableObject : SyncObject
 {
     [SerializeField] private bool isOnce = true;
+    [SerializeField] private bool isUsed = false;
     [SerializeField] private Animation anim;
     [SerializeField] private AnimationClip interactClip;
 
@@ -28,5 +29,21 @@ public class InteractableObject : NetworkBehaviour
     void InteractionClientRPC()
     {
         anim.Play(interactClip.name);
+        isUsed = true;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public override void SyncObjectServerRPC(ushort obj_key)
+    {
+        SyncInteractionClientRPC(obj_key, enabled, isOnce);
+    }
+
+    [ClientRpc]
+    private void SyncInteractionClientRPC(ushort obj_key, bool enabled, bool isUsed)
+    {
+        if (IsServer) return;
+        InteractableObject obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<InteractableObject>();
+        obj.enabled = enabled;
+        obj.isUsed = isUsed;
     }
 }
