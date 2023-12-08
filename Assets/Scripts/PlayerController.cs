@@ -529,6 +529,7 @@ public class PlayerController : SyncObject
     private void ToggleUI(InputAction.CallbackContext c)
     {
         isDisplayUI = !isDisplayUI;
+        GameManager.instance.isLocalPlayerEnableUI = isDisplayUI;
         foreach (PlayerData player in GameManager.instance.GetPlayerList())
         {
             if (player == null) return;

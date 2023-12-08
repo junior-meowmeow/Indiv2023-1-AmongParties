@@ -182,6 +182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21785b427766aeb4eb855263052c3baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  net_obj: {fileID: 0}
+  isInScene: 0
   objectName: Sphere
   description: 'Press [E] to DROP
 
@@ -200,7 +202,8 @@ MonoBehaviour:
   isDroppedAfterUse: 1
   hasAltUse: 1
   isDroppedAfterAltUse: 0
-  isStealable: 0
+  isStealable: 1
+  isHandShow: 0
   holdPlayer: {fileID: 0}
   meshRenderer: {fileID: 1922091604512361714}
   hands:

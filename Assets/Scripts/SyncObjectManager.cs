@@ -139,16 +139,16 @@ public class SyncObjectManager : NetworkBehaviour
             if (reference.TryGet(out NetworkObject obj))
             {
                 objectList.Add(obj.GetComponent<SyncObject>());
+                Debug.Log(obj.gameObject.name);
             }
             else
             {
-                print("NO OBJECT FROM REFERENCE!!!");
                 objectList.Add(null);
             }
         }
         for (ushort i = count; i < objectList.Count; i++)
         {
-            if (objectList[i] == null) return;
+            if (objectList[i] == null) continue;
             objectToKey[objectList[i]] = i;
             count++;
         }

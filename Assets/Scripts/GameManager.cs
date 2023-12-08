@@ -15,7 +15,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private bool isRelax;
 
     [SerializeField] private List<PlayerData> playerList;
-    public string currentPlayerName;
+    public string localPlayerName;
+    public bool isLocalPlayerEnableUI = true;
     public Transform lobbyLocation;
     public Transform gameplayLocation;
 
@@ -32,7 +33,7 @@ public class GameManager : NetworkBehaviour
 
         UpdateGameStateServerRPC();
         UpdateUI();
-        currentPlayerName = username;
+        localPlayerName = username;
     }
 
     public void StartGame()

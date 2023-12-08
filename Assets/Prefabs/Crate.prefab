@@ -298,8 +298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   net_obj: {fileID: 0}
-  playerCount: 0
-  isAdded: 0
+  isInScene: 0
   objectName: Crate
   description: 'Press [E] to DROP
 
@@ -315,7 +314,7 @@ MonoBehaviour:
   isDroppedAfterUse: 1
   hasAltUse: 0
   isDroppedAfterAltUse: 1
-  isStealable: 0
+  isStealable: 1
   isHandShow: 0
   holdPlayer: {fileID: 0}
   meshRenderer: {fileID: 7372799771298261566}
