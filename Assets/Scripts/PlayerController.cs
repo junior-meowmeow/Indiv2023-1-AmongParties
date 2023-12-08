@@ -6,6 +6,7 @@ using Unity.Netcode;
 
 public class PlayerController : NetworkBehaviour
 {
+    public bool isDisplayUI = true;
     [Header ("Movement")]
     [SerializeField] private float movementSpeed = 5.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
@@ -33,6 +34,7 @@ public class PlayerController : NetworkBehaviour
     public InputActionReference useItemAltInput;
     public InputActionReference scrollInput;
     public InputActionReference playDeadInput;
+    public InputActionReference toggleUIInput;
 
     [Header ("Body")]
     public Rigidbody rb;
@@ -71,6 +73,7 @@ public class PlayerController : NetworkBehaviour
         useItemAltInput.action.started += _ => { UseItemAltServerRPC(true); };
         useItemAltInput.action.canceled += _ => { UseItemAltServerRPC(false); };
         playDeadInput.action.started += _ => { Fall(fallDuration); };
+        toggleUIInput.action.started += ToggleUI;
 
         //hipJoint.GetComponent<NetworkTransform>().enabled = false;
         WarpServerRPC(GameManager.instance.lobbyLocation.position);
@@ -512,6 +515,15 @@ public class PlayerController : NetworkBehaviour
         else
         {
             ObjectInfoController.instance.ResetItemText();
+        }
+    }
+
+    private void ToggleUI(InputAction.CallbackContext c)
+    {
+        isDisplayUI = !isDisplayUI;
+        foreach (PlayerData player in GameManager.instance.GetPlayerList())
+        {
+            player.playerNameText.enabled = isDisplayUI;
         }
     }
 

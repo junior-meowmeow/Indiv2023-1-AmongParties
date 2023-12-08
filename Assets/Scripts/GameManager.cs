@@ -15,6 +15,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private bool isRelax;
 
     [SerializeField] private List<PlayerData> playerList;
+    public string currentPlayerName;
     public Transform lobbyLocation;
     public Transform gameplayLocation;
 
@@ -25,12 +26,13 @@ public class GameManager : NetworkBehaviour
         instance = this;
     }
 
-    public void JoinLobby()
+    public void JoinLobby(string username)
     {
-        gameState += 1;
+        gameState = GameState.LOBBY;
 
         UpdateGameStateServerRPC();
         UpdateUI();
+        currentPlayerName = username;
     }
 
     public void StartGame()
@@ -56,7 +58,6 @@ public class GameManager : NetworkBehaviour
         {
             ps.player.rb.transform.position = gameplayLocation.position;
         }
-
         UpdateUI();  
     }
 

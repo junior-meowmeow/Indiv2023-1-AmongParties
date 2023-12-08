@@ -14,8 +14,9 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Canvas menuCanvas;
     [SerializeField] private Camera menuCam;
     [SerializeField] private TMP_InputField usernameInput;
-    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TMP_InputField addressInput;
     private string address = "127.0.0.1";
+    private string username = "Player";
 
     [Header ("Lobby")]
     [SerializeField] private Canvas lobbyCanvas;
@@ -43,9 +44,13 @@ public class NetworkManagerUI : MonoBehaviour
     {
         instance = this;
         UpdateCanvas(GameManager.instance.GetGameState());
-        if (inputField != null)
+        if (addressInput != null)
         {
-            inputField.onEndEdit.AddListener(delegate { AddressChanged(inputField); });
+            addressInput.onEndEdit.AddListener(delegate { AddressChanged(addressInput); });
+        }
+        if (usernameInput != null)
+        {
+            usernameInput.onEndEdit.AddListener(delegate {UsernameChanged(usernameInput); });
         }
     }
 
@@ -66,11 +71,11 @@ public class NetworkManagerUI : MonoBehaviour
     {
         hostBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartHost();
-            GameManager.instance.JoinLobby();
+            GameManager.instance.JoinLobby(username);
         });
         clientBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartClient();
-            GameManager.instance.JoinLobby();
+            GameManager.instance.JoinLobby(username);
         });
         startGameBtn.onClick.AddListener(() => {
             GameManager.instance.StartGame();
@@ -105,11 +110,12 @@ public class NetworkManagerUI : MonoBehaviour
     {
         List<PlayerData> players = GameManager.instance.GetPlayerList();
 
-        playerListText.text = "";
+        playerListText.text = "Player List:\n";
 
+        int count = 1;
         foreach(PlayerData player in players)
         {
-            playerListText.text += player.name + "\n";
+            playerListText.text += (count++) + ". " + player.playerName + "\n";
         }
     }
 
@@ -133,5 +139,15 @@ public class NetworkManagerUI : MonoBehaviour
             (ushort)12345 // The port number is an unsigned short
             );
         Debug.Log("New Address : " + address);
+    }
+
+    void UsernameChanged(TMP_InputField input)
+    {
+        username = input.text;
+        if(username == string.Empty)
+        {
+            username = "Player";
+        }
+        Debug.Log("New Username : " + username);
     }
 }

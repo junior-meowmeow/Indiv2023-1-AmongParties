@@ -101,6 +101,8 @@ public class CameraController : MonoBehaviour
 
         transform.Rotate(Vector3.up * mouseX);
         transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0);
+
+        UpdatePlayerNameText();
     }
 
     public void SetScrollAxis(float axis)
@@ -111,5 +113,15 @@ public class CameraController : MonoBehaviour
     public void Disable()
     {
         gameObject.SetActive(false);
+    }
+
+    private void UpdatePlayerNameText()
+    {
+        if (!player.isDisplayUI) return;
+
+        foreach (PlayerData player in GameManager.instance.GetPlayerList())
+        {
+            player.playerNameText.rectTransform.rotation = Quaternion.Euler (verticalRotation, horizontalRotation, 0);
+        }
     }
 }
