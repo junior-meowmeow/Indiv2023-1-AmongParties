@@ -376,15 +376,6 @@ public class PlayerController : NetworkBehaviour
         if (!IsServer) return;
         if (isFall && Time.time - lastFallTime > lastfallDuration)
         {
-            GetUpServerRPC();
-        }
-    }
-
-    [ServerRpc]
-    void GetUpServerRPC()
-    {
-        if (isFall && Time.time - lastFallTime > lastfallDuration)
-        {
             GetUpClientRPC();
         }
     }

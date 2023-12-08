@@ -57,6 +57,7 @@ public class Crowbar : Weapon
     void OnCollisionEnter(Collision collision)
     {
         if (!isThrowing) return;
+        if (collision.gameObject.layer != 0) return;
         isThrowing = false;
         isAttacking = false;
     }
