@@ -35,6 +35,7 @@ public class InteractableObject : SyncObject
     [ServerRpc(RequireOwnership = false)]
     public override void SyncObjectServerRPC(ushort obj_key)
     {
+        base.SyncObjectServerRPC(obj_key);
         SyncInteractionClientRPC(obj_key, enabled, isOnce);
     }
 

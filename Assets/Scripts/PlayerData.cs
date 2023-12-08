@@ -28,12 +28,21 @@ public class PlayerData : NetworkBehaviour
         }
         player = gameObject.GetComponent<PlayerController>();
     }
+
     void Update()
     {
         if(playerNameText != null)
         {
             playerNameText.rectTransform.position = player.rb.transform.position + Vector3.up * 1.5f;
         }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+        Debug.Log("OnNetworkDespawn Called");
+        GameManager.instance.RemovePlayer(this);
+        NetworkManagerUI.instance.UpdatePlayerList();
     }
 
     [ServerRpc]
@@ -46,6 +55,10 @@ public class PlayerData : NetworkBehaviour
     void SetPlayerColorClientRPC(Color color)
     {
         SetPlayerColor(color);
+        if(player.holdingObject != null)
+        {
+            player.holdingObject.ShowHand(player.holdingObject.isHandShow);
+        }
     }
 
     public void SetPlayerColor(Color color)

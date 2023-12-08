@@ -58,7 +58,7 @@ public class GameManager : NetworkBehaviour
         {
             ps.player.rb.transform.position = gameplayLocation.position;
         }
-        UpdateUI();  
+        UpdateUI();
     }
 
     void Update()
@@ -181,6 +181,12 @@ public class GameManager : NetworkBehaviour
     public void AddNewPlayer(PlayerData player)
     {
         playerList.Add(player);
+        // AddNewPlayerServerRpc(player);
+    }
+
+    public void RemovePlayer(PlayerData player)
+    {
+        playerList.Remove(player);
         // AddNewPlayerServerRpc(player);
     }
 

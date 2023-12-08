@@ -26,7 +26,7 @@ public class PickableObject : SyncObject
     public bool isHandShow = false;
 
     protected Rigidbody rb;
-    public PlayerController holdPlayer;
+    public PlayerController holdPlayer = null;
 
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private GameObject[] hands;
@@ -116,7 +116,7 @@ public class PickableObject : SyncObject
         return holdPlayer == null || isStealable;
     }
 
-    void ShowHand(bool show)
+    public void ShowHand(bool show)
     {
         if (hands.Length == 0) return;
         isHandShow = show;
@@ -133,7 +133,14 @@ public class PickableObject : SyncObject
         base.SyncObjectServerRPC(obj_key);
         byte[] data = { (byte)objectType, (byte)objectColor };
         bool[] states = { isDroppedAfterUse, isDroppedAfterAltUse, isStealable, isHandShow };
-        SyncObjectVariableClientRPC(obj_key, SyncObjectManager.instance.objectToKey[holdPlayer], data, states);
+        if(holdPlayer == null)
+        {
+            SyncObjectVariableClientRPC(obj_key, ushort.MaxValue, data, states);
+        }
+        else
+        {
+            SyncObjectVariableClientRPC(obj_key, SyncObjectManager.instance.objectToKey[holdPlayer], data, states);
+        }
     }
 
     [ClientRpc]
@@ -146,7 +153,13 @@ public class PickableObject : SyncObject
         obj.isDroppedAfterUse = states[0];
         obj.isDroppedAfterAltUse = states[1];
         obj.isStealable = states[2];
-        obj.holdPlayer = SyncObjectManager.instance.objectList[holdPlayer_key].GetComponent<PlayerController>();
-        ShowHand(states[3]);
+        if(holdPlayer_key != ushort.MaxValue)
+        {
+            PlayerController player = SyncObjectManager.instance.objectList[holdPlayer_key].GetComponent<PlayerController>();
+            obj.holdPlayer = player;
+            player.holdingObject = obj;
+        }
+        obj.ShowHand(states[3]);
     }
+
 }

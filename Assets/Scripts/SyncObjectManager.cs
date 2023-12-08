@@ -23,6 +23,10 @@ public class SyncObjectManager : NetworkBehaviour
     void Start()
     {
         inSceneObjectList.AddRange(FindObjectsOfType<SyncObject>(true));
+        foreach (SyncObject obj in inSceneObjectList)
+        {
+            obj.isInScene = true;
+        }
     }
 
     public void Initialize()
@@ -31,16 +35,14 @@ public class SyncObjectManager : NetworkBehaviour
         {
             foreach(SyncObject obj in inSceneObjectList)
             {
-                obj.GetComponent<NetworkObject>().Spawn(destroyWithScene: true);
+                obj.GetComponent<NetworkObject>().Despawn(destroy: false);
+                obj.isInScene = false;
+                obj.GetComponent<NetworkObject>().Spawn(destroyWithScene:true);
             }
             RecreateObjectList();
         }
         else
         {
-            foreach (SyncObject obj in inSceneObjectList)
-            {
-                Destroy(obj);
-            }
             RequestObjectList();
         }
     }
@@ -206,7 +208,7 @@ public class SyncObjectManager : NetworkBehaviour
         foreach (SyncObject obj in objectList)
         {
             if (obj == null) continue;
-            Debug.Log("Syncing" + obj.name);
+            Debug.Log("Syncing " + obj.name);
             obj.SyncObjectServerRPC(objectToKey[obj]);
         }
     }

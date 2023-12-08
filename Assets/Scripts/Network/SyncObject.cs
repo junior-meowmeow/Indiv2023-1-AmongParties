@@ -7,8 +7,10 @@ using UnityEngine;
 public class SyncObject : NetworkBehaviour
 {
     public NetworkObject net_obj;
-    public ushort playerCount;
-    public bool isAdded;
+    private ushort playerCount;
+    private bool isAdded;
+    public bool isInScene = false;
+
     protected virtual void Awake()
     {
         net_obj = GetComponent<NetworkObject>();
@@ -27,7 +29,10 @@ public class SyncObject : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void CheckSpawnServerRPC()
     {
-        playerCount++;
+        if(!isInScene)
+        {
+            playerCount++;
+        }
         if(!isAdded && playerCount == NetworkManager.ConnectedClientsIds.Count)
         {
             SyncObjectManager.instance.AddObjectListServerRPC(net_obj);

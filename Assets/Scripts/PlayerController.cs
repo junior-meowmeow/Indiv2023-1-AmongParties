@@ -531,6 +531,7 @@ public class PlayerController : SyncObject
         isDisplayUI = !isDisplayUI;
         foreach (PlayerData player in GameManager.instance.GetPlayerList())
         {
+            if (player == null) return;
             player.playerNameText.enabled = isDisplayUI;
         }
     }
@@ -539,16 +540,28 @@ public class PlayerController : SyncObject
     public override void SyncObjectServerRPC(ushort obj_key)
     {
         base.SyncObjectServerRPC(obj_key);
+        Debug.Log("PlayerSR");
         SyncPlayerDataClientRPC(obj_key, playerData.playerName, playerData.playerColor);
         float[] data = {speedMultiplier, jumpMultiplier, lastFallTime, lastfallDuration, hipJoint.targetRotation.eulerAngles.y };
-        SyncPlayerVariableClientRPC(obj_key, data, isFall);
+        if(holdingObject == null)
+        {
+            SyncPlayerVariableClientRPC(obj_key, ushort.MaxValue, data, isFall);
+        }
+        else
+        {
+            SyncPlayerVariableClientRPC(obj_key, SyncObjectManager.instance.objectToKey[holdingObject], data, isFall);
+        }
     }
 
     [ClientRpc]
-    private void SyncPlayerVariableClientRPC(ushort obj_key, float[] data, bool isFall)
+    private void SyncPlayerVariableClientRPC(ushort obj_key, ushort holdingObject_key, float[] data, bool isFall)
     {
+        if (IsServer) return;
         PlayerController player = SyncObjectManager.instance.objectList[obj_key].GetComponent<PlayerController>();
-
+        if (holdingObject_key != ushort.MaxValue)
+        {
+            player.holdingObject = SyncObjectManager.instance.objectList[holdingObject_key].GetComponent<PickableObject>();
+        }
         player.speedMultiplier = data[0];
         player.jumpMultiplier = data[1];
         player.lastFallTime = data[2];

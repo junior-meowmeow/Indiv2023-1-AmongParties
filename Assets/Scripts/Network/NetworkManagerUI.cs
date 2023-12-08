@@ -58,8 +58,18 @@ public class NetworkManagerUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (Cursor.lockState == CursorLockMode.Locked) Cursor.lockState = CursorLockMode.None;
-            else Cursor.lockState = CursorLockMode.Locked;
+            if(GameManager.instance.GetGameState() == GameState.INGAME)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+            else if (Cursor.lockState == CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
