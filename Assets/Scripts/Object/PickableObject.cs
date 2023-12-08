@@ -8,7 +8,7 @@ public class PickableObject : SpawnableObject
     [Header("Object Info")]
     public string objectName = "Pickable Object";
     [TextArea(6, 10)]
-    public string description = "Press E to DROP\nPress MOUSE1 to DROP";
+    public string description = "Press [E] to DROP\nPress [MOUSE1] to DROP";
     [Header("Base Property")]
     public ObjectType objectType;
     public ObjectColor objectColor;

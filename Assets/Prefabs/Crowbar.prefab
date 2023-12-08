@@ -133,12 +133,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectName: Crowbar
-  description: 'Press E to DROP
+  description: 'Press [E] to DROP
 
-    Press MOUSE1 to ATTACK
+    Press [MOUSE1] to ATTACK
 
-    Press MOUSE2 to
-    THROW'
+    Press [MOUSE2]
+    to THROW'
   objectType: 0
   objectColor: 0
   holdPos: {x: 0.005, y: 0.005, z: -0.01}

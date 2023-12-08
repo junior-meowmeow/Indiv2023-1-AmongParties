@@ -183,12 +183,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectName: Sphere
-  description: 'Press E to DROP
+  description: 'Press [E] to DROP
 
-    Press MOUSE1 to DROP
+    Press [MOUSE1] to DROP
 
-    Hold and Release MOUSE2
-    to CHARGETHROW'
+    Hold and Release
+    [MOUSE2] to CHARGETHROW'
   objectType: 0
   objectColor: 0
   holdPos: {x: 0, y: 0.006, z: -0.0125}
