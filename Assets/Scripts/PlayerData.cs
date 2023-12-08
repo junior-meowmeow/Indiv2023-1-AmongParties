@@ -9,6 +9,7 @@ public class PlayerData : NetworkBehaviour
     [SerializeField] private SkinnedMeshRenderer meshRenderer;
     public PlayerController player;
     public TMP_Text playerNameText;
+    public Objective objective;
     public string playerName;
 
     void Awake()
