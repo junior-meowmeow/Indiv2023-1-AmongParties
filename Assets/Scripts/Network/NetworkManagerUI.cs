@@ -29,9 +29,9 @@ public class NetworkManagerUI : MonoBehaviour
     [Header ("Ingame")]
     [SerializeField] private Canvas ingameCanvas;
     [SerializeField] private TMP_Text timerText;
-    [SerializeField] private TMP_Text objectiveText;
-    [SerializeField] private GameObject objectiveDoneText;
-    [SerializeField] private GameObject objectiveFailText;
+    [SerializeField] private GameObject ObjectiveUIPrefab;
+    [SerializeField] private List<ObjectiveUI> ObjectiveList;
+    [SerializeField] private Transform ObjectiveParent;
 
     public static NetworkManagerUI instance;
 
@@ -96,14 +96,22 @@ public class NetworkManagerUI : MonoBehaviour
         timerText.text = ((int)time/60).ToString() + ":" + ((int)time%60).ToString();
     }
 
+    public void StartObjective(Objective objective)
+    {
+        ObjectiveUI obj = Instantiate(ObjectiveUIPrefab, ObjectiveParent).GetComponent<ObjectiveUI>();
+        obj.UpdateObjective(objective);
+        ObjectiveList.Add(obj);
+    }
+
+    public void EndObjective(Objective objective)
+    {
+        ObjectiveList[ObjectiveList.Count - 1].EndObjective(objective);
+    }
+
     public void UpdateObjective(Objective objective)
     {
-        objectiveText.text = "Objective : \n" + objective.GetObjectiveDescription()
-            + "\n" + objective.score.ToString() + "/" + objective.targetScore.ToString();
-
-        objectiveDoneText.SetActive(objective.isComplete);
-        objectiveFailText.SetActive(false);
-        // objectiveFailText.SetActive(!objective.isComplete);
+        if (ObjectiveList.Count == 0) return;
+        ObjectiveList[ObjectiveList.Count - 1].UpdateObjective(objective);
     }
 
     public void UpdatePlayerList()

@@ -77,7 +77,11 @@ public class GameManager : NetworkBehaviour
         else
         {
             if (isRelax) NextObjective();
-            else SetTimer(5f, true);
+            else
+            {
+                EndObjectiveClientRPC();
+                SetTimer(5f, true);
+            }
         }
         
     }
@@ -148,7 +152,13 @@ public class GameManager : NetworkBehaviour
     {
         objective.Update(id, score, targetScore);
 
-        NetworkManagerUI.instance.UpdateObjective(objective);
+        NetworkManagerUI.instance.StartObjective(objective);
+    }
+
+    [ClientRpc]
+    void EndObjectiveClientRPC()
+    {
+        NetworkManagerUI.instance.EndObjective(objective);
     }
 
     void UpdateUI()
