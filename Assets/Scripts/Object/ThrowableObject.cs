@@ -42,7 +42,7 @@ public class ThrowableObject : PickableObject
         }
         if(isHolding)
         {
-            rb.AddForce(holdPlayer.hipJoint.transform.forward * -throwForce, ForceMode.Impulse);
+            rb.AddForce((holdPlayer.hipJoint.transform.forward + Vector3.down * 0.25f) * -throwForce, ForceMode.Impulse);
         }
     }
 
@@ -59,7 +59,7 @@ public class ThrowableObject : PickableObject
         {
             chargeForce = maxThrowForce;
         }
-        rb.AddForce(holdPlayer.hipJoint.transform.forward * -chargeForce, ForceMode.Impulse);
+        rb.AddForce((holdPlayer.hipJoint.transform.forward + Vector3.down * 0.25f) * -chargeForce, ForceMode.Impulse);
         isCharging = false;
     }
 }

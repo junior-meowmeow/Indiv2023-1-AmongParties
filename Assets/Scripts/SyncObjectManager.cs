@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class ObjectManager : NetworkBehaviour
+public class SyncObjectManager : NetworkBehaviour
 {
-    public List<NetworkObject> objectList;
-    public Dictionary<NetworkObject, ushort> objectToKey = new();
+    public List<SyncObject> objectList;
+    public Dictionary<SyncObject, ushort> objectToKey = new();
     public ushort count = 0;
-    public static ObjectManager instance;
+    public static SyncObjectManager instance;
 
     void Awake()
     {
@@ -23,7 +22,7 @@ public class ObjectManager : NetworkBehaviour
         {
             return;
         }
-        objectList.AddRange(FindObjectsOfType<NetworkObject>(true));
+        objectList.AddRange(FindObjectsOfType<SyncObject>(true));
         for (ushort i = count; i < objectList.Count; i++)
         {
             objectToKey[objectList[i]] = i;
@@ -44,10 +43,10 @@ public class ObjectManager : NetworkBehaviour
         */
     }
 
-    [ContextMenu(itemName: "Update Object List")]
-    public void UpdateObjectList()
+    [ContextMenu(itemName: "Recreate Object List")]
+    public void RecreateObjectList()
     {
-        objectList.AddRange(FindObjectsOfType<NetworkObject>(true));
+        objectList.AddRange(FindObjectsOfType<SyncObject>(true));
         for (ushort i = count; i < objectList.Count; i++)
         {
             objectToKey[objectList[i]] = i;
@@ -79,7 +78,12 @@ public class ObjectManager : NetworkBehaviour
             NetworkObjectReference[] refList = new NetworkObjectReference[objectList.Count];
             for (ushort i = 0; i < objectList.Count; i++)
             {
-                refList[i] = objectList[i];
+                if (objectList[i] == null)
+                {
+                    refList[i] = default;
+                    continue;
+                }
+                refList[i] = objectList[i].net_obj;
             }
             SendObjectListClientRPC(refList, clientRpcParams);
         }
@@ -95,24 +99,50 @@ public class ObjectManager : NetworkBehaviour
         {
             if (reference.TryGet(out NetworkObject obj))
             {
-                objectList.Add(obj);
+                objectList.Add(obj.GetComponent<SyncObject>());
             }
             else
             {
                 print("NO OBJECT FROM REFERENCE!!!");
+                objectList.Add(null);
             }
         }
         for (ushort i = count; i < objectList.Count; i++)
         {
+            if (objectList[i] == null) return;
             objectToKey[objectList[i]] = i;
             count++;
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void AddObjectListServerRPC(NetworkObjectReference obj_ref)
+    {
+        AddObjectListClientRPC(obj_ref);
+    }
+
+    [ClientRpc]
+    public void AddObjectListClientRPC(NetworkObjectReference obj_ref)
+    {
+        if (obj_ref.TryGet(out NetworkObject obj))
+        {
+            objectList.Add(obj.GetComponent<SyncObject>());
+        }
+        else
+        {
+            print("NO OBJECT FROM REFERENCE!!!");
+            objectList.Add(null);
+        }
+
+        if (objectList[count] == null) return;
+        objectToKey[objectList[count]] = count;
+        count++;
+    }
+
     [ContextMenu(itemName: "Set Exact Position")]
     private void SetExactPositionAll()
     {
-        foreach(NetworkObject obj in objectList)
+        foreach(SyncObject obj in objectList)
         {
             SetExactPositionServerRPC(objectToKey[obj]);
         }
@@ -130,6 +160,16 @@ public class ObjectManager : NetworkBehaviour
     {
         print(pos);
         objectList[obj_key].transform.SetPositionAndRotation(pos, rot);
+    }
+
+    [ContextMenu(itemName: "Sync Objects")]
+    private void SyncObjects()
+    {
+        foreach (SyncObject obj in objectList)
+        {
+            if (obj == null) continue;
+            obj.SyncObjectServerRPC(objectToKey[obj]);
+        }
     }
 
 }

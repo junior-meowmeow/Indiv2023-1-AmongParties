@@ -121,7 +121,10 @@ public class CameraController : MonoBehaviour
 
         foreach (PlayerData player in GameManager.instance.GetPlayerList())
         {
-            player.playerNameText.rectTransform.rotation = Quaternion.Euler (verticalRotation, horizontalRotation, 0);
+            if(player.playerNameText.enabled)
+            {
+                player.playerNameText.rectTransform.rotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0);
+            }
         }
     }
 }

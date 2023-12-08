@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PickableObject : SpawnableObject
+public class PickableObject : SyncObject
 {
     [Header("Object Info")]
     public string objectName = "Pickable Object";

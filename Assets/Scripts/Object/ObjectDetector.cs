@@ -19,7 +19,7 @@ public class ObjectDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider col)
     {
-        if (col.TryGetComponent<PickableObject>(out PickableObject obj))
+        if (col.TryGetComponent(out PickableObject obj))
         {
             if(GameManager.instance.GetObject(obj, name))
             {

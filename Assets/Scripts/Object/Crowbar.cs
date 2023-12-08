@@ -41,7 +41,7 @@ public class Crowbar : Weapon
     {
         if(isHolding)
         {
-            rb.AddForce(holdPlayer.hipJoint.transform.forward * -throwForce, ForceMode.Impulse);
+            rb.AddForce((holdPlayer.hipJoint.transform.forward + Vector3.down * 0.25f) * -throwForce, ForceMode.Impulse);
             isThrowing = true;
             isAttacking = true;
         }

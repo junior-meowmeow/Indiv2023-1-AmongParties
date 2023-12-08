@@ -19,7 +19,10 @@ public class PlayerData : NetworkBehaviour
     void Start()
     {
         GameManager.instance.AddNewPlayer(this);
-        SetPlayerNameServerRPC(GameManager.instance.currentPlayerName);
+        if(IsOwner)
+        {
+            SetPlayerNameServerRPC(GameManager.instance.currentPlayerName);
+        }
         player = gameObject.GetComponent<PlayerController>();
     }
     void Update()

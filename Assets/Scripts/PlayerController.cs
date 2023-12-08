@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
 
-public class PlayerController : NetworkBehaviour
+public class PlayerController : SyncObject
 {
     public bool isDisplayUI = true;
     [Header ("Movement")]
@@ -50,6 +50,12 @@ public class PlayerController : NetworkBehaviour
     public Transform interactPoint;
     public InteractionCollider interactionCollider;
     public Transform groundPoint;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        //SyncObjectManager.instance.AddObjectListServerRPC(net_obj);
+    }
 
     void Start()
     {
@@ -526,5 +532,34 @@ public class PlayerController : NetworkBehaviour
             player.playerNameText.enabled = isDisplayUI;
         }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public override void SyncObjectServerRPC(ushort obj_key)
+    {
+        SyncTransformClientRPC(obj_key, transform.position, transform.rotation);
+    }
+
+    [ClientRpc]
+    protected override void SyncTransformClientRPC(ushort obj_key, Vector3 pos, Quaternion rot)
+    {
+        SyncObjectManager.instance.objectList[obj_key].transform.SetPositionAndRotation(pos, rot);
+    }
+
+    [ClientRpc]
+    private void SyncPlayerVariableClientRPC(ushort obj_key, Vector3 pos, Quaternion rot)
+    {
+        SyncObjectManager.instance.objectList[obj_key].transform.SetPositionAndRotation(pos, rot);
+        PlayerController player = SyncObjectManager.instance.objectList[obj_key].GetComponent<PlayerController>();
+
+        speedMultiplier = 1f;
+        jumpMultiplier = 1f;
+
+
+        /*
+        holdPos;
+        lastfallDuration;
+        lastFallTime;
+        isFall = false;*/
+        }
 
 }
