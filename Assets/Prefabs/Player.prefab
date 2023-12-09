@@ -400,7 +400,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb91e746cdc433447bb183ee30cc5039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayPlayerName: 1
+  net_obj: {fileID: 0}
+  isInScene: 0
+  isDisplayUI: 1
   movementSpeed: 5
   rotationSpeed: 200
   jumpForce: 100
@@ -451,7 +453,18 @@ MonoBehaviour:
   meshRenderer: {fileID: 8858178835525638267}
   player: {fileID: 6458680499265443462}
   playerNameText: {fileID: 3147855947348207042}
+  objective:
+    req: 0
+    objectType: 0
+    objectColor: 0
+    locationId: 0
+    isComplete: 0
+    startTime: 0
+    duration: 0
+    score: 0
+    targetScore: 0
   playerName: 
+  playerColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &6458680499265443468
 MonoBehaviour:
   m_ObjectHideFlags: 0

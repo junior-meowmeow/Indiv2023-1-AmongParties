@@ -43,6 +43,7 @@ public class PlayerController : SyncObject
     public ConfigurableJoint rightLeg;
 
     private CameraController cam;
+    private AudioListener audioListener;
     private PlayerData playerData;
     public PickableObject holdingObject;
     public Vector3 defaultHoldPos = new(0f, 0.006f, -0.014f);
@@ -59,9 +60,14 @@ public class PlayerController : SyncObject
 
     void Start()
     {
-        cam = GetComponentInChildren<CameraController>();
         playerData = GetComponent<PlayerData>();
-        if (!IsOwner) cam.Disable();
+        cam = GetComponentInChildren<CameraController>();
+        audioListener = GetComponentInChildren<AudioListener>();
+        if (!IsOwner)
+        {
+            cam.Disable();
+            audioListener.enabled = false;
+        }
 
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -87,6 +93,8 @@ public class PlayerController : SyncObject
         SyncObjectManager.instance.Initialize();
         GameManager.instance.UpdateGameStateServerRPC();
         NetworkManagerUI.instance.RequestObjectiveServerRPC();
+        GameManager.instance.localPlayer = this;
+        SoundManager.Instance.localPlayer = this.transform;
     }
 
     private void Update()
@@ -298,7 +306,7 @@ public class PlayerController : SyncObject
         }
     }
 
-    private void Drop()
+    public void Drop()
     {
         holdPos.localPosition = defaultHoldPos;
         holdPos.localRotation = Quaternion.identity;

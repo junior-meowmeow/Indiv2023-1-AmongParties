@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class InteractionCollider : MonoBehaviour
 {
@@ -39,6 +40,7 @@ public class InteractionCollider : MonoBehaviour
 
     private void UpdateObjectList()
     {
+        CheckObject();
         objectList.Sort(CompareObjectByDistance);
         pickable = true;
         if (objectList.Count == 0)
@@ -55,6 +57,17 @@ public class InteractionCollider : MonoBehaviour
         {
             player.UpdateObjectInfo(false,"");
         }
+    }
+
+    private void CheckObject()
+    {
+        objectList.RemoveAll(obj => !obj.gameObject.activeInHierarchy);
+    }
+
+    public void RemoveObject(PickableObject obj)
+    {
+        objectList.RemoveAll(item => item == obj);
+        UpdateObjectList();
     }
 
     private int CompareObjectByDistance(PickableObject a, PickableObject b)

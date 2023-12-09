@@ -14,6 +14,7 @@ struct Pool
 
 public class ObjectPool : NetworkBehaviour
 {
+    public Transform disablePosition;
     [SerializeField] private List<Pool> pools;
     [SerializeField] private Dictionary<string, Queue<GameObject>> poolDict;
     [SerializeField] private Transform objectParent;
@@ -30,6 +31,10 @@ public class ObjectPool : NetworkBehaviour
         if(objectParent == null)
         {
             objectParent = transform.root;
+        }
+        if (disablePosition == null)
+        {
+            disablePosition = transform.root;
         }
     }
 

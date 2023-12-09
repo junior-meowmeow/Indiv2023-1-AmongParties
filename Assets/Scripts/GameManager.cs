@@ -25,6 +25,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private bool isRelax;
 
     [SerializeField] private List<PlayerData> playerList;
+    public PlayerController localPlayer;
     public string localPlayerName;
     public bool isLocalPlayerEnableUI = true;
     public Transform lobbyLocation;

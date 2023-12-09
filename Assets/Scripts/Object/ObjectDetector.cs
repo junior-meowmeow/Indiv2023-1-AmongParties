@@ -25,7 +25,16 @@ public class ObjectDetector : MonoBehaviour
             {
                 ObjectPool.instance.SpawnObject("Score Particle", obj.transform.position, Quaternion.identity);
             }
+            if (obj.holdPlayer != null)
+            {
+                obj.holdPlayer.Drop();
+                obj.Drop();
+            }
             obj.gameObject.SetActive(false);
+            foreach (PlayerData ps in GameManager.instance.GetPlayerList())
+            {
+                ps.player.interactionCollider.RemoveObject(obj);
+            }
         }
     }
 }
