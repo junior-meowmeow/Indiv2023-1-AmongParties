@@ -9,10 +9,10 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance => instance;
 
     public List<Sound> sounds;
-    public Transform localPlayer;
+    public Transform localPlayerPosition;
     public List<string> themeList;
     public string currentTheme;
-    public float maxDistance = 12f;
+    public float maxDistance = 20f;
 
     void Awake()
     {
@@ -47,6 +47,7 @@ public class SoundManager : MonoBehaviour
         {
             if (sound.name == name)
             {
+                Debug.Log("found " + name);
                 sound.source.volume = sound.volume;
                 sound.source.Play();
                 return;
@@ -56,18 +57,19 @@ public class SoundManager : MonoBehaviour
 
     public void Play(string name, Vector3 sourceLocation)
     {
-        if (GameManager.instance.GetGameState() == GameState.MENU || localPlayer == null)
+        if (GameManager.instance.GetGameState() == GameState.MENU || localPlayerPosition == null)
         {
             Play(name);
             return;
         }
-        float distance = Vector3.Distance(localPlayer.transform.position, sourceLocation);
+        float distance = Vector3.Distance(localPlayerPosition.position, sourceLocation);
         if (distance >= maxDistance) return;
         float scale = (maxDistance - distance)/maxDistance;
         foreach (Sound sound in sounds)
         {
             if (sound.name == name)
             {
+                Debug.Log("found " + name);
                 sound.source.volume = sound.volume * scale;
                 sound.source.Play();
                 return;
@@ -81,6 +83,7 @@ public class SoundManager : MonoBehaviour
         {
             if (sound.name == name)
             {
+                Debug.Log("found " + name);
                 sound.source.Stop();
                 return;
             }
@@ -94,19 +97,21 @@ public class SoundManager : MonoBehaviour
         {
             if (sound.name == currentTheme)
             {
+                Debug.Log("found " + currentTheme);
                 sound.source.Stop();
                 count++;
             }
             if (sound.name == name)
             {
-                currentTheme = name;
+                Debug.Log("found " + name);
                 sound.source.Play();
                 count++;
             }
             if (count == 2)
             {
-                return;
+                break;
             }
         }
+        currentTheme = name;
     }
 }

@@ -54,7 +54,7 @@ public class Crowbar : Weapon
         isAttacking = true;
         lastAttackTime = Time.time;
         holdPlayer.holdPos.gameObject.GetComponent<HoldPosController>().PlayAnimation(attackAnimation);
-        SoundManager.Instance.Play("attack");
+        SoundManager.Instance.Play("attack", this.transform.position);
     }
 
     public override void SetUp(byte typeId, byte colorId, Color color)

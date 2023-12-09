@@ -42,7 +42,7 @@ public class GameManager : NetworkBehaviour
     public void JoinLobby(string username)
     {
         gameState = GameState.LOBBY;
-        SoundManager.Instance.PlayTheme("menu");
+        SoundManager.Instance.PlayTheme("lobby");
         UpdateGameState(gameState);
         localPlayerName = username;
     }
