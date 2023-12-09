@@ -13446,7 +13446,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1970475435}
   - component: {fileID: 1970475438}
-  - component: {fileID: 1970475437}
   - component: {fileID: 1970475436}
   m_Layer: 0
   m_Name: Camera
@@ -13503,14 +13502,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!81 &1970475437
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1970475434}
-  m_Enabled: 1
 --- !u!20 &1970475438
 Camera:
   m_ObjectHideFlags: 0
@@ -14245,6 +14236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2042804775}
   - component: {fileID: 2042804776}
+  - component: {fileID: 2042804777}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -14280,20 +14272,120 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: Click
-    clip: {fileID: 0}
+  - name: footstep
+    clip: {fileID: 8300000, guid: f20770d7e8a9a2c418ed2cf2b0f40bb8, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 1
+    source: {fileID: 0}
+  - name: click
+    clip: {fileID: 8300000, guid: dc24f2587be0c554caec7ee4a626d262, type: 3}
     volume: 1
     pitch: 0
     isLoop: 0
     source: {fileID: 0}
-  - name: 
-    clip: {fileID: 0}
-    volume: 0
+  - name: select
+    clip: {fileID: 8300000, guid: 9b9daf7aab2af8a43ba75cfc76e82cab, type: 3}
+    volume: 1
     pitch: 0
     isLoop: 0
     source: {fileID: 0}
+  - name: attack
+    clip: {fileID: 8300000, guid: 9cc46c220cc2098468970cce8f669d0f, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: get_point
+    clip: {fileID: 8300000, guid: 67c4af1152d0464439adf39c96106043, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: failed
+    clip: {fileID: 8300000, guid: 3d9e5f682db308b408c5125b9cef5cbc, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: deny
+    clip: {fileID: 8300000, guid: 5588a3021a54f3348adfef708e8f6371, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: approve1
+    clip: {fileID: 8300000, guid: e48a4f63c3325524d8be8a71db243888, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: approve2
+    clip: {fileID: 8300000, guid: 41664073f53cd2248a52f810c675648d, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: approve3
+    clip: {fileID: 8300000, guid: 58a366abfb03e9649b68a73a8aeb8d6c, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: door_open
+    clip: {fileID: 8300000, guid: cf220205df1e24e4eb7343dd363582d0, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: win
+    clip: {fileID: 8300000, guid: b4f0db1c4192b254dbcf163a763a17cd, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: lose
+    clip: {fileID: 8300000, guid: c4c5fcb59a833944da3d7a64b4677878, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 0
+    source: {fileID: 0}
+  - name: lobby
+    clip: {fileID: 8300000, guid: fd6bbea98ca725440ae664f809eeb2a8, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 1
+    source: {fileID: 0}
+  - name: coop
+    clip: {fileID: 8300000, guid: 2d8c9b0dfd5d0194299203d276112a51, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 1
+    source: {fileID: 0}
+  - name: battle
+    clip: {fileID: 8300000, guid: 8149a479754e8454db8b64daac929105, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 1
+    source: {fileID: 0}
+  - name: menu
+    clip: {fileID: 8300000, guid: 2d05dadd68291a742ba7841fd28f991c, type: 3}
+    volume: 1
+    pitch: 0
+    isLoop: 1
+    source: {fileID: 0}
   localPlayer: {fileID: 0}
+  themeList: []
+  currentTheme: 
   maxDistance: 12
+--- !u!81 &2042804777
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2042804774}
+  m_Enabled: 1
 --- !u!1 &2095512960
 GameObject:
   m_ObjectHideFlags: 0

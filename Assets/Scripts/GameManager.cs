@@ -42,6 +42,7 @@ public class GameManager : NetworkBehaviour
     public void JoinLobby(string username)
     {
         gameState = GameState.LOBBY;
+        SoundManager.Instance.PlayTheme("menu");
         UpdateGameState(gameState);
         localPlayerName = username;
     }
@@ -115,6 +116,7 @@ public class GameManager : NetworkBehaviour
         failScore = 0;
         winTargetScore = winScore;
         loseTargetScore = loseScore;
+        SoundManager.Instance.PlayTheme("coop");
         mainObjectiveText.text = "Complete " + winScore + " Objective to Win(You have " + loseScore + " Chances to Fail)";
         NetworkManagerUI.instance.ResetObjectives();
         ObjectPool.instance.RecallAllObjects();
@@ -199,7 +201,8 @@ public class GameManager : NetworkBehaviour
         if(isDone)
         {
             ++doneScore;
-            if(doneScore >= winTargetScore)
+            SoundManager.Instance.Play("get_point");
+            if (doneScore >= winTargetScore)
             {
                 EndCOOPGame(true);
             }
@@ -207,6 +210,7 @@ public class GameManager : NetworkBehaviour
         else
         {
             ++failScore;
+            SoundManager.Instance.Play("failed");
             if (failScore >= loseTargetScore)
             {
                 EndCOOPGame(false);
@@ -217,16 +221,19 @@ public class GameManager : NetworkBehaviour
     public void EndCOOPGame(bool isWin)
     {
         gameState = GameState.LOBBY;
+        SoundManager.Instance.PlayTheme("lobby");
         NetworkManagerUI.instance.UpdateCanvas(gameState);
         if (isWin)
         {
             Debug.Log("YOU WIN");
             winText.SetActive(true);
+            SoundManager.Instance.Play("win");
         }
         else
         {
             Debug.Log("YOU LOSE");
             loseText.SetActive(true);
+            SoundManager.Instance.Play("lose");
         }
         if (IsServer)
         {

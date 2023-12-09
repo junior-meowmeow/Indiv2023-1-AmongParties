@@ -10,6 +10,8 @@ public class SoundManager : MonoBehaviour
 
     public List<Sound> sounds;
     public Transform localPlayer;
+    public List<string> themeList;
+    public string currentTheme;
     public float maxDistance = 12f;
 
     void Awake()
@@ -31,6 +33,12 @@ public class SoundManager : MonoBehaviour
             sound.source.loop = sound.isLoop;
             sound.source.spatialBlend = 0;
         }
+    }
+
+    private void Start()
+    {
+        Play("menu");
+        currentTheme = "menu";
     }
 
     public void Play(string name)
@@ -74,6 +82,29 @@ public class SoundManager : MonoBehaviour
             if (sound.name == name)
             {
                 sound.source.Stop();
+                return;
+            }
+        }
+    }
+
+    public void PlayTheme(string name)
+    {
+        ushort count = 0;
+        foreach (Sound sound in sounds)
+        {
+            if (sound.name == currentTheme)
+            {
+                sound.source.Stop();
+                count++;
+            }
+            if (sound.name == name)
+            {
+                currentTheme = name;
+                sound.source.Play();
+                count++;
+            }
+            if (count == 2)
+            {
                 return;
             }
         }

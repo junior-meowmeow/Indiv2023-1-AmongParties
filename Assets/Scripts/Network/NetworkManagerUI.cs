@@ -90,13 +90,16 @@ public class NetworkManagerUI : NetworkBehaviour
         hostBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartHost();
             GameManager.instance.JoinLobby(username);
+            SoundManager.Instance.Play("select");
         });
         clientBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartClient();
             GameManager.instance.JoinLobby(username);
+            SoundManager.Instance.Play("select");
         });
         startGameBtn.onClick.AddListener(() => {
             GameManager.instance.StartGame(selectedGameMode);
+            SoundManager.Instance.Play("select");
         });
 
         Button[] btnList = colorButtonList.GetComponentsInChildren<Button>();

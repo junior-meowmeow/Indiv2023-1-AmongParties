@@ -24,6 +24,11 @@ public class ObjectDetector : MonoBehaviour
             if(GameManager.instance.GetObject(obj, name))
             {
                 ObjectPool.instance.SpawnObject("Score Particle", obj.transform.position, Quaternion.identity);
+                SoundManager.Instance.Play("approve" + Random.Range(1, 4));
+            }
+            else
+            {
+                SoundManager.Instance.Play("deny");
             }
             if (obj.holdPlayer != null)
             {
