@@ -7,10 +7,10 @@ public enum ObjectColor {ANY, RED, BLUE, YELLOW, ORANGE}
 [System.Serializable]
 public class Objective : INetworkSerializeByMemcpy
 {
-    public int req; // 0 = specific type, 1 = specific color, 2 = specific both type and color
+    public byte req; // 0 = specific type, 1 = specific color, 2 = specific both type and color
     public ObjectType objectType;
     public ObjectColor objectColor;
-    public int locationId;
+    public byte locationId;
     public bool isComplete;
     [SerializeField] private static string[] locationList = {"Base", "Furnace", "Garbage"};
     [SerializeField] private static string[] typeList = {"Object", "Crate", "Core"};
@@ -25,10 +25,10 @@ public class Objective : INetworkSerializeByMemcpy
 
     public void SetUp()
     {
-        req = Random.Range(0, 3);
+        req = (byte)Random.Range(0, 3);
         objectType = req == 1? (ObjectType)Random.Range(1, 3) : 0;
         objectColor = req == 2? (ObjectColor)Random.Range(1, 4) : 0;
-        locationId = Random.Range(0, locationList.Length);
+        locationId = (byte)Random.Range(0, locationList.Length);
         startTime = Time.time;
         score = 0;
         targetScore = (ushort)Random.Range(2, 5);
@@ -74,13 +74,13 @@ public class Objective : INetworkSerializeByMemcpy
 
     public void SetUp(int id)
     {
-        req = id/1000;
+        req = (byte)(id/1000);
         id %= 1000;
         objectType = (ObjectType)(id/100);
         id %= 100;
         objectColor = (ObjectColor)(id/10);
         id %= 10;
-        locationId = id;
+        locationId = (byte)id;
         startTime = Time.time;
         score = 0;
         targetScore = (ushort)Random.Range(2, 5);

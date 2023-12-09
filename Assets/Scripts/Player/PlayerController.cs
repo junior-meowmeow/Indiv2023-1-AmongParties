@@ -86,6 +86,7 @@ public class PlayerController : SyncObject
 
         SyncObjectManager.instance.Initialize();
         GameManager.instance.UpdateGameStateServerRPC();
+        NetworkManagerUI.instance.RequestObjectiveUIServerRPC();
     }
 
     private void Update()

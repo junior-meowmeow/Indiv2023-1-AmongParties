@@ -6,7 +6,7 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NetworkManagerUI : MonoBehaviour
+public class NetworkManagerUI : NetworkBehaviour
 {
     [Header ("Menu")]
     [SerializeField] private Button hostBtn;
@@ -19,6 +19,7 @@ public class NetworkManagerUI : MonoBehaviour
     private string username = "Player";
 
     [Header ("Lobby")]
+    [SerializeField] private GameMode selectedGameMode = GameMode.COOP;
     [SerializeField] private Canvas lobbyCanvas;
     [SerializeField] private Button startGameBtn;
     [SerializeField] private GameObject lobbyWaitText;
@@ -95,7 +96,7 @@ public class NetworkManagerUI : MonoBehaviour
             GameManager.instance.JoinLobby(username);
         });
         startGameBtn.onClick.AddListener(() => {
-            GameManager.instance.StartGame();
+            GameManager.instance.StartGame(selectedGameMode);
         });
 
         Button[] btnList = colorButtonList.GetComponentsInChildren<Button>();
@@ -177,14 +178,58 @@ public class NetworkManagerUI : MonoBehaviour
         Debug.Log("New Username : " + username);
     }
 
-    [ServerRpc]
-    void RequestObjectivesServerRPC()
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestObjectiveUIServerRPC(ServerRpcParams serverRpcParams = default)
     {
-        RequestObjectivesClientRPC();
+        if (GameManager.instance.GetGameState() != GameState.INGAME) return;
+        var clientId = serverRpcParams.Receive.SenderClientId;
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            //var client = NetworkManager.ConnectedClients[clientId];
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+
+            for (int i = 0; i < ObjectiveList.Count; i++)
+            {
+                if(ObjectiveList[i].isEnded)
+                {
+                    SetEndedObjectiveUIClientRPC(ObjectiveList[i].isDone, clientRpcParams);
+                }
+                else
+                {
+                    Objective objective = GameManager.instance.GetCurrentObjective();
+                    int id = objective.GetID();
+                    ushort score = objective.score;
+                    ushort targetScore = objective.targetScore;
+                    SetOngoingObjectiveUIClientRPC(id, score, targetScore, clientRpcParams);
+                }
+            }
+        }
     }
 
     [ClientRpc]
-    void RequestObjectivesClientRPC()
+    void SetEndedObjectiveUIClientRPC(bool isDone,ClientRpcParams clientRpcParams = default)
     {
+        ObjectiveUI obj = Instantiate(ObjectiveUIPrefab, ObjectiveParent).GetComponent<ObjectiveUI>();
+        obj.SetEndedUI(isDone);
+        ObjectiveList.Add(obj);
+        obj.objectiveTitle.text = "Objective  " + ObjectiveList.Count.ToString();
+    }
+
+    [ClientRpc]
+    void SetOngoingObjectiveUIClientRPC(int id, ushort score, ushort targerScore,ClientRpcParams clientRpcParams = default)
+    {
+        Objective objective = new();
+        objective.Update(id, score, targerScore);
+        GameManager.instance.SetCurrentObjective(objective);
+        ObjectiveUI obj = Instantiate(ObjectiveUIPrefab, ObjectiveParent).GetComponent<ObjectiveUI>();
+        obj.UpdateObjective(objective);
+        ObjectiveList.Add(obj);
+        obj.objectiveTitle.text = "Objective  " + ObjectiveList.Count.ToString();
     }
 }

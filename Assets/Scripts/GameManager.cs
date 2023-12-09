@@ -10,7 +10,8 @@ public class GameManager : NetworkBehaviour
 {
     [SerializeField] private GameState gameState;
     [SerializeField] private GameMode gameMode;
-    [SerializeField] private Objective objective;
+    [SerializeField] private Objective currentObjective;
+    [SerializeField] private ushort gameScore;
 
     [Header ("Find Object")]
     [SerializeField] private float timer;
@@ -69,13 +70,22 @@ public class GameManager : NetworkBehaviour
         */
     }
 
-    public void StartGame()
+    public void StartGame(GameMode gameMode)
     {
         if (!IsServer) return;
+        this.gameMode = gameMode;
+        if (gameMode == GameMode.COOP)
+        {
+            StartGameServerRPC();
+            SetTimer(10f, true);
+            
+        }
+        else if(gameMode == GameMode.PVP)
+        {
+            StartGameServerRPC();
+            SetTimer(10f, true);
+        }
 
-        gameMode = GameMode.COOP;
-        StartGameServerRPC();
-        SetTimer(10f, true);
     }
 
     [ServerRpc]
@@ -132,14 +142,14 @@ public class GameManager : NetworkBehaviour
 
     public Vector3 GetLobbySpawnPosition()
     {
-        return lobbyLocation.position + new Vector3(Random.Range(-1.3f, 4f), 0, Random.Range(-2.5f, 3.5f));
+        return lobbyLocation.position + new Vector3(Random.Range(-1.25f, 3f), 0, Random.Range(-1.25f, 2.5f));
     }
 
     public Vector3 GetGameplaySpawnPosition()
     {
         if(gameMode == GameMode.COOP)
         {
-            return coopGameplayLocation.position + new Vector3(Random.Range(-8f, 8f), 0, Random.Range(-3.5f, 3.5f));
+            return coopGameplayLocation.position + new Vector3(Random.Range(-5f, 5f), 0, Random.Range(-8f, 8f));
         }
         return lobbyLocation.position;
     }
@@ -149,9 +159,9 @@ public class GameManager : NetworkBehaviour
         if (!IsServer) return false;
         if (isRelax) return false;
         
-        if (objective.ScoreObject(obj, location))
+        if (currentObjective.ScoreObject(obj, location))
         {
-            UpdateObjectiveClientRPC(objective.score, objective.targetScore);
+            UpdateObjectiveClientRPC(currentObjective.score, currentObjective.targetScore);
             return true;
         }
         return false;
@@ -169,7 +179,7 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log("SendGameState");
         UpdateGameStateClientRPC(gameState);
-        UpdateObjectiveClientRPC(objective.score, objective.targetScore);
+        UpdateObjectiveClientRPC(currentObjective.score, currentObjective.targetScore);
         SetTimerClientRPC(timer, isRelax);
     }
 
@@ -199,40 +209,40 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void UpdateObjectiveClientRPC(ushort score, ushort targetScore)
     {
-        objective.Update(score, targetScore);
-        NetworkManagerUI.instance.UpdateObjective(objective);
+        currentObjective.Update(score, targetScore);
+        NetworkManagerUI.instance.UpdateObjective(currentObjective);
     }
 
     void NextObjective()
     {
         if (!IsServer) return;
 
-        objective = new Objective();
-        objective.SetUp();
+        currentObjective = new Objective();
+        currentObjective.SetUp();
 
-        NextObjectiveClientRPC(objective.GetID(), objective.score, objective.targetScore);
-        SetTimerClientRPC(objective.duration, false);
-        ObjectSpawner.instance.StartObjective(objective.GetID(), objective.targetScore);
+        NextObjectiveClientRPC(currentObjective.GetID(), currentObjective.score, currentObjective.targetScore);
+        SetTimerClientRPC(currentObjective.duration, false);
+        ObjectSpawner.instance.StartObjective(currentObjective.GetID(), currentObjective.targetScore);
     }
 
     [ClientRpc]
     void NextObjectiveClientRPC(int id, ushort score, ushort targetScore)
     {
-        objective.Update(id, score, targetScore);
+        currentObjective.Update(id, score, targetScore);
 
-        NetworkManagerUI.instance.StartObjective(objective);
+        NetworkManagerUI.instance.StartObjective(currentObjective);
     }
 
     [ClientRpc]
     void EndObjectiveClientRPC()
     {
-        NetworkManagerUI.instance.EndObjective(objective);
+        NetworkManagerUI.instance.EndObjective(currentObjective);
     }
 
     void UpdateUI()
     {
         NetworkManagerUI.instance.UpdateTimer(timer, isRelax);
-        NetworkManagerUI.instance.UpdateObjective(objective);
+        NetworkManagerUI.instance.UpdateObjective(currentObjective);
         NetworkManagerUI.instance.UpdateCanvas(gameState);
     }
 
@@ -261,6 +271,15 @@ public class GameManager : NetworkBehaviour
     public bool IsPlayerHost()
     {
         return IsServer;
+    }
+    public void SetCurrentObjective(Objective objective)
+    {
+        currentObjective = objective;
+    }
+
+    public Objective GetCurrentObjective()
+    {
+        return currentObjective;
     }
 
     // [ServerRpc]

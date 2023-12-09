@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class ObjectiveUI : MonoBehaviour
 {
+    public bool isEnded = false;
+    public bool isDone = false;
     public TMP_Text objectiveTitle;
     [SerializeField] private RectTransform rect;
     [SerializeField] private TMP_Text objectiveText;
@@ -21,9 +23,16 @@ public class ObjectiveUI : MonoBehaviour
 
     public void EndObjective(Objective objective)
     {
+        isEnded = true;
+        isDone = objective.isComplete;
+        SetEndedUI(objective.isComplete);
+    }
+
+    public void SetEndedUI(bool isDone)
+    {
         objectiveText.text = "";
-        objectiveDoneText.SetActive(objective.isComplete);
-        objectiveFailText.SetActive(!objective.isComplete);
+        objectiveDoneText.SetActive(isDone);
+        objectiveFailText.SetActive(!isDone);
         rect.sizeDelta = new Vector2(400, 80);
     }
 }
