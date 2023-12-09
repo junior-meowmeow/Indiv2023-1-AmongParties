@@ -157,6 +157,14 @@ public class NetworkManagerUI : NetworkBehaviour
 
         ingameCanvas.gameObject.SetActive(gameState == GameState.INGAME);
     }
+    public void ResetObjectives()
+    {
+        foreach(ObjectiveUI obj in ObjectiveList)
+        {
+            Destroy(obj.gameObject);
+        }
+        ObjectiveList.Clear();
+    }
 
     void AddressChanged(TMP_InputField input)
     {
@@ -179,7 +187,7 @@ public class NetworkManagerUI : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void RequestObjectiveUIServerRPC(ServerRpcParams serverRpcParams = default)
+    public void RequestObjectiveServerRPC(ServerRpcParams serverRpcParams = default)
     {
         if (GameManager.instance.GetGameState() != GameState.INGAME) return;
         var clientId = serverRpcParams.Receive.SenderClientId;
@@ -222,10 +230,10 @@ public class NetworkManagerUI : NetworkBehaviour
     }
 
     [ClientRpc]
-    void SetOngoingObjectiveUIClientRPC(int id, ushort score, ushort targerScore,ClientRpcParams clientRpcParams = default)
+    void SetOngoingObjectiveUIClientRPC(int id, ushort score, ushort targetScore,ClientRpcParams clientRpcParams = default)
     {
         Objective objective = new();
-        objective.Update(id, score, targerScore);
+        objective.Update(id, score, targetScore);
         GameManager.instance.SetCurrentObjective(objective);
         ObjectiveUI obj = Instantiate(ObjectiveUIPrefab, ObjectiveParent).GetComponent<ObjectiveUI>();
         obj.UpdateObjective(objective);

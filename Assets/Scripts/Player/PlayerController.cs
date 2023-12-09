@@ -86,7 +86,7 @@ public class PlayerController : SyncObject
 
         SyncObjectManager.instance.Initialize();
         GameManager.instance.UpdateGameStateServerRPC();
-        NetworkManagerUI.instance.RequestObjectiveUIServerRPC();
+        NetworkManagerUI.instance.RequestObjectiveServerRPC();
     }
 
     private void Update()
@@ -276,7 +276,7 @@ public class PlayerController : SyncObject
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void DropObjectServerRPC(bool isSteal)
     {
         if (holdingObject != null)
@@ -503,14 +503,14 @@ public class PlayerController : SyncObject
         return playerData;
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void WarpServerRPC(Vector3 destination)
     {
         WarpClientRPC(destination);
     }
 
     [ClientRpc]
-    void WarpClientRPC(Vector3 destination)
+    public void WarpClientRPC(Vector3 destination)
     {
         rb.transform.position = destination;
     }

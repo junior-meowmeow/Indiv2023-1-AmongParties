@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -11,7 +12,13 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private GameState gameState;
     [SerializeField] private GameMode gameMode;
     [SerializeField] private Objective currentObjective;
-    [SerializeField] private ushort gameScore;
+    [SerializeField] private ushort doneScore = 0;
+    [SerializeField] private ushort failScore = 0;
+    [SerializeField] private ushort winTargetScore = 3;
+    [SerializeField] private ushort loseTargetScore = 2;
+    [SerializeField] private TMP_Text mainObjectiveText;
+    [SerializeField] private GameObject winText;
+    [SerializeField] private GameObject loseText;
 
     [Header ("Find Object")]
     [SerializeField] private float timer;
@@ -76,30 +83,62 @@ public class GameManager : NetworkBehaviour
         this.gameMode = gameMode;
         if (gameMode == GameMode.COOP)
         {
-            StartGameServerRPC();
+            StartCOOPGameServerRPC();
             SetTimer(10f, true);
-            
         }
         else if(gameMode == GameMode.PVP)
         {
-            StartGameServerRPC();
+            StartPVPGameServerRPC();
             SetTimer(10f, true);
         }
 
     }
 
     [ServerRpc]
-    void StartGameServerRPC()
+    void StartCOOPGameServerRPC()
     {
-        StartGameClientRPC();
+        if (!ObjectPool.instance.isPoolInitialized)
+        {
+            ObjectPool.instance.PrewarmSpawn();
+        }
+        StartCOOPGameClientRPC(winTargetScore, loseTargetScore);
+    }
+
+    [ClientRpc]
+    void StartCOOPGameClientRPC(ushort winScore, ushort loseScore)
+    {
+        winText.SetActive(false);
+        loseText.SetActive(false);
+        gameState = GameState.INGAME;
+        doneScore = 0;
+        failScore = 0;
+        winTargetScore = winScore;
+        loseTargetScore = loseScore;
+        mainObjectiveText.text = "Complete " + winScore + " Objective to Win(You have " + loseScore + " Chances to Fail)";
+        NetworkManagerUI.instance.ResetObjectives();
+        ObjectPool.instance.RecallAllObjects();
+        UpdateUI();
+        if (IsServer)
+        {
+            foreach (PlayerData ps in playerList)
+            {
+                ps.player.WarpServerRPC(GetGameplaySpawnPosition());
+            }
+        }
+    }
+
+    [ServerRpc]
+    void StartPVPGameServerRPC()
+    {
+        StartPVPGameClientRPC();
         ObjectPool.instance.PrewarmSpawn();
     }
 
     [ClientRpc]
-    void StartGameClientRPC()
+    void StartPVPGameClientRPC()
     {
         gameState = GameState.INGAME;
-        foreach(PlayerData ps in playerList)
+        foreach (PlayerData ps in playerList)
         {
             ps.player.rb.transform.position = GetGameplaySpawnPosition();
         }
@@ -142,7 +181,7 @@ public class GameManager : NetworkBehaviour
 
     public Vector3 GetLobbySpawnPosition()
     {
-        return lobbyLocation.position + new Vector3(Random.Range(-1.25f, 3f), 0, Random.Range(-1.25f, 2.5f));
+        return lobbyLocation.position + new Vector3(Random.Range(-3f, 1.25f), 0, Random.Range(-2.5f, 1.25f));
     }
 
     public Vector3 GetGameplaySpawnPosition()
@@ -154,6 +193,55 @@ public class GameManager : NetworkBehaviour
         return lobbyLocation.position;
     }
 
+    public void UpdateCOOPGameScore(bool isDone)
+    {
+        if(isDone)
+        {
+            ++doneScore;
+            if(doneScore >= winTargetScore)
+            {
+                EndCOOPGame(true);
+            }
+        }
+        else
+        {
+            ++failScore;
+            if (failScore >= loseTargetScore)
+            {
+                EndCOOPGame(false);
+            }
+        }
+    }
+
+    public void EndCOOPGame(bool isWin)
+    {
+        gameState = GameState.LOBBY;
+        NetworkManagerUI.instance.UpdateCanvas(gameState);
+        if (isWin)
+        {
+            Debug.Log("YOU WIN");
+            winText.SetActive(true);
+        }
+        else
+        {
+            Debug.Log("YOU LOSE");
+            loseText.SetActive(true);
+        }
+        if (IsServer)
+        {
+            foreach (PlayerData ps in playerList)
+            {
+                ps.player.WarpClientRPC(GetLobbySpawnPosition());
+            }
+        }
+    }
+
+    [ClientRpc]
+    void EndCOOPGameClientRPC(bool isWin)
+    {
+        EndCOOPGame(isWin);
+    }
+
     public bool GetObject(PickableObject obj, string location)
     {
         if (!IsServer) return false;
@@ -162,6 +250,13 @@ public class GameManager : NetworkBehaviour
         if (currentObjective.ScoreObject(obj, location))
         {
             UpdateObjectiveClientRPC(currentObjective.score, currentObjective.targetScore);
+            if(currentObjective.isComplete)
+            {
+                if (doneScore+1 >= winTargetScore)
+                {
+                    EndCOOPGameClientRPC(true);
+                }
+            }
             return true;
         }
         return false;
@@ -177,7 +272,6 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void UpdateGameStateServerRPC()
     {
-        Debug.Log("SendGameState");
         UpdateGameStateClientRPC(gameState);
         UpdateObjectiveClientRPC(currentObjective.score, currentObjective.targetScore);
         SetTimerClientRPC(timer, isRelax);
@@ -187,8 +281,6 @@ public class GameManager : NetworkBehaviour
     void UpdateGameStateClientRPC(GameState state)
     {
         if (IsServer) return;
-        Debug.Log("yes");
-        Debug.Log(state);
         UpdateGameState(state);
     }
 
@@ -237,6 +329,7 @@ public class GameManager : NetworkBehaviour
     void EndObjectiveClientRPC()
     {
         NetworkManagerUI.instance.EndObjective(currentObjective);
+        UpdateCOOPGameScore(currentObjective.isComplete);
     }
 
     void UpdateUI()
@@ -272,14 +365,15 @@ public class GameManager : NetworkBehaviour
     {
         return IsServer;
     }
-    public void SetCurrentObjective(Objective objective)
-    {
-        currentObjective = objective;
-    }
 
     public Objective GetCurrentObjective()
     {
         return currentObjective;
+    }
+
+    public void SetCurrentObjective(Objective objective)
+    {
+        currentObjective = objective;
     }
 
     // [ServerRpc]

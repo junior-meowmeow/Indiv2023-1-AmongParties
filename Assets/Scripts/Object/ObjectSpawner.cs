@@ -46,7 +46,16 @@ public class ObjectSpawner : NetworkBehaviour
         GameObject obj = ObjectPool.instance.SpawnObject(tag, spawnPos[spawnIdx].position, spawnPos[spawnIdx].rotation);
         if(obj != null)
         {
-            obj.GetComponent<PickableObject>().SetUp(typeId, colorId, colorList[colorId - 1]);
+            obj.GetComponent<PickableObject>().SetUp(typeId, colorId, GetColorFromId(colorId));
         }
+    }
+
+    public Color GetColorFromId(byte colorId)
+    {
+        if(colorId < 0)
+        {
+            colorId = 0;
+        }
+        return colorList[colorId];
     }
 }

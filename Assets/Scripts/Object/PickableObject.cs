@@ -160,6 +160,10 @@ public class PickableObject : SyncObject
             player.holdingObject = obj;
         }
         obj.ShowHand(states[3]);
+        if (meshRenderer != null)
+        {
+            meshRenderer.material.color = ObjectSpawner.instance.GetColorFromId(data[1]);
+        }
     }
 
 }

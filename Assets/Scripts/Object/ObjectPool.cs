@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -19,9 +18,9 @@ public class ObjectPool : NetworkBehaviour
     [SerializeField] private Dictionary<string, Queue<GameObject>> poolDict;
     [SerializeField] private Transform objectParent;
     [SerializeField] private Queue<GameObject> tempPool;
-    [SerializeField] private bool isPoolInitialized = false;
     [SerializeField] private bool isLateJoin = false;
     [SerializeField] private bool isPoolReady = false;
+    public bool isPoolInitialized = false;
 
     public static ObjectPool instance;
 
@@ -175,6 +174,18 @@ public class ObjectPool : NetworkBehaviour
         poolDict[tag].Enqueue(obj);
 
         return obj;
+    }
+
+    public void RecallAllObjects()
+    {
+        foreach (Queue<GameObject> queue in poolDict.Values)
+        {
+            IEnumerator<GameObject> enumerator = queue.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                enumerator.Current.SetActive(false);
+            }
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
