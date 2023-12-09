@@ -111,6 +111,7 @@ public class NetworkManagerUI : MonoBehaviour
         ObjectiveUI obj = Instantiate(ObjectiveUIPrefab, ObjectiveParent).GetComponent<ObjectiveUI>();
         obj.UpdateObjective(objective);
         ObjectiveList.Add(obj);
+        obj.objectiveTitle.text = "Objective  " + ObjectiveList.Count.ToString();
     }
 
     public void EndObjective(Objective objective)

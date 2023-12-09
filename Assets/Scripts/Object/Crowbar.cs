@@ -56,6 +56,21 @@ public class Crowbar : Weapon
         holdPlayer.holdPos.gameObject.GetComponent<HoldPosController>().PlayAnimation(attackAnimation);
     }
 
+    public override void SetUp(byte typeId, byte colorId, Color color)
+    {
+        objectType = ObjectType.Weapon;
+        if (typeId == 3)
+        {
+            objectColor = ObjectColor.RED;
+            objectName = "Crowbar";
+        }
+        else if(typeId == 4)
+        {
+            objectColor = ObjectColor.BLUE;
+            objectName = "Hammer";
+        }
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (!isThrowing) return;

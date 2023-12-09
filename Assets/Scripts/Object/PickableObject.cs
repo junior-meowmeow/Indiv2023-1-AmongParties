@@ -81,7 +81,7 @@ public class PickableObject : SyncObject
         return;
     }
 
-    public void SetUp(byte typeId, byte colorId, Color color)
+    public virtual void SetUp(byte typeId, byte colorId, Color color)
     {
         objectType = (ObjectType)typeId;
         objectColor = (ObjectColor)colorId;

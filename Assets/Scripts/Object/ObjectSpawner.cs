@@ -5,6 +5,7 @@ using Unity.Netcode;
 
 public class ObjectSpawner : NetworkBehaviour
 {
+    [SerializeField] private bool isEnableRandomSpawn = true;
     [SerializeField] private Transform[] spawnPos;
     [SerializeField] private Color[] colorList;
 
@@ -23,7 +24,19 @@ public class ObjectSpawner : NetworkBehaviour
         {
             int spawnIdx = 0;
             if (objective.locationId == 0) spawnIdx = Random.Range(1, spawnPos.Length);
-            SpawnObjectClientRPC(objective.GetObjectType(), objective.GetObjectTypeId(), objective.GetObjectColorId(), spawnIdx);
+            byte typeId = objective.GetObjectTypeId();
+            SpawnObjectClientRPC(Objective.GetObjectType(typeId), typeId, objective.GetObjectColorId(), spawnIdx);
+        }
+        if(isEnableRandomSpawn)
+        {
+            int range = Random.Range(0, 3);
+            for (int i = 0; i < range; i++)
+            {
+                int spawnIdx = 0;
+                if (objective.locationId == 0) spawnIdx = Random.Range(1, spawnPos.Length);
+                byte typeId = Objective.GetRandomObjectTypeId();
+                SpawnObjectClientRPC(Objective.GetObjectType(typeId), typeId, objective.GetObjectColorId(), spawnIdx);
+            }
         }
     }
 

@@ -28,6 +28,11 @@ public class InteractableObject : SyncObject
     [ClientRpc]
     void InteractionClientRPC()
     {
+        Interaction();
+    }
+
+    void Interaction()
+    {
         anim.Play(interactClip.name);
         isUsed = true;
     }
@@ -46,5 +51,9 @@ public class InteractableObject : SyncObject
         InteractableObject obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<InteractableObject>();
         obj.enabled = enabled;
         obj.isUsed = isUsed;
+        if(obj.isOnce && isUsed)
+        {
+            Interaction();
+        }
     }
 }

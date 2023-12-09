@@ -4,10 +4,12 @@ using Unity.Netcode;
 using UnityEngine;
 
 public enum GameState {MENU, LOBBY, INGAME};
+public enum GameMode { COOP, PVP };
 
 public class GameManager : NetworkBehaviour
 {
     [SerializeField] private GameState gameState;
+    [SerializeField] private GameMode gameMode;
     [SerializeField] private Objective objective;
 
     [Header ("Find Object")]
@@ -18,7 +20,8 @@ public class GameManager : NetworkBehaviour
     public string localPlayerName;
     public bool isLocalPlayerEnableUI = true;
     public Transform lobbyLocation;
-    public Transform gameplayLocation;
+    public Transform coopGameplayLocation;
+    public Transform pvpGameplayLocation;
 
     public static GameManager instance;
 
@@ -40,6 +43,7 @@ public class GameManager : NetworkBehaviour
     {
         if (!IsServer) return;
 
+        gameMode = GameMode.COOP;
         StartGameServerRPC();
         SetTimer(10f, true);
     }
@@ -57,7 +61,7 @@ public class GameManager : NetworkBehaviour
         gameState = GameState.INGAME;
         foreach(PlayerData ps in playerList)
         {
-            ps.player.rb.transform.position = gameplayLocation.position;
+            ps.player.rb.transform.position = coopGameplayLocation.position;
         }
         UpdateUI();
     }
@@ -87,6 +91,29 @@ public class GameManager : NetworkBehaviour
         
     }
 
+    public Vector3 GetPlayerSpawnPosition()
+    {
+        if(gameState != GameState.INGAME)
+        {
+            return GetLobbySpawnPosition();
+        }
+        return GetGameplaySpawnPosition();
+    }
+
+    public Vector3 GetLobbySpawnPosition()
+    {
+        return lobbyLocation.position + new Vector3(Random.Range(-1.3f, 4f), 0, Random.Range(-2.5f, 3.5f));
+    }
+
+    public Vector3 GetGameplaySpawnPosition()
+    {
+        if(gameMode == GameMode.COOP)
+        {
+            return coopGameplayLocation.position + new Vector3(Random.Range(-8f, 8f), 0, Random.Range(-3.5f, 3.5f));
+        }
+        return lobbyLocation.position;
+    }
+
     public bool GetObject(PickableObject obj, string location)
     {
         if (!IsServer) return false;
@@ -110,11 +137,11 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void UpdateGameStateServerRPC()
     {
-        UpdateGameStateClientRPC((int)gameState);
+        UpdateGameStateClientRPC((byte)gameState);
     }
 
     [ClientRpc]
-    void UpdateGameStateClientRPC(int state)
+    void UpdateGameStateClientRPC(byte state)
     {
         gameState = (GameState)state;
         UpdateObjectiveClientRPC(objective.score, objective.targetScore);
@@ -130,7 +157,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void UpdateObjectiveClientRPC(int score, int targetScore)
+    void UpdateObjectiveClientRPC(ushort score, ushort targetScore)
     {
         objective.Update(score, targetScore);
         NetworkManagerUI.instance.UpdateObjective(objective);
@@ -149,7 +176,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void NextObjectiveClientRPC(int id, int score, int targetScore)
+    void NextObjectiveClientRPC(int id, ushort score, ushort targetScore)
     {
         objective.Update(id, score, targetScore);
 

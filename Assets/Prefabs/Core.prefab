@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 343590691793790428}
   - component: {fileID: -8867297250408800561}
   m_Layer: 8
-  m_Name: Sphere
+  m_Name: Core
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,14 +184,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   net_obj: {fileID: 0}
   isInScene: 0
-  objectName: Sphere
+  objectName: Core
   description: 'Press [E] to DROP
 
     Press [MOUSE1] to DROP
 
     Hold and Release
     [MOUSE2] to CHARGETHROW'
-  objectType: 0
+  objectType: 2
   objectColor: 0
   holdPos: {x: 0, y: 0.006, z: -0.0125}
   holdRotation: {x: 0, y: -180, z: 0}

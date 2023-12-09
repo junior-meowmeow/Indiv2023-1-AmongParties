@@ -12,15 +12,16 @@ public class Objective : INetworkSerializeByMemcpy
     public ObjectColor objectColor;
     public int locationId;
     public bool isComplete;
-    [SerializeField] private string[] locationList = {"Base", "Furnace", "Garbage"};
-    [SerializeField] private string[] typeList = {"Object", "Crate", "Core"};
-    [SerializeField] private string[] colorList = {"Any", "Red", "Blue", "Yellow", "Orange"};
+    [SerializeField] private static string[] locationList = {"Base", "Furnace", "Garbage"};
+    [SerializeField] private static string[] typeList = {"Object", "Crate", "Core"};
+    [SerializeField] private static string[] colorList = {"Any", "Red", "Blue", "Yellow", "Orange"};
+    [SerializeField] private static string[] allTypeList = { "Object", "Crate", "Core", "Crowbar", "Hammer" };
 
     [HideInInspector] public float startTime; //not used yet
     [HideInInspector] public float duration; //not used yet
 
-    public int score;
-    public int targetScore;
+    public ushort score;
+    public ushort targetScore;
 
     public void SetUp()
     {
@@ -30,12 +31,12 @@ public class Objective : INetworkSerializeByMemcpy
         locationId = Random.Range(0, locationList.Length);
         startTime = Time.time;
         score = 0;
-        targetScore = Random.Range(2, 5);
+        targetScore = (ushort)Random.Range(2, 5);
         duration = 30 + 10 * targetScore;
         isComplete = score >= targetScore;
     }
 
-    public void Update(int id, int score, int targetScore)
+    public void Update(int id, ushort score, ushort targetScore)
     {
         SetUp(id);
         this.score = score;
@@ -43,7 +44,7 @@ public class Objective : INetworkSerializeByMemcpy
         isComplete = score >= targetScore;
     }
 
-    public void Update(int score, int targetScore)
+    public void Update(ushort score, ushort targetScore)
     {
         this.score = score;
         this.targetScore = targetScore;
@@ -62,7 +63,7 @@ public class Objective : INetworkSerializeByMemcpy
         return false;
     }
 
-    void AddScore(int add)
+    void AddScore(ushort add)
     {
         score += add;
         if (score >= targetScore)
@@ -82,7 +83,7 @@ public class Objective : INetworkSerializeByMemcpy
         locationId = id;
         startTime = Time.time;
         score = 0;
-        targetScore = Random.Range(2, 5);
+        targetScore = (ushort)Random.Range(2, 5);
         duration = 30 + 10 * targetScore;
         isComplete = score >= targetScore;
     }
@@ -92,21 +93,20 @@ public class Objective : INetworkSerializeByMemcpy
         return req * 1000 + (int)objectType * 100 + (int)objectColor * 10 + locationId;
     }
 
-    public string GetObjectType()
+    public static string GetObjectType(byte objectTypeId)
     {
-        if ((int)objectType == 0) return typeList[Random.Range(1, typeList.Length)];
-        return typeList[(int)objectType];
+        return allTypeList[objectTypeId];
     }
 
     public byte GetObjectTypeId()
     {
-        if ((byte)objectType == 0) return (byte)Random.Range(1, typeList.Length);
+        if (objectType == 0) return (byte)Random.Range(1, typeList.Length);
         return (byte)objectType;
     }
 
     public byte GetObjectColorId()
     {
-        if ((byte)objectColor == 0) return (byte)Random.Range(1, colorList.Length);
+        if (objectColor == 0) return (byte)Random.Range(1, colorList.Length);
         return (byte)objectColor;
     }
 
@@ -114,4 +114,15 @@ public class Objective : INetworkSerializeByMemcpy
     {
         return $"Deliver {colorList[(int)objectColor]} {typeList[(int)objectType]} to {locationList[locationId]}";
     }
+
+    public static byte GetRandomObjectTypeId()
+    {
+        return (byte)Random.Range(1, allTypeList.Length);
+    }
+
+    public static byte GetRandomObjectColorId()
+    {
+        return (byte)Random.Range(1, colorList.Length);
+    }
+    
 }

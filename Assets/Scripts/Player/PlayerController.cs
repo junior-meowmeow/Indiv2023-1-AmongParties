@@ -82,7 +82,7 @@ public class PlayerController : SyncObject
         toggleUIInput.action.started += ToggleUI;
 
         //hipJoint.GetComponent<NetworkTransform>().enabled = false;
-        WarpServerRPC(GameManager.instance.lobbyLocation.position);
+        //WarpServerRPC(GameManager.instance.lobbyLocation.position);
 
         SyncObjectManager.instance.Initialize();
     }
@@ -246,20 +246,20 @@ public class PlayerController : SyncObject
         if (interactionCollider.HasObjectNearby)
         {
             PickableObject obj = interactionCollider.GetNearestObject();
-            if (obj.IsPickable() && obj.TryGetComponent(out NetworkObject obj_ref))
+            if (obj.IsPickable() && obj.TryGetComponent(out SyncObject sync_obj))
             {
-                PickObjectClientRPC(obj_ref);
+                PickObjectClientRPC(SyncObjectManager.instance.objectToKey[sync_obj]);
             }
         }
     }
 
     [ClientRpc]
-    void PickObjectClientRPC(NetworkObjectReference obj_ref)
+    void PickObjectClientRPC(ushort obj_key)
     {
-        PickableObject obj; 
-        if(obj_ref.TryGet(out NetworkObject targetObject))
+        SyncObject sync_obj;
+        if (sync_obj = SyncObjectManager.instance.objectList[obj_key])
         {
-            obj = targetObject.GetComponent<PickableObject>();
+            PickableObject obj = sync_obj.GetComponent<PickableObject>();
             obj.Hold(this);
             holdingObject = obj;
             holdPos.localPosition = obj.holdPos;
@@ -502,7 +502,7 @@ public class PlayerController : SyncObject
     }
 
     [ServerRpc]
-    void WarpServerRPC(Vector3 destination)
+    public void WarpServerRPC(Vector3 destination)
     {
         WarpClientRPC(destination);
     }

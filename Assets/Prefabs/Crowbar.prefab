@@ -133,6 +133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   net_obj: {fileID: 0}
+  isInScene: 0
   objectName: Crowbar
   description: 'Press [E] to DROP
 
@@ -140,8 +141,8 @@ MonoBehaviour:
 
     Press [MOUSE2]
     to THROW'
-  objectType: 0
-  objectColor: 0
+  objectType: 3
+  objectColor: 1
   holdPos: {x: 0.005, y: 0.005, z: -0.01}
   holdRotation: {x: 30, y: -180, z: 0}
   movingSpeed: 8
@@ -152,6 +153,7 @@ MonoBehaviour:
   hasAltUse: 1
   isDroppedAfterAltUse: 1
   isStealable: 0
+  isHandShow: 0
   holdPlayer: {fileID: 0}
   meshRenderer: {fileID: 0}
   hands:

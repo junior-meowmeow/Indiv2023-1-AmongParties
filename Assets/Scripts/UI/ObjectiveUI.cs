@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class ObjectiveUI : MonoBehaviour
 {
+    public TMP_Text objectiveTitle;
     [SerializeField] private RectTransform rect;
     [SerializeField] private TMP_Text objectiveText;
     [SerializeField] private GameObject objectiveDoneText;
@@ -13,7 +14,7 @@ public class ObjectiveUI : MonoBehaviour
     
     public void UpdateObjective(Objective objective)
     {
-        objectiveText.text = objective.GetObjectiveDescription() + " " + objective.score.ToString() + " " + objective.targetScore.ToString();
+        objectiveText.text = objective.GetObjectiveDescription() + "\nProgress: " + objective.score.ToString() + "/" + objective.targetScore.ToString();
 
         objectiveDoneText.SetActive(objective.isComplete);
     }

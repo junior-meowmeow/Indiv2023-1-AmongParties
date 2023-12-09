@@ -303,7 +303,7 @@ MonoBehaviour:
   description: 'Press [E] to DROP
 
     Press [MOUSE1] to DROP'
-  objectType: 0
+  objectType: 1
   objectColor: 0
   holdPos: {x: 0, y: 0.006, z: -0.014}
   holdRotation: {x: 0, y: -180, z: 0}
