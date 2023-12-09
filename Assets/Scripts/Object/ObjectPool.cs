@@ -28,6 +28,10 @@ public class ObjectPool : NetworkBehaviour
     void Awake()
     {
         instance = this;
+        if(objectParent == null)
+        {
+            objectParent = transform.root;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -44,7 +48,6 @@ public class ObjectPool : NetworkBehaviour
                     TargetClientIds = new ulong[] { clientId }
                 }
             };
-            Debug.Log(isPoolInitialized);
             CheckLateJoinClientRPC(isPoolInitialized);
         }
     }
@@ -68,7 +71,6 @@ public class ObjectPool : NetworkBehaviour
         if(isPoolReady)
         {
             poolDict = new Dictionary<string, Queue<GameObject>>();
-            Debug.Log("REQUEST");
             RequestPoolServerRPC();
             isLateJoin = false;
         }
@@ -204,7 +206,6 @@ public class ObjectPool : NetworkBehaviour
                     obj_actives[count] = obj.activeInHierarchy;
                     count++;
                 }
-                Debug.Log("Send " + tag + count);
                 SyncPooledObjectsClientRPC(obj_keys, obj_actives, tag, clientRpcParams);
             }
         }
@@ -213,16 +214,15 @@ public class ObjectPool : NetworkBehaviour
     [ClientRpc]
     private void SyncPooledObjectsClientRPC(ushort[] obj_keys, bool[] obj_actives, string tag, ClientRpcParams clientRpcParams = default)
     {
-        Debug.Log("Syncing " + tag + obj_keys.Length);
         tempPool = new Queue<GameObject>();
         for (int i = 0; i < obj_keys.Length; i++)
         {
             GameObject obj = SyncObjectManager.instance.objectList[obj_keys[i]].gameObject;
             obj.SetActive(obj_actives[i]);
+            //obj.transform.SetParent(objectParent);
             tempPool.Enqueue(obj);
         }
         poolDict.Add(tag, tempPool);
-        Debug.Log(tag);
         isPoolInitialized = true;
     }
 }

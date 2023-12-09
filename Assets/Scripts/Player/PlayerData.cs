@@ -41,7 +41,7 @@ public class PlayerData : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
-        Debug.Log("OnNetworkDespawn Called");
+        //Debug.Log("OnNetworkDespawn Called");
         GameManager.instance.RemovePlayer(this);
         NetworkManagerUI.instance.UpdatePlayerList();
     }

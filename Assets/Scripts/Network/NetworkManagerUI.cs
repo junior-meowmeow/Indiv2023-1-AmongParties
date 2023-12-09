@@ -150,7 +150,7 @@ public class NetworkManagerUI : MonoBehaviour
         menuCanvas.gameObject.SetActive(gameState == GameState.MENU);
         menuCam.gameObject.SetActive(gameState == GameState.MENU);
         startGameBtn.gameObject.SetActive(GameManager.instance.IsPlayerHost());
-        lobbyWaitText.gameObject.SetActive(!GameManager.instance.IsPlayerHost());
+        lobbyWaitText.SetActive(!GameManager.instance.IsPlayerHost());
         
         lobbyCanvas.gameObject.SetActive(gameState == GameState.LOBBY);
 

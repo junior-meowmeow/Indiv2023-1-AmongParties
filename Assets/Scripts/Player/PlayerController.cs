@@ -85,6 +85,7 @@ public class PlayerController : SyncObject
         //WarpServerRPC(GameManager.instance.lobbyLocation.position);
 
         SyncObjectManager.instance.Initialize();
+        GameManager.instance.UpdateGameStateServerRPC();
     }
 
     private void Update()
@@ -541,7 +542,6 @@ public class PlayerController : SyncObject
     public override void SyncObjectServerRPC(ushort obj_key)
     {
         base.SyncObjectServerRPC(obj_key);
-        Debug.Log("PlayerSR");
         SyncPlayerDataClientRPC(obj_key, playerData.playerName, playerData.playerColor);
         float[] data = {speedMultiplier, jumpMultiplier, lastFallTime, lastfallDuration, hipJoint.targetRotation.eulerAngles.y };
         if(holdingObject == null)

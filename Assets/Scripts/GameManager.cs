@@ -33,9 +33,7 @@ public class GameManager : NetworkBehaviour
     public void JoinLobby(string username)
     {
         gameState = GameState.LOBBY;
-
-        UpdateGameStateServerRPC();
-        UpdateUI();
+        UpdateGameState(gameState);
         localPlayerName = username;
     }
 
@@ -134,18 +132,28 @@ public class GameManager : NetworkBehaviour
         SetTimerClientRPC(time, isRelax);
     }
 
-    [ServerRpc]
-    void UpdateGameStateServerRPC()
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateGameStateServerRPC()
     {
-        UpdateGameStateClientRPC((byte)gameState);
+        Debug.Log("SendGameState");
+        UpdateGameStateClientRPC(gameState);
+        UpdateObjectiveClientRPC(objective.score, objective.targetScore);
+        SetTimerClientRPC(timer, isRelax);
     }
 
     [ClientRpc]
-    void UpdateGameStateClientRPC(byte state)
+    void UpdateGameStateClientRPC(GameState state)
     {
-        gameState = (GameState)state;
-        UpdateObjectiveClientRPC(objective.score, objective.targetScore);
-        SetTimerClientRPC(timer, isRelax);
+        if (IsServer) return;
+        Debug.Log("yes");
+        Debug.Log(state);
+        UpdateGameState(state);
+    }
+
+    private void UpdateGameState(GameState state)
+    {
+        gameState = state;
+        UpdateUI();
     }
 
     [ClientRpc]
