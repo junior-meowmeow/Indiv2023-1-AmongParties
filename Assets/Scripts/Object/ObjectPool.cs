@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -18,12 +19,83 @@ public class ObjectPool : NetworkBehaviour
     [SerializeField] private Dictionary<string, Queue<GameObject>> poolDict;
     [SerializeField] private Transform objectParent;
     [SerializeField] private Queue<GameObject> tempPool;
+    [SerializeField] private bool isPoolInitialized = false;
+    [SerializeField] private bool isLateJoin = false;
+    [SerializeField] private bool isPoolReady = false;
 
     public static ObjectPool instance;
 
     void Awake()
     {
         instance = this;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CheckLateJoinServerRPC(ServerRpcParams serverRpcParams = default)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            //var client = NetworkManager.ConnectedClients[clientId];
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+            Debug.Log(isPoolInitialized);
+            CheckLateJoinClientRPC(isPoolInitialized);
+        }
+    }
+
+    [ClientRpc]
+    private void CheckLateJoinClientRPC(bool isLateJoin, ClientRpcParams clientRpcParams = default)
+    {
+        this.isLateJoin = isLateJoin;
+    }
+
+    void Update()
+    {
+        if(isLateJoin && !isPoolInitialized)
+        {
+            CheckPool();
+        }
+    }
+    public void CheckPool()
+    {
+        CheckPoolReadyServerRPC(SyncObjectManager.instance.count);
+        if(isPoolReady)
+        {
+            poolDict = new Dictionary<string, Queue<GameObject>>();
+            Debug.Log("REQUEST");
+            RequestPoolServerRPC();
+            isLateJoin = false;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void CheckPoolReadyServerRPC(ushort count,ServerRpcParams serverRpcParams = default)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            //var client = NetworkManager.ConnectedClients[clientId];
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+            CheckPoolReadyClientRPC(SyncObjectManager.instance.count == count);
+        }
+    }
+
+    [ClientRpc]
+    private void CheckPoolReadyClientRPC(bool isPoolReady, ClientRpcParams clientRpcParams = default)
+    {
+        this.isPoolReady = isPoolReady;
     }
 
     public void PrewarmSpawn()
@@ -48,6 +120,7 @@ public class ObjectPool : NetworkBehaviour
             //poolDict.Add(pool.tag, objectPool);
             AddDictClientRPC(pool.tag);
         }
+        isPoolInitialized = true;
     }
 
     [ClientRpc]
@@ -100,5 +173,56 @@ public class ObjectPool : NetworkBehaviour
         poolDict[tag].Enqueue(obj);
 
         return obj;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestPoolServerRPC(ServerRpcParams serverRpcParams = default)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            //var client = NetworkManager.ConnectedClients[clientId];
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId }
+                }
+            };
+            foreach (var keyValue in poolDict)
+            {
+                string tag = keyValue.Key;
+                Queue<GameObject> queue = keyValue.Value;
+                ushort[] obj_keys = new ushort[queue.Count];
+                bool[] obj_actives = new bool[queue.Count];
+                IEnumerator<GameObject> enumerator = queue.GetEnumerator();
+                ushort count = 0;
+                while (enumerator.MoveNext())
+                {
+                    GameObject obj = enumerator.Current;
+                    obj_keys[count] = SyncObjectManager.instance.objectToKey[obj.GetComponent<SyncObject>()];
+                    obj_actives[count] = obj.activeInHierarchy;
+                    count++;
+                }
+                Debug.Log("Send " + tag + count);
+                SyncPooledObjectsClientRPC(obj_keys, obj_actives, tag, clientRpcParams);
+            }
+        }
+    }
+
+    [ClientRpc]
+    private void SyncPooledObjectsClientRPC(ushort[] obj_keys, bool[] obj_actives, string tag, ClientRpcParams clientRpcParams = default)
+    {
+        Debug.Log("Syncing " + tag + obj_keys.Length);
+        tempPool = new Queue<GameObject>();
+        for (int i = 0; i < obj_keys.Length; i++)
+        {
+            GameObject obj = SyncObjectManager.instance.objectList[obj_keys[i]].gameObject;
+            obj.SetActive(obj_actives[i]);
+            tempPool.Enqueue(obj);
+        }
+        poolDict.Add(tag, tempPool);
+        Debug.Log(tag);
+        isPoolInitialized = true;
     }
 }

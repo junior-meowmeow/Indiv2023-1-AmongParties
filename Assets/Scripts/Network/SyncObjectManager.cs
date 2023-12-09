@@ -69,7 +69,6 @@ public class SyncObjectManager : NetworkBehaviour
     public void RecreateObjectListClientRPC(NetworkObjectReference[] referenceList)
     {
         if (IsServer) return;
-
         objectList.Clear();
         objectToKey.Clear();
         count = 0;
@@ -139,7 +138,7 @@ public class SyncObjectManager : NetworkBehaviour
             if (reference.TryGet(out NetworkObject obj))
             {
                 objectList.Add(obj.GetComponent<SyncObject>());
-                Debug.Log(obj.gameObject.name);
+                //Debug.Log(obj.gameObject.name);
             }
             else
             {
@@ -148,11 +147,14 @@ public class SyncObjectManager : NetworkBehaviour
         }
         for (ushort i = count; i < objectList.Count; i++)
         {
-            if (objectList[i] == null) continue;
-            objectToKey[objectList[i]] = i;
+            if (objectList[count] != null)
+            {
+                objectToKey[objectList[count]] = count;
+            }
             count++;
         }
         SyncInitialStates();
+        ObjectPool.instance.CheckLateJoinServerRPC();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -174,8 +176,10 @@ public class SyncObjectManager : NetworkBehaviour
             objectList.Add(null);
         }
 
-        if (objectList[count] == null) return;
-        objectToKey[objectList[count]] = count;
+        if (objectList[count] != null)
+        {
+            objectToKey[objectList[count]] = count;
+        }
         count++;
     }
 
@@ -208,7 +212,7 @@ public class SyncObjectManager : NetworkBehaviour
         foreach (SyncObject obj in objectList)
         {
             if (obj == null) continue;
-            Debug.Log("Syncing " + obj.name);
+            //Debug.Log("Syncing " + obj.name);
             obj.SyncObjectServerRPC(objectToKey[obj]);
         }
     }

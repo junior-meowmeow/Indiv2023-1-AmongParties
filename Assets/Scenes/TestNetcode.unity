@@ -2356,7 +2356,7 @@ Transform:
   - {fileID: 295753601}
   - {fileID: 519576319}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &384066621 stripped
 GameObject:
@@ -4104,7 +4104,7 @@ Transform:
   - {fileID: 1063871842}
   - {fileID: 240254196}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705436565
 GameObject:
@@ -6059,7 +6059,7 @@ Transform:
   - {fileID: 750256395}
   - {fileID: 1333818984}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &901205098
 MonoBehaviour:
@@ -6114,11 +6114,9 @@ MonoBehaviour:
     prefab: {fileID: 6633045757757680229, guid: 5c8a11779842bef46b77f1ad4386e955,
       type: 3}
     size: 10
-  - tag: Hammer
-    prefab: {fileID: 6633045757757680229, guid: ce95750da305d284d8a494d021766509,
-      type: 3}
-    size: 10
   objectParent: {fileID: 901205097}
+  isPoolInitialized: 0
+  isPoolReady: 0
 --- !u!114 &901205100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9161,7 +9159,7 @@ Transform:
   - {fileID: 34083015}
   - {fileID: 431733339}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1231935774
 GameObject:
@@ -9723,7 +9721,7 @@ RectTransform:
   - {fileID: 1768645893}
   - {fileID: 904364711}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -9911,7 +9909,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1333818983
 GameObject:
@@ -14703,6 +14701,11 @@ PrefabInstance:
         type: 3}
       propertyPath: GlobalObjectIdHash
       value: 4005193900
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400502471199266995, guid: e5460f3aa7840374ebc18d7d130c876d,
+        type: 3}
+      propertyPath: m_PlayAutomatically
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8498804546677375763, guid: e5460f3aa7840374ebc18d7d130c876d,
         type: 3}

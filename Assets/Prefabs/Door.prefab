@@ -370,10 +370,9 @@ Animation:
   serializedVersion: 3
   m_Animation: {fileID: 0}
   m_Animations:
-  - {fileID: 7400000, guid: df07bdee5c6791749818137c6e08dece, type: 2}
   - {fileID: 7400000, guid: 050ba46828b0e6e4abf0f434d1633ee6, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
 --- !u!114 &6599757949259381355
@@ -388,7 +387,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 443dc37919a5d1d44addcca31c67bca2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  net_obj: {fileID: 0}
+  isInScene: 0
   isOnce: 1
+  isUsed: 0
   anim: {fileID: 2400502471199266995}
   interactClip: {fileID: 7400000, guid: 050ba46828b0e6e4abf0f434d1633ee6, type: 2}
 --- !u!114 &1270727884467228174

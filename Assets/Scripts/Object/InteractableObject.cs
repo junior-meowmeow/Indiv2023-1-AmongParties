@@ -41,7 +41,7 @@ public class InteractableObject : SyncObject
     public override void SyncObjectServerRPC(ushort obj_key)
     {
         base.SyncObjectServerRPC(obj_key);
-        SyncInteractionClientRPC(obj_key, enabled, isOnce);
+        SyncInteractionClientRPC(obj_key, enabled, isUsed);
     }
 
     [ClientRpc]
@@ -49,11 +49,11 @@ public class InteractableObject : SyncObject
     {
         if (IsServer) return;
         InteractableObject obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<InteractableObject>();
-        obj.enabled = enabled;
         obj.isUsed = isUsed;
         if(obj.isOnce && isUsed)
         {
             Interaction();
         }
+        obj.enabled = enabled;
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreParticle : MonoBehaviour
+public class ScoreParticle : SyncObject
 {
     void Start()
     {

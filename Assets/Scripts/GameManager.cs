@@ -61,7 +61,7 @@ public class GameManager : NetworkBehaviour
         gameState = GameState.INGAME;
         foreach(PlayerData ps in playerList)
         {
-            ps.player.rb.transform.position = coopGameplayLocation.position;
+            ps.player.rb.transform.position = GetGameplaySpawnPosition();
         }
         UpdateUI();
     }

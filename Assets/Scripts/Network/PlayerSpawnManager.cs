@@ -16,7 +16,7 @@ public class PlayerSpawnManager : NetworkBehaviour
          * (I.E: its start position, its character) and to perform additional validation checks. */
         response.Approved = true;
         response.CreatePlayerObject = true;
-        response.Position = GameManager.instance.GetLobbySpawnPosition();
+        response.Position = GameManager.instance.GetPlayerSpawnPosition();
     }
 
     /*

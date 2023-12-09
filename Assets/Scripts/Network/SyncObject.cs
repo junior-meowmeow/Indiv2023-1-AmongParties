@@ -22,7 +22,7 @@ public class SyncObject : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        Debug.Log("OnNetworkSpawn Called");
+        //Debug.Log("OnNetworkSpawn Called");
         CheckSpawnServerRPC();
     }
 

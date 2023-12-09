@@ -102,8 +102,8 @@ public class NetworkManagerUI : MonoBehaviour
     {
         if (isRelax) timerText.color = new Color(1, 0, 0);
         else timerText.color = new Color(1, 1, 1);
-        
-        timerText.text = ((int)time/60).ToString() + ":" + ((int)time%60).ToString();
+        string secondText = ((int)time % 60).ToString("00");
+        timerText.text = ((int)time/60).ToString() + ":" + secondText;
     }
 
     public void StartObjective(Objective objective)
