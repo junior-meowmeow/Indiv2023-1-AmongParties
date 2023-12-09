@@ -6114,8 +6114,13 @@ MonoBehaviour:
     prefab: {fileID: 6633045757757680229, guid: 5c8a11779842bef46b77f1ad4386e955,
       type: 3}
     size: 10
+  - tag: Hammer
+    prefab: {fileID: 6633045757757680229, guid: ce95750da305d284d8a494d021766509,
+      type: 3}
+    size: 10
   objectParent: {fileID: 901205097}
   isPoolInitialized: 0
+  isLateJoin: 0
   isPoolReady: 0
 --- !u!114 &901205100
 MonoBehaviour:

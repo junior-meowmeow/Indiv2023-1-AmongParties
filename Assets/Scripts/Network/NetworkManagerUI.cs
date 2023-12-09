@@ -73,7 +73,14 @@ public class NetworkManagerUI : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.Quit();
+            Cursor.lockState = CursorLockMode.None;
+        }
+        if(Input.GetMouseButtonDown(0))
+        {
+            if (GameManager.instance.GetGameState() == GameState.INGAME)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
     }
 
@@ -100,7 +107,7 @@ public class NetworkManagerUI : MonoBehaviour
 
     public void UpdateTimer(float time, bool isRelax)
     {
-        if (isRelax) timerText.color = new Color(1, 0, 0);
+        if (isRelax) timerText.color = new Color(1, 0.185f, 0.185f);
         else timerText.color = new Color(1, 1, 1);
         string secondText = ((int)time % 60).ToString("00");
         timerText.text = ((int)time/60).ToString() + ":" + secondText;
