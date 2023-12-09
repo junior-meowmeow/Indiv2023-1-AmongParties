@@ -76,7 +76,8 @@ public class PlayerData : NetworkBehaviour
     [ServerRpc]
     private void SetPlayerNameServerRPC(string name)
     {
-        SetPlayerNameClientRPC(name);
+        string validUsername = GameManager.instance.GetValidUsername(name);
+        SetPlayerNameClientRPC(validUsername);
     }
 
     [ClientRpc]

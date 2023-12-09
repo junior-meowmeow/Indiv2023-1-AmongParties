@@ -37,6 +37,38 @@ public class GameManager : NetworkBehaviour
         localPlayerName = username;
     }
 
+    public string GetValidUsername(string username)
+    {
+        string validUsername = username;
+        byte count = 1;
+        foreach (PlayerData ps in playerList)
+        {
+            if (ps.playerName == validUsername)
+            {
+                validUsername = username + " " + count;
+                count++;
+            }
+        }
+        return validUsername;
+        /*
+        if(count <= 1)
+        {
+            return validUsername;
+        }
+        validUsername = username + " 1";
+        count = 2;
+        foreach (PlayerData ps in playerList)
+        {
+            if (ps.playerName == validUsername)
+            {
+                validUsername = username + " " + count;
+                count++;
+            }
+        }
+        return validUsername;
+        */
+    }
+
     public void StartGame()
     {
         if (!IsServer) return;

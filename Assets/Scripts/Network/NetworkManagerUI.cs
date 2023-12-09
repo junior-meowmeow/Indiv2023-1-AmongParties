@@ -176,4 +176,15 @@ public class NetworkManagerUI : MonoBehaviour
         }
         Debug.Log("New Username : " + username);
     }
+
+    [ServerRpc]
+    void RequestObjectivesServerRPC()
+    {
+        RequestObjectivesClientRPC();
+    }
+
+    [ClientRpc]
+    void RequestObjectivesClientRPC()
+    {
+    }
 }
