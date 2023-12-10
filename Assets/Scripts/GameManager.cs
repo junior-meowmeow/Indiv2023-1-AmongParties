@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using UnityEngine.UI;
 
 public enum GameState {MENU, LOBBY, INGAME};
 public enum GameMode { COOP, PVP };
@@ -82,6 +84,7 @@ public class GameManager : NetworkBehaviour
     public void StartGame(GameMode gameMode)
     {
         if (!IsServer) return;
+        if (gameState == GameState.INGAME) return;
         this.gameMode = gameMode;
         if (gameMode == GameMode.COOP)
         {
@@ -91,7 +94,7 @@ public class GameManager : NetworkBehaviour
         else if(gameMode == GameMode.PVP)
         {
             StartPVPGameServerRPC();
-            SetTimer(10f, true);
+            //SetTimer(10f, true);
         }
 
     }
@@ -109,17 +112,11 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void StartCOOPGameClientRPC(ushort winScore, ushort loseScore)
     {
-        winText.SetActive(false);
-        loseText.SetActive(false);
-        gameState = GameState.INGAME;
-        doneScore = 0;
-        failScore = 0;
+        ResetValueBeforeGame();
         winTargetScore = winScore;
         loseTargetScore = loseScore;
         SoundManager.Instance.PlayTheme("coop");
         mainObjectiveText.text = "Complete " + winScore + " Objective to Win(You have " + loseScore + " Chances to Fail)";
-        NetworkManagerUI.instance.ResetObjectives();
-        ObjectPool.instance.RecallAllObjects();
         UpdateUI();
         if (IsServer)
         {
@@ -133,19 +130,38 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void StartPVPGameServerRPC()
     {
+        if (!ObjectPool.instance.isPoolInitialized)
+        {
+            ObjectPool.instance.PrewarmSpawn();
+        }
         StartPVPGameClientRPC();
-        ObjectPool.instance.PrewarmSpawn();
     }
 
     [ClientRpc]
     void StartPVPGameClientRPC()
     {
-        gameState = GameState.INGAME;
-        foreach (PlayerData ps in playerList)
+        ResetValueBeforeGame();
+        Debug.Log("PVP ENDED");
+        gameState = GameState.LOBBY;
+        if (IsServer)
         {
-            ps.player.WarpClientRPC(GetGameplaySpawnPosition(), isDropItem: true);
+            foreach (PlayerData ps in playerList)
+            {
+                ps.player.WarpClientRPC(GetGameplaySpawnPosition(), isDropItem: true);
+            }
         }
         UpdateUI();
+    }
+
+    private void ResetValueBeforeGame()
+    {
+        winText.SetActive(false);
+        loseText.SetActive(false);
+        doneScore = 0;
+        failScore = 0;
+        NetworkManagerUI.instance.ResetObjectives();
+        ObjectPool.instance.RecallAllObjects();
+        gameState = GameState.INGAME;
     }
 
     void Update()
@@ -155,7 +171,7 @@ public class GameManager : NetworkBehaviour
 
     void TimerCounting()
     {
-        if (gameState != GameState.INGAME) return;
+        if (gameState != GameState.INGAME || gameMode != GameMode.COOP) return;
         if (timer > 0)
         {
             timer -= Time.deltaTime;
@@ -193,7 +209,7 @@ public class GameManager : NetworkBehaviour
         {
             return coopGameplayLocation.position + new Vector3(Random.Range(-5f, 5f), 0, Random.Range(-8f, 8f));
         }
-        return lobbyLocation.position;
+        return GetLobbySpawnPosition();
     }
 
     public void UpdateCOOPGameScore(bool isDone)
@@ -295,7 +311,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void UpdateGameStateServerRPC()
     {
-        UpdateGameStateClientRPC(gameState);
+        UpdateGameStateClientRPC(gameState, gameMode);
         UpdateGameScoreClientRPC(doneScore, failScore, winTargetScore, loseTargetScore);
         UpdateObjectiveClientRPC(currentObjective.score, currentObjective.targetScore);
         UpdateThemeClientRPC(SoundManager.Instance.currentTheme);
@@ -303,10 +319,11 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void UpdateGameStateClientRPC(GameState state)
+    void UpdateGameStateClientRPC(GameState state, GameMode gameMode)
     {
         if (IsServer) return;
         UpdateGameState(state);
+        this.gameMode = gameMode;
     }
 
     private void UpdateGameState(GameState state)

@@ -89,6 +89,7 @@ public class PlayerController : SyncObject
 
         SyncObjectManager.instance.Initialize();
         GameManager.instance.UpdateGameStateServerRPC();
+        NetworkManagerUI.instance.RequestUIStateServerRPC();
         NetworkManagerUI.instance.RequestObjectiveServerRPC();
         GameManager.instance.localPlayer = this;
         SoundManager.Instance.localPlayerPosition = rb.transform;
