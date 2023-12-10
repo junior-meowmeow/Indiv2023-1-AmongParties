@@ -15,9 +15,12 @@ public class SoundManager : MonoBehaviour
     public Transform localPlayerPosition;
     public List<string> themeList;
     public string currentTheme;
+    private Sound currentThemeSound;
     public float maxDistance = 40f;
     public float distanceMultiplier = 1f;
     public float blendValue = 0.75f;
+    public float sfxVolume = 1f;
+    private float musicVolume = 1f;
 
     void Awake()
     {
@@ -54,8 +57,7 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        Play("menu");
-        currentTheme = "menu";
+        PlayTheme("menu");
     }
 
     public void SetRotation(float angleY)
@@ -71,7 +73,7 @@ public class SoundManager : MonoBehaviour
             {
                 //Debug.Log("found " + name);
                 sound.source.transform.localPosition = Vector3.zero;
-                sound.source.volume = sound.volume;
+                sound.source.volume = sound.volume * sfxVolume;
                 sound.source.spatialBlend = 0;
                 sound.source.Play();
                 return;
@@ -97,7 +99,7 @@ public class SoundManager : MonoBehaviour
                 //Debug.Log("found " + name);
                 sound.source.transform.localPosition = displacement * distanceMultiplier;
                 //sound.source.volume = sound.volume * scale;
-                sound.source.volume = sound.volume;
+                sound.source.volume = sound.volume * sfxVolume;
                 sound.source.spatialBlend = blendValue;
                 sound.source.Play();
                 return;
@@ -131,7 +133,7 @@ public class SoundManager : MonoBehaviour
                 }
                 //Debug.Log("found " + name);
                 sound.source.transform.localPosition = displacement * distanceMultiplier;
-                sound.source.volume = sound.volume * scale;
+                sound.source.volume = sound.volume * sfxVolume * scale;
                 sound.source.spatialBlend = blendValue;
                 sound.source.Play();
                 return;
@@ -153,7 +155,7 @@ public class SoundManager : MonoBehaviour
                 }
                 //Debug.Log("found " + newName);
                 sound.source.transform.localPosition = displacement * distanceMultiplier;
-                s.source.volume = s.volume * scale;
+                s.source.volume = s.volume * sfxVolume * scale;
                 sound.source.spatialBlend = blendValue;
                 s.source.Play();
                 return;
@@ -176,7 +178,7 @@ public class SoundManager : MonoBehaviour
         sounds.Add(newSound);
 
         newSound.source.transform.localPosition = displacement * distanceMultiplier;
-        newSound.source.volume = newSound.volume * scale;
+        newSound.source.volume = newSound.volume * sfxVolume * scale;
         sound.source.spatialBlend = blendValue;
         newSound.source.Play();
     }
@@ -209,8 +211,10 @@ public class SoundManager : MonoBehaviour
             if (sound.name == name)
             {
                 //Debug.Log("found " + name);
+                sound.source.volume = sound.volume * musicVolume;
                 sound.source.spatialBlend = 0;
                 sound.source.Play();
+                currentThemeSound = sound;
                 count++;
             }
             if (count == 2)
@@ -219,5 +223,11 @@ public class SoundManager : MonoBehaviour
             }
         }
         currentTheme = name;
+    }
+
+    public void SetMusicVolume(float musicVolume)
+    {
+        this.musicVolume = musicVolume;
+        currentThemeSound.source.volume = currentThemeSound.volume * musicVolume;
     }
 }

@@ -6,10 +6,11 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.UI;
 using HSVPicker;
+using UnityEngine.SceneManagement;
 
 public class NetworkManagerUI : NetworkBehaviour
 {
-    [Header ("Menu")]
+    [Header("Menu")]
     [SerializeField] private Button hostBtn;
     [SerializeField] private Button clientBtn;
     [SerializeField] private Canvas menuCanvas;
@@ -19,7 +20,7 @@ public class NetworkManagerUI : NetworkBehaviour
     private string address = "127.0.0.1";
     private string username = "Player";
 
-    [Header ("Lobby")]
+    [Header("Lobby")]
     [SerializeField] private GameMode selectedGameMode = GameMode.COOP;
     [SerializeField] private Canvas lobbyCanvas;
     [SerializeField] private Button startGameBtn;
@@ -32,12 +33,19 @@ public class NetworkManagerUI : NetworkBehaviour
     [SerializeField] private Color selectedColor;
     [SerializeField] private TMP_Text playerListText;
 
-    [Header ("Ingame")]
+    [Header("Ingame")]
     [SerializeField] private Canvas ingameCanvas;
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private GameObject ObjectiveUIPrefab;
     [SerializeField] private List<ObjectiveUI> ObjectiveList;
     [SerializeField] private Transform ObjectiveParent;
+
+    [Header("Pause")]
+    [SerializeField] private Canvas pauseCanvas;
+    [SerializeField] private Slider sfxSlider;
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private Button backToMenuBtn;
+    [SerializeField] private Button quitGameBtn;
 
     public static NetworkManagerUI instance;
 
@@ -50,21 +58,13 @@ public class NetworkManagerUI : NetworkBehaviour
     {
         instance = this;
         UpdateCanvas(GameManager.instance.GetGameState());
-        if (addressInput != null)
-        {
-            addressInput.onEndEdit.AddListener(delegate { AddressChanged(addressInput); });
-        }
-        if (usernameInput != null)
-        {
-            usernameInput.onEndEdit.AddListener(delegate {UsernameChanged(usernameInput); });
-        }
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if(GameManager.instance.GetGameState() == GameState.INGAME)
+            if (GameManager.instance.GetGameState() == GameState.INGAME)
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }
@@ -80,10 +80,14 @@ public class NetworkManagerUI : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;
+            if (GameManager.instance.GetGameState() != GameState.MENU)
+            {
+                TogglePause();
+            }
         }
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            if (GameManager.instance.GetGameState() == GameState.INGAME)
+            if (GameManager.instance.GetGameState() == GameState.INGAME && !pauseCanvas.gameObject.activeSelf)
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }
@@ -92,6 +96,14 @@ public class NetworkManagerUI : NetworkBehaviour
 
     void InitButton()
     {
+        if (addressInput != null)
+        {
+            addressInput.onEndEdit.AddListener(delegate { AddressChanged(addressInput); });
+        }
+        if (usernameInput != null)
+        {
+            usernameInput.onEndEdit.AddListener(delegate { UsernameChanged(usernameInput); });
+        }
         hostBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartHost();
             GameManager.instance.JoinLobby(username);
@@ -106,6 +118,18 @@ public class NetworkManagerUI : NetworkBehaviour
             GameManager.instance.StartGame(selectedGameMode);
             SoundManager.Instance.Play("select");
         });
+        backToMenuBtn.onClick.AddListener(() => {
+            SoundManager.Instance.Play("select");
+            BackToMenu();
+        });
+        quitGameBtn.onClick.AddListener(() => {
+            Application.Quit();
+        });
+
+        sfxSlider.value = 1f;
+        sfxSlider.onValueChanged.AddListener(delegate { SfxVolumeChanged(); });
+        musicSlider.value = 1f;
+        musicSlider.onValueChanged.AddListener(delegate { MusicVolumeChanged(); });
 
         /*
         Button[] btnList = colorButtonList.GetComponentsInChildren<Button>();
@@ -138,12 +162,51 @@ public class NetworkManagerUI : NetworkBehaviour
         });
     }
 
+    private void BackToMenu()
+    {
+        if(IsHost)
+        {
+            AfterHostEndedClientRPC();
+        }
+        else
+        {
+            DisconnectToMenu();
+        }
+    }
+
+    [ClientRpc]
+    private void AfterHostEndedClientRPC()
+    {
+        DisconnectToMenu();
+    }
+
+    private void DisconnectToMenu()
+    {
+        GameObject networkManager = NetworkManager.Singleton.gameObject;
+        NetworkManager.Singleton.Shutdown();
+        Destroy(networkManager);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+    }
+
+    private void TogglePause()
+    {
+        if (pauseCanvas.gameObject.activeSelf)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+        pauseCanvas.gameObject.SetActive(!pauseCanvas.gameObject.activeSelf);
+    }
+
     public void UpdateTimer(float time, bool isRelax)
     {
         if (isRelax) timerText.color = new Color(1, 0.185f, 0.185f);
         else timerText.color = new Color(1, 1, 1);
         string secondText = ((int)time % 60).ToString("00");
-        timerText.text = ((int)time/60).ToString() + ":" + secondText;
+        timerText.text = ((int)time / 60).ToString() + ":" + secondText;
     }
 
     public void StartObjective(Objective objective)
@@ -172,7 +235,7 @@ public class NetworkManagerUI : NetworkBehaviour
         playerListText.text = "Player List:\n";
 
         int count = 1;
-        foreach(PlayerData player in players)
+        foreach (PlayerData player in players)
         {
             playerListText.text += (count++) + ". " + player.playerName + "\n";
         }
@@ -180,6 +243,10 @@ public class NetworkManagerUI : NetworkBehaviour
 
     public void UpdateCanvas(GameState gameState)
     {
+        if (!pauseCanvas.gameObject.activeSelf || gameState != GameState.INGAME)
+        {
+            pauseCanvas.gameObject.SetActive(false);
+        }
         menuCanvas.gameObject.SetActive(gameState == GameState.MENU);
         menuCam.gameObject.SetActive(gameState == GameState.MENU);
         startGameBtn.gameObject.SetActive(GameManager.instance.IsPlayerHost());
@@ -188,6 +255,14 @@ public class NetworkManagerUI : NetworkBehaviour
         lobbyCanvas.gameObject.SetActive(gameState == GameState.LOBBY);
 
         ingameCanvas.gameObject.SetActive(gameState == GameState.INGAME);
+        if(gameState == GameState.MENU)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
     public void ResetObjectives()
     {
@@ -206,6 +281,16 @@ public class NetworkManagerUI : NetworkBehaviour
             (ushort)12345 // The port number is an unsigned short
             );
         Debug.Log("New Address : " + address);
+    }
+
+    void SfxVolumeChanged()
+    {
+        SoundManager.Instance.sfxVolume = sfxSlider.value;
+    }
+
+    void MusicVolumeChanged()
+    {
+        SoundManager.Instance.SetMusicVolume(musicSlider.value);
     }
 
     void UsernameChanged(TMP_InputField input)
