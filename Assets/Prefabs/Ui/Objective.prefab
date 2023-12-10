@@ -476,8 +476,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Description
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8d689431490a0ee4e865ef84e5fbd9b8, type: 2}
-  m_sharedMaterial: {fileID: 4865365910257000828, guid: 8d689431490a0ee4e865ef84e5fbd9b8,
+  m_fontAsset: {fileID: 11400000, guid: 5ef6ea526255445409788465b54f9f00, type: 2}
+  m_sharedMaterial: {fileID: 7664277193409673126, guid: 5ef6ea526255445409788465b54f9f00,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -607,6 +607,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3bcd95d0e0b2ba4d80a8e5190d96a85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnded: 0
+  isDone: 0
   objectiveTitle: {fileID: 1441993929743740456}
   rect: {fileID: 4775611866723062592}
   objectiveText: {fileID: 4775611866517415237}
