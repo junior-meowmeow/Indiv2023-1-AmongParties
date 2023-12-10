@@ -14,6 +14,7 @@ public class PlayerColorButtonUI : MonoBehaviour
         GetComponent<Image>().color = color;
         GetComponent<Button>().onClick.AddListener(() => {
             NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetPlayerColorServerRPC(color);
+            SoundManager.Instance.Play("select");
         });
     }
 }

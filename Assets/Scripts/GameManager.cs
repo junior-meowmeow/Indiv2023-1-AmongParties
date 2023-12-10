@@ -125,7 +125,7 @@ public class GameManager : NetworkBehaviour
         {
             foreach (PlayerData ps in playerList)
             {
-                ps.player.WarpServerRPC(GetGameplaySpawnPosition());
+                ps.player.WarpClientRPC(GetGameplaySpawnPosition(), isDropItem: true);
             }
         }
     }
@@ -143,7 +143,7 @@ public class GameManager : NetworkBehaviour
         gameState = GameState.INGAME;
         foreach (PlayerData ps in playerList)
         {
-            ps.player.rb.transform.position = GetGameplaySpawnPosition();
+            ps.player.WarpClientRPC(GetGameplaySpawnPosition(), isDropItem: true);
         }
         UpdateUI();
     }
@@ -201,19 +201,25 @@ public class GameManager : NetworkBehaviour
         if(isDone)
         {
             ++doneScore;
-            SoundManager.Instance.Play("get_point");
             if (doneScore >= winTargetScore)
             {
                 EndCOOPGame(true);
+            }
+            else
+            {
+                SoundManager.Instance.Play("get_point");
             }
         }
         else
         {
             ++failScore;
-            SoundManager.Instance.Play("failed");
             if (failScore >= loseTargetScore)
             {
                 EndCOOPGame(false);
+            }
+            else
+            {
+                SoundManager.Instance.Play("failed");
             }
         }
     }
@@ -239,7 +245,7 @@ public class GameManager : NetworkBehaviour
         {
             foreach (PlayerData ps in playerList)
             {
-                ps.player.WarpClientRPC(GetLobbySpawnPosition());
+                ps.player.WarpClientRPC(GetLobbySpawnPosition(), isDropItem: true);
             }
         }
     }
@@ -263,11 +269,20 @@ public class GameManager : NetworkBehaviour
                 if (doneScore+1 >= winTargetScore)
                 {
                     EndCOOPGameClientRPC(true);
+                    return true;
                 }
             }
+            PlaySoundClientRPC("approve" + Random.Range(1, 4), obj.transform.position);
             return true;
         }
+        PlaySoundClientRPC("deny", obj.transform.position);
         return false;
+    }
+
+    [ClientRpc]
+    private void PlaySoundClientRPC(string name, Vector3 position)
+    {
+        SoundManager.Instance.PlayNew(name, position);
     }
 
     public void SetTimer(float time, bool isRelax)
@@ -281,7 +296,9 @@ public class GameManager : NetworkBehaviour
     public void UpdateGameStateServerRPC()
     {
         UpdateGameStateClientRPC(gameState);
+        UpdateGameScoreClientRPC(doneScore, failScore, winTargetScore, loseTargetScore);
         UpdateObjectiveClientRPC(currentObjective.score, currentObjective.targetScore);
+        UpdateThemeClientRPC(SoundManager.Instance.currentTheme);
         SetTimerClientRPC(timer, isRelax);
     }
 
@@ -297,6 +314,24 @@ public class GameManager : NetworkBehaviour
         gameState = state;
         UpdateUI();
     }
+
+    [ClientRpc]
+    void UpdateGameScoreClientRPC(ushort doneScore, ushort failScore, ushort winTargetScore, ushort loseTargetScore)
+    {
+        if (IsServer) return;
+        this.doneScore = doneScore;
+        this.failScore = failScore;
+        this.winTargetScore = winTargetScore;   
+        this.loseTargetScore = loseTargetScore;
+    }
+
+    [ClientRpc]
+    void UpdateThemeClientRPC(string name)
+    {
+        if (IsServer) return;
+        SoundManager.Instance.PlayTheme(name);
+    }
+
 
     [ClientRpc]
     void SetTimerClientRPC(float time, bool isRelax)
@@ -359,6 +394,7 @@ public class GameManager : NetworkBehaviour
 
     public void AddNewPlayer(PlayerData player)
     {
+        player.indexInPlayerList = playerList.Count;
         playerList.Add(player);
         // AddNewPlayerServerRpc(player);
     }
@@ -366,6 +402,10 @@ public class GameManager : NetworkBehaviour
     public void RemovePlayer(PlayerData player)
     {
         playerList.Remove(player);
+        for (int i = 0; i < playerList.Count; i++)
+        {
+            playerList[i].indexInPlayerList = i;
+        }
         // AddNewPlayerServerRpc(player);
     }
 

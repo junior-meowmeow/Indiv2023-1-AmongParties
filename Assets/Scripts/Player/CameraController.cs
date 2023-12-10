@@ -103,6 +103,7 @@ public class CameraController : MonoBehaviour
         transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0);
 
         UpdatePlayerNameText();
+        SoundManager.Instance.SetRotation(-horizontalRotation);
     }
 
     public void SetScrollAxis(float axis)

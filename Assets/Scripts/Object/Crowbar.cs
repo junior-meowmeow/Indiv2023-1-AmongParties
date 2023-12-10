@@ -46,6 +46,7 @@ public class Crowbar : Weapon
             rb.AddForce((holdPlayer.hipJoint.transform.forward + Vector3.down * 0.25f) * -throwForce, ForceMode.Impulse);
             isThrowing = true;
             isAttacking = true;
+            SoundManager.Instance.PlayNew("throw", transform.position);
         }
     }
 
@@ -54,7 +55,7 @@ public class Crowbar : Weapon
         isAttacking = true;
         lastAttackTime = Time.time;
         holdPlayer.holdPos.gameObject.GetComponent<HoldPosController>().PlayAnimation(attackAnimation);
-        SoundManager.Instance.Play("attack", this.transform.position);
+        SoundManager.Instance.PlayNew("attack", transform.position);
     }
 
     public override void SetUp(byte typeId, byte colorId, Color color)

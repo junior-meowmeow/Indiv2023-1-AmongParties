@@ -7,7 +7,7 @@ using Unity.Netcode;
 public class PlayerController : SyncObject
 {
     public bool isDisplayUI = true;
-    [Header ("Movement")]
+    [Header("Movement")]
     [SerializeField] private float movementSpeed = 5.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
     [SerializeField] private float jumpForce = 100f;
@@ -26,7 +26,7 @@ public class PlayerController : SyncObject
 
     private float scrollAxis = 0f;
 
-    [Header ("Input Action")]
+    [Header("Input Action")]
     public InputActionReference moveInput;
     public InputActionReference jumpInput;
     public InputActionReference interactInput;
@@ -36,14 +36,13 @@ public class PlayerController : SyncObject
     public InputActionReference playDeadInput;
     public InputActionReference toggleUIInput;
 
-    [Header ("Body")]
+    [Header("Body")]
     public Rigidbody rb;
     public ConfigurableJoint hipJoint;
     public ConfigurableJoint leftLeg;
     public ConfigurableJoint rightLeg;
 
     private CameraController cam;
-    private AudioListener audioListener;
     private PlayerData playerData;
     public PickableObject holdingObject;
     public Vector3 defaultHoldPos = new(0f, 0.006f, -0.014f);
@@ -62,18 +61,16 @@ public class PlayerController : SyncObject
     {
         playerData = GetComponent<PlayerData>();
         cam = GetComponentInChildren<CameraController>();
-        audioListener = GetComponentInChildren<AudioListener>();
         if (!IsOwner)
         {
             cam.Disable();
-            audioListener.enabled = false;
         }
 
         Cursor.lockState = CursorLockMode.Locked;
 
         currentStepTime = 0f;
 
-        if(!IsOwner)
+        if (!IsOwner)
         {
             return;
         }
@@ -129,7 +126,7 @@ public class PlayerController : SyncObject
             }
             return;
         }
-        if(stopped)
+        if (stopped)
         {
             SetMoveServerRPC(true);
             stopped = false;
@@ -218,7 +215,7 @@ public class PlayerController : SyncObject
     [ClientRpc]
     void SetMoveClientRPC(bool isMove)
     {
-        if(isMove)
+        if (isMove)
         {
             isMoving = true;
         }
@@ -277,7 +274,7 @@ public class PlayerController : SyncObject
             speedMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
             jumpMultiplier = Mathf.Clamp(1f - holdingObject.weight / 100f, 0.1f, 1f);
 
-            if(IsOwner)
+            if (IsOwner)
             {
                 ObjectInfoController.instance.SetHoldingText(obj.objectName, obj.description);
             }
@@ -298,7 +295,7 @@ public class PlayerController : SyncObject
     {
         if (holdingObject != null)
         {
-            if(!isSteal)
+            if (!isSteal)
             {
                 holdingObject.Drop();
             }
@@ -361,7 +358,7 @@ public class PlayerController : SyncObject
 
     void JumpServer(InputAction.CallbackContext c)
     {
-        if(!IsOwner)
+        if (!IsOwner)
         {
             return;
         }
@@ -390,6 +387,7 @@ public class PlayerController : SyncObject
     public void FallClientRPC(float fallDuration)
     {
         Fall(fallDuration);
+        SoundManager.Instance.PlayNew("hit", rb.transform.position);
     }
 
     void CheckFallServer()
@@ -462,12 +460,19 @@ public class PlayerController : SyncObject
             //Debug.Log("angle " + angle);
         }
 
-        float leftLegAngle = offset + 25f * Mathf.Sin(currentStepTime * stepMultiplier);
-        float rightLegAngle = offset + -25f * Mathf.Sin(currentStepTime * stepMultiplier);
+        float angle = Mathf.Sin(currentStepTime * stepMultiplier);
+
+        float leftLegAngle = offset + 25f * angle;
+        float rightLegAngle = offset + -25f * angle;
         leftLeg.targetRotation = Quaternion.Euler(leftLegAngle, 0f, 0f);
         rightLeg.targetRotation = Quaternion.Euler(rightLegAngle, 0f, 0f);
 
         currentStepTime += stepSpeed * speedMultiplier * Time.fixedDeltaTime;
+
+        if (angle * Mathf.Sin(currentStepTime * stepMultiplier) < 0 && Physics.Raycast(groundPoint.position, Vector3.down, out _, 0.35f))
+        {
+            SoundManager.Instance.PlayNew("footstep", rb.transform.position + Vector3.down * 0.8f);
+        }
     }
 
     void CameraControl()
@@ -477,13 +482,14 @@ public class PlayerController : SyncObject
         {
             cam.SetScrollAxis(axis);
             scrollAxis = axis;
-        } 
-        
+        }
+
     }
 
     void Fall(float fallDuration)
     {
         isFall = true;
+        isMoving = false;
         interactInput.action.started -= Interact;
         //jumpInput.action.started -= Jump;
         jumpInput.action.started -= JumpServer;
@@ -492,7 +498,7 @@ public class PlayerController : SyncObject
         jointXDrive.positionSpring = 0f;
         hipJoint.angularXDrive = jointXDrive;
 
-        if(holdingObject != null)
+        if (holdingObject != null)
         {
             holdingObject.Drop();
             holdingObject = null;
@@ -512,21 +518,26 @@ public class PlayerController : SyncObject
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void WarpServerRPC(Vector3 destination)
+    public void WarpServerRPC(Vector3 destination, bool isDropItem)
     {
-        WarpClientRPC(destination);
+        WarpClientRPC(destination, isDropItem);
     }
 
     [ClientRpc]
-    public void WarpClientRPC(Vector3 destination)
+    public void WarpClientRPC(Vector3 destination, bool isDropItem)
     {
         rb.transform.position = destination;
+        if(isDropItem && holdingObject != null)
+        {
+            holdingObject.Drop();
+            Drop();
+        }
     }
 
     public void UpdateObjectInfo(bool isSet, string itemName)
     {
         if (!IsOwner) return;
-        if(isSet)
+        if (isSet)
         {
             ObjectInfoController.instance.SetItemText(itemName);
         }
@@ -552,8 +563,8 @@ public class PlayerController : SyncObject
     {
         base.SyncObjectServerRPC(obj_key);
         SyncPlayerDataClientRPC(obj_key, playerData.playerName, playerData.playerColor);
-        float[] data = {speedMultiplier, jumpMultiplier, lastFallTime, lastfallDuration, hipJoint.targetRotation.eulerAngles.y };
-        if(holdingObject == null)
+        float[] data = { speedMultiplier, jumpMultiplier, lastFallTime, lastfallDuration, hipJoint.targetRotation.eulerAngles.y };
+        if (holdingObject == null)
         {
             SyncPlayerVariableClientRPC(obj_key, ushort.MaxValue, data, isFall);
         }

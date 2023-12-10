@@ -12,6 +12,7 @@ public class PlayerData : NetworkBehaviour
     public Objective objective;
     public string playerName;
     public Color playerColor;
+    public int indexInPlayerList;
 
     void Awake()
     {

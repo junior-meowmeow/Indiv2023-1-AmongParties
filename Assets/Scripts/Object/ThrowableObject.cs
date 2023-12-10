@@ -43,7 +43,7 @@ public class ThrowableObject : PickableObject
         }
         if(isHolding)
         {
-            rb.AddForce((holdPlayer.hipJoint.transform.forward + Vector3.down * 0.25f) * -throwForce, ForceMode.Impulse);
+            Throw(throwForce);
         }
     }
 
@@ -60,8 +60,14 @@ public class ThrowableObject : PickableObject
         {
             chargeForce = maxThrowForce;
         }
-        rb.AddForce((holdPlayer.hipJoint.transform.forward + Vector3.down * 0.25f) * -chargeForce, ForceMode.Impulse);
+        Throw(chargeForce);
         isCharging = false;
+    }
+
+    private void Throw(float currentThrowForce)
+    {
+        rb.AddForce((holdPlayer.hipJoint.transform.forward + Vector3.down * 0.25f) * -currentThrowForce, ForceMode.Impulse);
+        SoundManager.Instance.PlayNew("throw", transform.position);
     }
 
     [ServerRpc(RequireOwnership = false)]
