@@ -57,16 +57,16 @@ public class PlayerData : NetworkBehaviour
     void SetPlayerColorClientRPC(Color color)
     {
         SetPlayerColor(color);
-        if(player.holdingObject != null)
-        {
-            player.holdingObject.ShowHand(player.holdingObject.isHandShow);
-        }
     }
 
     public void SetPlayerColor(Color color)
     {
         playerColor = color;
         meshRenderer.material.color = color;
+        if (player.holdingObject != null)
+        {
+            player.holdingObject.ShowHand(player.holdingObject.isHandShow);
+        }
     }
 
     public Color GetColor()

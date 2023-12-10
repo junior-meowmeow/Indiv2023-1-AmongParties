@@ -5,6 +5,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.UI;
+using HSVPicker;
 
 public class NetworkManagerUI : NetworkBehaviour
 {
@@ -23,8 +24,12 @@ public class NetworkManagerUI : NetworkBehaviour
     [SerializeField] private Canvas lobbyCanvas;
     [SerializeField] private Button startGameBtn;
     [SerializeField] private GameObject lobbyWaitText;
-    [SerializeField] private GameObject colorButtonList;
-    [SerializeField] private Color[] colorList;
+    //[SerializeField] private GameObject colorButtonList;
+    //[SerializeField] private Color[] colorList;
+    [SerializeField] private Button changeColorBtn;
+    [SerializeField] private Button confirmColorBtn;
+    [SerializeField] private ColorPicker colorPicker;
+    [SerializeField] private Color selectedColor;
     [SerializeField] private TMP_Text playerListText;
 
     [Header ("Ingame")]
@@ -102,11 +107,35 @@ public class NetworkManagerUI : NetworkBehaviour
             SoundManager.Instance.Play("select");
         });
 
+        /*
         Button[] btnList = colorButtonList.GetComponentsInChildren<Button>();
         for(int idx = 0; idx < btnList.Length; idx++)
         {
-            btnList[idx].GetComponent<PlayerColorButtonUI>().Init(colorList[idx]);
+            //btnList[idx].GetComponent<PlayerColorButtonUI>().Init(colorList[idx]);
         }
+        */
+
+        changeColorBtn.onClick.AddListener(() => {
+            SoundManager.Instance.Play("select");
+            colorPicker.gameObject.SetActive(true);
+            confirmColorBtn.gameObject.SetActive(true);
+            changeColorBtn.gameObject.SetActive(false);
+        });
+
+        confirmColorBtn.onClick.AddListener(() =>
+        {
+            SoundManager.Instance.Play("select");
+            NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetPlayerColorServerRPC(selectedColor);
+            changeColorBtn.gameObject.SetActive(true);
+            colorPicker.gameObject.SetActive(false);
+            confirmColorBtn.gameObject.SetActive(false);
+        });
+
+        colorPicker.onValueChanged.AddListener(color =>
+        {
+            selectedColor = color;
+            NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetPlayerColor(color);
+        });
     }
 
     public void UpdateTimer(float time, bool isRelax)
