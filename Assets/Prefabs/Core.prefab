@@ -193,6 +193,11 @@ MonoBehaviour:
     [MOUSE2] to CHARGETHROW'
   objectType: 2
   objectColor: 0
+  impactSound: wood
+  minimumImpact: 4
+  defaultMinimumImpact: 4
+  holdingMinimumImpact: 7
+  impactSoundCooldown: 0.2
   holdPos: {x: 0, y: 0.006, z: -0.0125}
   holdRotation: {x: 0, y: -180, z: 0}
   movingSpeed: 8

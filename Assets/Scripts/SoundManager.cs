@@ -107,6 +107,11 @@ public class SoundManager : MonoBehaviour
 
     public void PlayNew(string name, Vector3 sourceLocation)
     {
+        PlayNew(name, 1f, sourceLocation);
+    }
+
+    public void PlayNew(string name, float scale, Vector3 sourceLocation)
+    {
         if (GameManager.instance.GetGameState() == GameState.MENU || localPlayerPosition == null)
         {
             Play(name);
@@ -114,21 +119,19 @@ public class SoundManager : MonoBehaviour
         }
         float distance = Vector3.Distance(localPlayerPosition.position, sourceLocation);
         if (distance >= maxDistance) return;
-        float scale = (maxDistance - distance) / maxDistance;
         Vector3 displacement = sourceLocation - localPlayerPosition.position;
         foreach (Sound sound in sounds)
         {
             if (sound.name == name)
             {
-                if(sound.source.isPlaying)
+                if (sound.source.isPlaying)
                 {
-                    PlayNew(sound, 1, scale,displacement);
+                    PlayNew(sound, sound.name, 1, scale, displacement);
                     return;
                 }
                 //Debug.Log("found " + name);
                 sound.source.transform.localPosition = displacement * distanceMultiplier;
-                //sound.source.volume = sound.volume * scale;
-                sound.source.volume = sound.volume;
+                sound.source.volume = sound.volume * scale;
                 sound.source.spatialBlend = blendValue;
                 sound.source.Play();
                 return;
@@ -136,22 +139,21 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    private void PlayNew(Sound sound,int count,float scale,Vector3 displacement)
+    private void PlayNew(Sound sound, string name,int count,float scale,Vector3 displacement)
     {
-        string newName = sound.name + count;
+        string newName = name + count;
         foreach (Sound s in sounds)
         {
             if (s.name == newName)
             {
                 if (s.source.isPlaying)
                 {
-                    PlayNew(s, count+1, scale,displacement);
+                    PlayNew(s, name, count+1, scale,displacement);
                     return;
                 }
                 //Debug.Log("found " + newName);
                 sound.source.transform.localPosition = displacement * distanceMultiplier;
-                //s.source.volume = s.volume * scale;
-                s.source.volume = s.volume;
+                s.source.volume = s.volume * scale;
                 sound.source.spatialBlend = blendValue;
                 s.source.Play();
                 return;
@@ -174,8 +176,7 @@ public class SoundManager : MonoBehaviour
         sounds.Add(newSound);
 
         newSound.source.transform.localPosition = displacement * distanceMultiplier;
-        //newSound.source.volume = newSound.volume * scale;
-        newSound.source.volume = newSound.volume;
+        newSound.source.volume = newSound.volume * scale;
         sound.source.spatialBlend = blendValue;
         newSound.source.Play();
     }

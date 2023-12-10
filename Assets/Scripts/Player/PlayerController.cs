@@ -279,6 +279,7 @@ public class PlayerController : SyncObject
                 ObjectInfoController.instance.SetHoldingText(obj.objectName, obj.description);
             }
         }
+        SoundManager.Instance.PlayNew("hold", rb.transform.position);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -381,6 +382,7 @@ public class PlayerController : SyncObject
     void JumpClientRPC()
     {
         rb.AddForce(jumpForce * jumpMultiplier * Vector3.up, ForceMode.Impulse);
+        SoundManager.Instance.PlayNew("jump", rb.transform.position + Vector3.down * 0.8f);
     }
 
     [ClientRpc]

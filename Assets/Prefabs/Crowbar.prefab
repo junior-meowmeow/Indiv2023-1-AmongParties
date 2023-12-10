@@ -143,6 +143,11 @@ MonoBehaviour:
     to THROW'
   objectType: 3
   objectColor: 1
+  impactSound: metal3
+  minimumImpact: 4
+  defaultMinimumImpact: 4
+  holdingMinimumImpact: 11
+  impactSoundCooldown: 0.3
   holdPos: {x: 0.005, y: 0.005, z: -0.01}
   holdRotation: {x: 30, y: -180, z: 0}
   movingSpeed: 8

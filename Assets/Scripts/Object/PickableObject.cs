@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class PickableObject : SyncObject
 {
@@ -12,6 +13,12 @@ public class PickableObject : SyncObject
     [Header("Base Property")]
     public ObjectType objectType;
     public ObjectColor objectColor;
+    public string impactSound = "defaultImpact";
+    public float minimumImpact = 4f;
+    public float defaultMinimumImpact = 4f;
+    public float holdingMinimumImpact = 7f;
+    public float impactSoundCooldown = 0.2f;
+    private float lastImpactTime;
 
     public Vector3 holdPos = new(0f, 0.006f, -0.014f);
     public Vector3 holdRotation = new(0f, 0f, 0f);
@@ -39,6 +46,7 @@ public class PickableObject : SyncObject
         }
 
         ShowHand(false);
+        minimumImpact = defaultMinimumImpact;
     }
 
     protected virtual void FixedUpdate()
@@ -103,12 +111,14 @@ public class PickableObject : SyncObject
         }
         holdPlayer = player;
         ShowHand(true);
+        minimumImpact = holdingMinimumImpact;
     }
 
     public void Drop()
     {
         holdPlayer = null;
         ShowHand(false);
+        minimumImpact = defaultMinimumImpact;
     }
 
     public bool IsPickable()
@@ -164,6 +174,22 @@ public class PickableObject : SyncObject
         {
             meshRenderer.material.color = ObjectSpawner.instance.GetColorFromId(data[1]);
         }
+    }
+
+    protected virtual void OnCollisionEnter(Collision collision)
+    {
+        if (collision.relativeVelocity.magnitude > minimumImpact)
+        {
+            PlayImpactSound(collision.relativeVelocity.magnitude, collision.transform.position);
+        }
+    }
+
+    protected virtual void PlayImpactSound(float magnitude, Vector3 position)
+    {
+        if (Time.time - lastImpactTime < impactSoundCooldown) return;
+        float scale = magnitude / 30f;
+        SoundManager.Instance.PlayNew(impactSound, scale, position);
+        lastImpactTime = Time.time;
     }
 
 }

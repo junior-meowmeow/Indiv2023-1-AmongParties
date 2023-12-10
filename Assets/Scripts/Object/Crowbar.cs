@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Crowbar : Weapon
@@ -73,12 +72,19 @@ public class Crowbar : Weapon
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    protected override void PlayImpactSound(float magnitude, Vector3 position)
     {
+        base.PlayImpactSound(magnitude, position);
+    }
+
+    protected override void OnCollisionEnter(Collision collision)
+    {
+        base.OnCollisionEnter(collision);
         if (!isThrowing) return;
         if (collision.gameObject.layer != 0) return;
         isThrowing = false;
         isAttacking = false;
+        PlayImpactSound(collision.relativeVelocity.magnitude, collision.transform.position);
     }
 
     [ServerRpc(RequireOwnership = false)]
