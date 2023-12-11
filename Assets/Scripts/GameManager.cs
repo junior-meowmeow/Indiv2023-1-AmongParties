@@ -32,7 +32,8 @@ public class GameManager : NetworkBehaviour
     public bool isLocalPlayerEnableUI = true;
     public Transform lobbyLocation;
     public Transform coopGameplayLocation;
-    public Transform pvpGameplayLocation;
+    public Transform[] pvpGameplayLocations;
+    private int pvpLocationCount = 0;
 
     public static GameManager instance;
 
@@ -141,6 +142,7 @@ public class GameManager : NetworkBehaviour
     void StartPVPGameClientRPC()
     {
         ResetValueBeforeGame();
+        pvpLocationCount = 0;
         Debug.Log("PVP ENDED");
         gameState = GameState.LOBBY;
         if (IsServer)
@@ -148,6 +150,7 @@ public class GameManager : NetworkBehaviour
             foreach (PlayerData ps in playerList)
             {
                 ps.player.WarpClientRPC(GetGameplaySpawnPosition(), isDropItem: true);
+                pvpLocationCount = (pvpLocationCount + 1)%pvpGameplayLocations.Length;
             }
         }
         UpdateUI();
@@ -208,6 +211,10 @@ public class GameManager : NetworkBehaviour
         if(gameMode == GameMode.COOP)
         {
             return coopGameplayLocation.position + new Vector3(Random.Range(-5f, 5f), 0, Random.Range(-8f, 8f));
+        }
+        if(gameMode == GameMode.PVP)
+        {
+            return pvpGameplayLocations[pvpLocationCount].position + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
         }
         return GetLobbySpawnPosition();
     }
