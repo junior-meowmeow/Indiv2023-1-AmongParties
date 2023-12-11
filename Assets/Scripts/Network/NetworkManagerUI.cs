@@ -50,6 +50,10 @@ public class NetworkManagerUI : NetworkBehaviour
     [SerializeField] private Button backToMenuBtn;
     [SerializeField] private Button quitGameBtn;
 
+    [Header("Loading")]
+    [SerializeField] private Canvas loadingCanvas;
+    [SerializeField] private TMP_Text loadingText;
+
     public static NetworkManagerUI instance;
 
     void Awake()
@@ -110,11 +114,13 @@ public class NetworkManagerUI : NetworkBehaviour
             usernameInput.onEndEdit.AddListener(delegate { UsernameChanged(usernameInput); });
         }
         hostBtn.onClick.AddListener(() => {
+            ToggleLoading(true, "Loading...");
             NetworkManager.Singleton.StartHost();
             GameManager.instance.JoinLobby(username);
             SoundManager.Instance.Play("select");
         });
         clientBtn.onClick.AddListener(() => {
+            ToggleLoading(true, "Findind Server...");
             NetworkManager.Singleton.StartClient();
             GameManager.instance.JoinLobby(username);
             SoundManager.Instance.Play("select");
@@ -278,6 +284,17 @@ public class NetworkManagerUI : NetworkBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
     }
+
+    public void ToggleLoading(bool isLoading)
+    {
+        loadingCanvas.gameObject.SetActive(isLoading);
+    }
+    public void ToggleLoading(bool isLoading, string text)
+    {
+        loadingCanvas.gameObject.SetActive(isLoading);
+        loadingText.text = text;
+    }
+
     public void ResetObjectives()
     {
         foreach(ObjectiveUI obj in ObjectiveList)
@@ -318,7 +335,6 @@ public class NetworkManagerUI : NetworkBehaviour
             btn.UpdateButton(gameMode, IsServer);
         }
     }
-
 
     void SfxVolumeChanged()
     {

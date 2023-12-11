@@ -13,6 +13,7 @@ public class PlayerData : NetworkBehaviour
     public string playerName;
     public Color playerColor;
     public int indexInPlayerList;
+    public bool isDead;
 
     void Awake()
     {
