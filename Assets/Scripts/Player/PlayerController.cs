@@ -494,6 +494,7 @@ public class PlayerController : SyncObject
     {
         isFall = true;
         isMoving = false;
+        stopped = true;
         interactInput.action.started -= Interact;
         //jumpInput.action.started -= Jump;
         jumpInput.action.started -= JumpServer;
