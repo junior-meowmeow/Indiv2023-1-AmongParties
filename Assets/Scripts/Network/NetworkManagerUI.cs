@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using HSVPicker;
 using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms;
 
 public class NetworkManagerUI : NetworkBehaviour
 {
@@ -35,6 +34,7 @@ public class NetworkManagerUI : NetworkBehaviour
     [SerializeField] private TMP_Text playerListText;
     [SerializeField] private Toggle coopToggle;
     [SerializeField] private Toggle pvpToggle;
+    [SerializeField] private List<GameModeButtonUI> gameModeBtnList;
 
     [Header("Ingame")]
     [SerializeField] private Canvas ingameCanvas;
@@ -95,6 +95,8 @@ public class NetworkManagerUI : NetworkBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
+
+        ToggleGameMode(selectedGameMode);
     }
 
     void InitButton()
@@ -133,12 +135,10 @@ public class NetworkManagerUI : NetworkBehaviour
             Application.Quit();
         });
 
-        coopToggle.onValueChanged.AddListener(delegate {
-            CoopToggleValueChanged(coopToggle);
-        });
-        pvpToggle.onValueChanged.AddListener(delegate {
-            PvpToggleValueChanged(pvpToggle);
-        });
+        foreach (GameModeButtonUI btn in gameModeBtnList)
+        {
+            btn.Init();
+        }
 
         sfxSlider.value = 1f;
         sfxSlider.onValueChanged.AddListener(delegate { SfxVolumeChanged(); });
@@ -174,13 +174,6 @@ public class NetworkManagerUI : NetworkBehaviour
             selectedColor = color;
             NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetPlayerColor(color);
         });
-
-        CoopToggleValueChanged(coopToggle);
-        if(!IsServer)
-        {
-            coopToggle.interactable = false;
-            pvpToggle.interactable = false;
-        }
     }
 
     private void BackToMenu()
@@ -304,57 +297,28 @@ public class NetworkManagerUI : NetworkBehaviour
         Debug.Log("New Address : " + address);
     }
 
-    void CoopToggleValueChanged(Toggle change)
-    {
-        if(change.isOn)
-        {
-            selectedGameMode = GameMode.COOP;
-            coopToggle.interactable = false;
-            pvpToggle.isOn = false;
-            if (IsServer)
-            {
-                pvpToggle.interactable = true;
-            }
-            SyncToggleValue();
-        }
-    }
-
-    void PvpToggleValueChanged(Toggle change)
-    {
-        if (change.isOn)
-        {
-            selectedGameMode = GameMode.PVP;
-            pvpToggle.interactable = false;
-            coopToggle.isOn = false;
-            if(IsServer)
-            {
-                coopToggle.interactable = true;
-            }
-            SyncToggleValue();
-        }
-    }
-
-    void SyncToggleValue()
+    public void ToggleGameMode(GameMode gameMode)
     {
         if (!IsServer) return;
-        SyncToggleValueClientRPC(selectedGameMode == GameMode.COOP);
+        selectedGameMode = gameMode;
+        UpdateGameModeClientRPC(gameMode);
     }
 
     [ClientRpc]
-    void SyncToggleValueClientRPC(bool isCoop)
+    void UpdateGameModeClientRPC(GameMode gameMode)
     {
-        if (IsServer) return;
-        if (isCoop)
+        selectedGameMode = gameMode;
+        UpdateGameModeButton(gameMode);
+    }
+
+    void UpdateGameModeButton(GameMode gameMode)
+    {
+        foreach (GameModeButtonUI btn in gameModeBtnList)
         {
-            coopToggle.isOn = true;
-            CoopToggleValueChanged(coopToggle);
-        }
-        else
-        {
-            pvpToggle.isOn = true;
-            PvpToggleValueChanged(pvpToggle);
+            btn.UpdateButton(gameMode, IsServer);
         }
     }
+
 
     void SfxVolumeChanged()
     {
@@ -390,23 +354,15 @@ public class NetworkManagerUI : NetworkBehaviour
                     TargetClientIds = new ulong[] { clientId }
                 }
             };
-            SendUIStateClientRPC(selectedGameMode == GameMode.COOP, clientRpcParams);
+            SendUIStateClientRPC(selectedGameMode, clientRpcParams);
         }
     }
 
     [ClientRpc]
-    void SendUIStateClientRPC(bool isCoop, ClientRpcParams clientRpcParams = default)
+    void SendUIStateClientRPC(GameMode gameMode, ClientRpcParams clientRpcParams = default)
     {
-        if (isCoop)
-        {
-            coopToggle.isOn = true;
-            CoopToggleValueChanged(coopToggle);
-        }
-        else
-        {
-            pvpToggle.isOn = true;
-            PvpToggleValueChanged(pvpToggle);
-        }
+        selectedGameMode = gameMode;
+        UpdateGameModeButton(gameMode);
     }
 
     [ServerRpc(RequireOwnership = false)]
