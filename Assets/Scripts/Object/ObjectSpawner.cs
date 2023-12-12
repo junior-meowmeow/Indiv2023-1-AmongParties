@@ -5,14 +5,25 @@ using Unity.Netcode;
 
 public class ObjectSpawner : NetworkBehaviour
 {
+    private static ObjectSpawner instance;
+    public static ObjectSpawner Instance => instance;
+
     [SerializeField] private bool isEnableRandomSpawn = true;
     [SerializeField] private Transform[] spawnPos;
     [SerializeField] private Color[] colorList;
 
-    public static ObjectSpawner instance;
-
     void Awake()
     {
+        InitSingleton();
+    }
+
+    private void InitSingleton()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
     }
 

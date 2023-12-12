@@ -383,7 +383,7 @@ public class GameManager : NetworkBehaviour
 
         NextObjectiveClientRPC(currentObjective.GetID(), currentObjective.score, currentObjective.targetScore);
         SetTimerClientRPC(currentObjective.duration, false);
-        ObjectSpawner.instance.StartObjective(currentObjective.GetID(), currentObjective.targetScore);
+        ObjectSpawner.Instance.StartObjective(currentObjective.GetID(), currentObjective.targetScore);
     }
 
     [ClientRpc]

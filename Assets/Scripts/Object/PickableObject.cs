@@ -172,7 +172,7 @@ public class PickableObject : SyncObject
         obj.ShowHand(states[3]);
         if (meshRenderer != null)
         {
-            meshRenderer.material.color = ObjectSpawner.instance.GetColorFromId(data[1]);
+            meshRenderer.material.color = ObjectSpawner.Instance.GetColorFromId(data[1]);
         }
     }
 
