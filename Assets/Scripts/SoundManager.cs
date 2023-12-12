@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class SoundManager : MonoBehaviour
@@ -30,8 +31,11 @@ public class SoundManager : MonoBehaviour
             return;
         }
         instance = this;
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        Debug.Log("SoundManager Subscribe OnSceneLoaded");
 
-        if(soundParent == null)
+        if (soundParent == null)
         {
             soundParent = new GameObject().transform;
             soundParent.parent = transform;
@@ -55,9 +59,13 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        PlayTheme("menu");
+        Debug.Log("SoundManager: OnSceneLoaded");
+        if (scene.buildIndex == 0)
+        {
+            PlayTheme("menu");
+        }
     }
 
     public void SetRotation(float angleY)
@@ -229,5 +237,23 @@ public class SoundManager : MonoBehaviour
     {
         this.musicVolume = musicVolume;
         currentThemeSound.source.volume = currentThemeSound.volume * musicVolume;
+    }
+
+    public static float GetSfxVolume()
+    {
+        if (instance == null)
+        {
+            return 1f;
+        }
+        return instance.sfxVolume;
+    }
+
+    public static float GetMusicVolume()
+    {
+        if(instance == null)
+        {
+            return 1f;
+        }
+        return instance.musicVolume;
     }
 }

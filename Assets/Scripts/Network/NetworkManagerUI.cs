@@ -134,11 +134,8 @@ public class NetworkManagerUI : NetworkBehaviour
             BackToMenu();
         });
         quitGameBtn.onClick.AddListener(() => {
-            if(IsHost)
-            {
-                AfterHostEndedClientRPC();
-            }
             Application.Quit();
+            //Subscribed OnApplicationQuit
         });
 
         foreach (GameModeButtonUI btn in gameModeBtnList)
@@ -146,10 +143,7 @@ public class NetworkManagerUI : NetworkBehaviour
             btn.Init();
         }
 
-        sfxSlider.value = 1f;
-        sfxSlider.onValueChanged.AddListener(delegate { SfxVolumeChanged(); });
-        musicSlider.value = 1f;
-        musicSlider.onValueChanged.AddListener(delegate { MusicVolumeChanged(); });
+        InitSlider();
 
         /*
         Button[] btnList = colorButtonList.GetComponentsInChildren<Button>();
@@ -180,6 +174,14 @@ public class NetworkManagerUI : NetworkBehaviour
             selectedColor = color;
             NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetPlayerColor(color);
         });
+    }
+
+    private void OnApplicationQuit()
+    {
+        if (IsHost)
+        {
+            AfterHostEndedClientRPC();
+        }
     }
 
     private void BackToMenu()
@@ -219,6 +221,14 @@ public class NetworkManagerUI : NetworkBehaviour
             Cursor.lockState = CursorLockMode.None;
         }
         pauseCanvas.gameObject.SetActive(!pauseCanvas.gameObject.activeSelf);
+    }
+
+    public void InitSlider()
+    {
+        sfxSlider.value = SoundManager.GetSfxVolume();
+        musicSlider.value = SoundManager.GetMusicVolume();
+        sfxSlider.onValueChanged.AddListener(delegate { SfxVolumeChanged(); });
+        musicSlider.onValueChanged.AddListener(delegate { MusicVolumeChanged(); });
     }
 
     public void UpdateTimer(float time, bool isRelax)
