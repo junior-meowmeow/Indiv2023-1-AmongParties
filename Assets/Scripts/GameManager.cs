@@ -103,10 +103,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void StartCOOPGameServerRPC()
     {
-        if (!ObjectPool.instance.isPoolInitialized)
-        {
-            ObjectPool.instance.PrewarmSpawn();
-        }
+        InitPool();
         StartCOOPGameClientRPC(winTargetScore, loseTargetScore);
     }
 
@@ -131,10 +128,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void StartPVPGameServerRPC()
     {
-        if (!ObjectPool.instance.isPoolInitialized)
-        {
-            ObjectPool.instance.PrewarmSpawn();
-        }
+        InitPool();
         StartPVPGameClientRPC();
     }
 
@@ -156,6 +150,14 @@ public class GameManager : NetworkBehaviour
         UpdateUI();
     }
 
+    private void InitPool()
+    {
+        if (!ObjectPool.Instance.CheckPoolInitialized())
+        {
+            ObjectPool.Instance.PrewarmSpawn();
+        }
+    }
+
     private void ResetValueBeforeGame()
     {
         winText.SetActive(false);
@@ -163,7 +165,7 @@ public class GameManager : NetworkBehaviour
         doneScore = 0;
         failScore = 0;
         NetworkManagerUI.instance.ResetObjectives();
-        ObjectPool.instance.RecallAllObjects();
+        ObjectPool.Instance.RecallAllObjects();
         gameState = GameState.INGAME;
     }
 

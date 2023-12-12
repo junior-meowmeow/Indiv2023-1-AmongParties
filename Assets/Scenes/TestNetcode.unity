@@ -2376,7 +2376,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77c29abbd1951c84db2ab5c3972995b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disablePosition: {fileID: 884538495}
   pools:
   - tag: Crate
     prefab: {fileID: 4036525283591223986, guid: c8f13bb43d475df4d872f194c93a04cd,
@@ -2398,7 +2397,7 @@ MonoBehaviour:
     prefab: {fileID: 6633045757757680229, guid: ce95750da305d284d8a494d021766509,
       type: 3}
     size: 10
-  objectParent: {fileID: 0}
+  spawningTransform: {fileID: 188341738}
   isLateJoin: 0
   isPoolReady: 0
   isPoolInitialized: 0
@@ -3114,6 +3113,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 180151782}
   m_CullTransparentMesh: 1
+--- !u!1 &188341737
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 188341738}
+  m_Layer: 0
+  m_Name: ObjectSpawnPositon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &188341738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188341737}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 20, y: 10, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &197840350
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9649,7 +9679,7 @@ Transform:
   - {fileID: 1210656283}
   - {fileID: 901205097}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &886631178
 GameObject:
@@ -9777,7 +9807,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &889574001
 GameObject:
@@ -15564,7 +15594,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inSceneObjectList: []
   objectList: []
-  count: 0
+  sync_count: 0
 --- !u!4 &1396217606
 Transform:
   m_ObjectHideFlags: 0
@@ -15821,7 +15851,7 @@ Transform:
   - {fileID: 962691016}
   - {fileID: 1450051968}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1463752341
 GameObject:

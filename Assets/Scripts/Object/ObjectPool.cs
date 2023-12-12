@@ -14,28 +14,39 @@ struct Pool
 
 public class ObjectPool : NetworkBehaviour
 {
-    public Transform disablePosition;
+    private static ObjectPool instance;
+    public static ObjectPool Instance => instance;
+
     [SerializeField] private List<Pool> pools;
     [SerializeField] private Dictionary<string, Queue<GameObject>> poolDict;
-    [SerializeField] private Transform objectParent;
+    [SerializeField] private Transform spawningTransform;
     [SerializeField] private Queue<GameObject> tempPool;
     [SerializeField] private bool isLateJoin = false;
     [SerializeField] private bool isPoolReady = false;
-    public bool isPoolInitialized = false;
-
-    public static ObjectPool instance;
+    [SerializeField] private bool isPoolInitialized = false;
 
     void Awake()
     {
+        InitSingleton();
+        if(spawningTransform == null)
+        {
+            spawningTransform = transform.root;
+        }
+    }
+
+    private void InitSingleton()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
-        if(objectParent == null)
-        {
-            objectParent = transform.root;
-        }
-        if (disablePosition == null)
-        {
-            disablePosition = transform.root;
-        }
+    }
+
+    public bool CheckPoolInitialized()
+    {
+        return isPoolInitialized;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -69,6 +80,7 @@ public class ObjectPool : NetworkBehaviour
             CheckPool();
         }
     }
+
     public void CheckPool()
     {
         CheckPoolReadyServerRPC(SyncObjectManager.Instance.GetObjectCount());
@@ -116,7 +128,7 @@ public class ObjectPool : NetworkBehaviour
 
             for (int i = 0; i < pool.size; i++)
             {
-                GameObject obj = Instantiate(pool.prefab, objectParent);
+                GameObject obj = Instantiate(pool.prefab, spawningTransform.position, spawningTransform.rotation);
                 obj.GetComponent<NetworkObject>().Spawn(destroyWithScene:true);
                 //obj.GetComponent<SpawnableObject>().SetActiveClientRPC(false);
                 //objectPool.Enqueue(obj);
@@ -241,4 +253,5 @@ public class ObjectPool : NetworkBehaviour
         poolDict.Add(tag, tempPool);
         isPoolInitialized = true;
     }
+
 }

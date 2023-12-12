@@ -209,7 +209,7 @@ public class SyncObjectManager : NetworkBehaviour
             count++;
         }
         SyncInitialStates();
-        ObjectPool.instance.CheckLateJoinServerRPC();
+        ObjectPool.Instance.CheckLateJoinServerRPC();
     }
 
     [ContextMenu(itemName: "Synchronize Objects")]

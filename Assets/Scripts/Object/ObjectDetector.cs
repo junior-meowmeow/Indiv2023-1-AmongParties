@@ -23,7 +23,7 @@ public class ObjectDetector : MonoBehaviour
         {
             if(GameManager.instance.GetObject(obj, name))
             {
-                ObjectPool.instance.SpawnObject("Score Particle", obj.transform.position, Quaternion.identity);
+                ObjectPool.Instance.SpawnObject("Score Particle", obj.transform.position, Quaternion.identity);
             }
             if (obj.holdPlayer != null)
             {

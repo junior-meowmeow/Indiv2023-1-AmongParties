@@ -24,6 +24,7 @@ public class InteractionCollider : MonoBehaviour
     {
         if(other.gameObject.TryGetComponent(out PickableObject obj))
         {
+            if (!obj.IsPickable()) return;
             objectList.Add(obj);
             UpdateObjectList();
         }
