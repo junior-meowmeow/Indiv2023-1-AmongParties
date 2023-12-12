@@ -348,12 +348,12 @@ public class NetworkManagerUI : NetworkBehaviour
 
     void SfxVolumeChanged()
     {
-        SoundManager.Instance.sfxVolume = sfxSlider.value;
+        SoundManager.SetSfxVolume(sfxSlider.value);
     }
 
     void MusicVolumeChanged()
     {
-        SoundManager.Instance.SetMusicVolume(musicSlider.value);
+        SoundManager.SetMusicVolume(musicSlider.value);
     }
 
     void UsernameChanged(TMP_InputField input)

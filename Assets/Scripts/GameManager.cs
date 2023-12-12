@@ -45,7 +45,7 @@ public class GameManager : NetworkBehaviour
     public void JoinLobby(string username)
     {
         gameState = GameState.LOBBY;
-        SoundManager.Instance.PlayTheme("lobby");
+        SoundManager.Instance.PlayMusic("lobby");
         UpdateGameState(gameState);
         localPlayerName = username;
     }
@@ -116,7 +116,7 @@ public class GameManager : NetworkBehaviour
         ResetValueBeforeGame();
         winTargetScore = winScore;
         loseTargetScore = loseScore;
-        SoundManager.Instance.PlayTheme("coop");
+        SoundManager.Instance.PlayMusic("coop");
         mainObjectiveText.text = "Complete " + winScore + " Objective to Win(You have " + loseScore + " Chances to Fail)";
         UpdateUI();
         if (IsServer)
@@ -250,7 +250,7 @@ public class GameManager : NetworkBehaviour
     public void EndCOOPGame(bool isWin)
     {
         gameState = GameState.LOBBY;
-        SoundManager.Instance.PlayTheme("lobby");
+        SoundManager.Instance.PlayMusic("lobby");
         NetworkManagerUI.instance.UpdateCanvas(gameState);
         if (isWin)
         {
@@ -321,7 +321,7 @@ public class GameManager : NetworkBehaviour
         UpdateGameStateClientRPC(gameState, gameMode);
         UpdateGameScoreClientRPC(doneScore, failScore, winTargetScore, loseTargetScore);
         UpdateObjectiveClientRPC(currentObjective.score, currentObjective.targetScore);
-        UpdateThemeClientRPC(SoundManager.Instance.currentTheme);
+        UpdateThemeClientRPC(SoundManager.GetCurrentMusicName());
         SetTimerClientRPC(timer, isRelax);
     }
 
@@ -353,7 +353,7 @@ public class GameManager : NetworkBehaviour
     void UpdateThemeClientRPC(string name)
     {
         if (IsServer) return;
-        SoundManager.Instance.PlayTheme(name);
+        SoundManager.Instance.PlayMusic(name);
     }
 
 

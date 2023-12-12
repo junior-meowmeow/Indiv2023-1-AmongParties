@@ -59,40 +59,42 @@ public class PlayerController : SyncObject
 
     void Start()
     {
+        GlobalInit();
+        if (!IsOwner) return;
+        LocalInit();
+    }
+
+    private void GlobalInit()
+    {
         playerData = GetComponent<PlayerData>();
         cam = GetComponentInChildren<CameraController>();
         if (!IsOwner)
         {
             cam.Disable();
         }
-
         Cursor.lockState = CursorLockMode.Locked;
-
         currentStepTime = 0f;
+    }
 
-        if (!IsOwner)
-        {
-            return;
-        }
-        interactInput.action.started += Interact;
-        //jumpInput.action.started += Jump;
+    private void LocalInit()
+    {
+        toggleUIInput.action.started += ToggleUI;
+
         jumpInput.action.started += JumpServer;
+        //playDeadInput.action.started += _ => { Fall(fallDuration); };
+
+        interactInput.action.started += Interact;
         useItemInput.action.started += _ => { UseItemServerRPC(true); };
         useItemInput.action.canceled += _ => { UseItemServerRPC(false); };
         useItemAltInput.action.started += _ => { UseItemAltServerRPC(true); };
         useItemAltInput.action.canceled += _ => { UseItemAltServerRPC(false); };
-        playDeadInput.action.started += _ => { Fall(fallDuration); };
-        toggleUIInput.action.started += ToggleUI;
-
-        //hipJoint.GetComponent<NetworkTransform>().enabled = false;
-        //WarpServerRPC(GameManager.instance.lobbyLocation.position);
 
         SyncObjectManager.instance.Initialize();
         GameManager.instance.UpdateGameStateServerRPC();
         NetworkManagerUI.instance.RequestUIStateServerRPC();
         NetworkManagerUI.instance.RequestObjectiveServerRPC();
         GameManager.instance.localPlayer = this;
-        SoundManager.Instance.localPlayerPosition = rb.transform;
+        SoundManager.SetInspectingPlayer(rb.transform);
         NetworkManagerUI.instance.ToggleLoading(false);
     }
 

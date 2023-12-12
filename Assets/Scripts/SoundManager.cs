@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -11,19 +9,32 @@ public class SoundManager : MonoBehaviour
     private static SoundManager instance;
     public static SoundManager Instance => instance;
 
-    [SerializeField] private Transform soundParent;
-    public List<Sound> sounds;
-    public Transform localPlayerPosition;
-    public List<string> themeList;
-    public string currentTheme;
-    private Sound currentThemeSound;
-    public float maxDistance = 40f;
-    public float distanceMultiplier = 1f;
-    public float blendValue = 0.75f;
-    public float sfxVolume = 1f;
-    private float musicVolume = 1f;
+    public List<Sound> soundList;
 
-    void Awake()
+    [Header("Sound Settings")]
+    [Tooltip("Max Distance Between Sound and Inspecting Player to Play Sound Using [PlayNew]")]
+    [SerializeField] private float maxDistance = 40f;
+    [Tooltip("Make Sound Feel More Distance.")]
+    [SerializeField] private float distanceMultiplier = 2f;
+    [Tooltip("Make Sound Feel More 3D. (Value is between 0 and 1)")]
+    [SerializeField] private float blendValue = 0.75f;
+
+    [Header("Debug Properties")] // Add [SerializeField] to Debug
+    [SerializeField] private float sfxVolume = 1f;
+    [SerializeField] private float musicVolume = 1f;
+    [SerializeField] private Transform inspectingPlayerPosition;
+    private Transform soundParent;
+    private string currentMusicName;
+    private Sound currentMusic;
+
+    private void Awake()
+    {
+        InitSingleton();
+        InitSoundList();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void InitSingleton()
     {
         if (instance != null && instance != this)
         {
@@ -32,9 +43,11 @@ public class SoundManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        Debug.Log("SoundManager Subscribe OnSceneLoaded");
+    }
 
+    private void InitSoundList()
+    {
+        // Create Sound Parent
         if (soundParent == null)
         {
             soundParent = new GameObject().transform;
@@ -43,7 +56,8 @@ public class SoundManager : MonoBehaviour
             soundParent.gameObject.name = "Sounds";
         }
 
-        foreach (Sound sound in sounds)
+        // Create Audio Source from SoundList
+        foreach (Sound sound in soundList)
         {
             GameObject newObject = new();
             newObject.transform.parent = soundParent;
@@ -59,59 +73,92 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("SoundManager: OnSceneLoaded");
         if (scene.buildIndex == 0)
         {
-            PlayTheme("menu");
+            PlayMusic("menu");
         }
     }
 
-    public void SetRotation(float angleY)
+    private Sound DuplicateSound(Sound sound, string newName)
     {
-        soundParent.rotation = Quaternion.Euler(0, angleY, 0);
+        //Debug.Log("create " + newName);
+        GameObject newObject = new();
+        newObject.transform.parent = soundParent;
+        newObject.transform.position = transform.position;
+        newObject.name = newName;
+
+        Sound newSound = new(newName, sound.clip, sound.volume, sound.pitch, sound.isLoop)
+        {
+            source = newObject.AddComponent<AudioSource>()
+        };
+        newSound.source.clip = newSound.clip;
+        newSound.source.pitch = newSound.pitch;
+        newSound.source.loop = newSound.isLoop;
+        newSound.source.spatialBlend = 0;
+
+        soundList.Add(newSound);
+
+        return newSound;
+    }
+
+    private Sound FindSound(string name)
+    {
+        foreach (Sound sound in soundList)
+        {
+            if (sound.name == name)
+            {
+                return sound;
+            }
+        }
+        return null;
+    }
+
+    private void PlaySound(Sound sound, float volumeScale)
+    {
+        sound.source.transform.localPosition = Vector3.zero;
+        sound.source.volume = sound.volume * volumeScale;
+        sound.source.spatialBlend = 0;
+        //sound.source.loop = false;
+        sound.source.Play();
+    }
+
+    private void PlaySound3D(Sound sound, float volumeScale, Vector3 relativePosition)
+    {
+        sound.source.transform.localPosition = relativePosition * distanceMultiplier;
+        sound.source.volume = sound.volume * volumeScale;
+        sound.source.spatialBlend = blendValue;
+        //sound.source.loop = false;
+        sound.source.Play();
     }
 
     public void Play(string name)
     {
-        foreach (Sound sound in sounds)
+        Sound sound = FindSound(name);
+        if (sound != null)
         {
-            if (sound.name == name)
-            {
-                //Debug.Log("found " + name);
-                sound.source.transform.localPosition = Vector3.zero;
-                sound.source.volume = sound.volume * sfxVolume;
-                sound.source.spatialBlend = 0;
-                sound.source.Play();
-                return;
-            }
+            PlaySound(sound, sfxVolume);
         }
     }
 
     public void Play(string name, Vector3 sourceLocation)
     {
-        if (GameManager.instance.GetGameState() == GameState.MENU || localPlayerPosition == null)
+        if (GameManager.instance.GetGameState() == GameState.MENU || inspectingPlayerPosition == null)
         {
             Play(name);
             return;
         }
-        float distance = Vector3.Distance(localPlayerPosition.position, sourceLocation);
+
+        float distance = Vector3.Distance(inspectingPlayerPosition.position, sourceLocation);
         if (distance >= maxDistance) return;
-        //float scale = (maxDistance - distance)/maxDistance;
-        Vector3 displacement = sourceLocation - localPlayerPosition.position;
-        foreach (Sound sound in sounds)
+        Vector3 displacement = sourceLocation - inspectingPlayerPosition.position;
+
+        Sound sound = FindSound(name);
+        if (sound != null)
         {
-            if (sound.name == name)
-            {
-                //Debug.Log("found " + name);
-                sound.source.transform.localPosition = displacement * distanceMultiplier;
-                //sound.source.volume = sound.volume * scale;
-                sound.source.volume = sound.volume * sfxVolume;
-                sound.source.spatialBlend = blendValue;
-                sound.source.Play();
-                return;
-            }
+            PlaySound3D(sound, sfxVolume, displacement);
         }
     }
 
@@ -122,107 +169,74 @@ public class SoundManager : MonoBehaviour
 
     public void PlayNew(string name, float scale, Vector3 sourceLocation)
     {
-        if (GameManager.instance.GetGameState() == GameState.MENU || localPlayerPosition == null)
+        if (GameManager.instance.GetGameState() == GameState.MENU || inspectingPlayerPosition == null)
         {
             Play(name);
             return;
         }
-        float distance = Vector3.Distance(localPlayerPosition.position, sourceLocation);
+
+        float distance = Vector3.Distance(inspectingPlayerPosition.position, sourceLocation);
         if (distance >= maxDistance) return;
-        Vector3 displacement = sourceLocation - localPlayerPosition.position;
-        foreach (Sound sound in sounds)
+        Vector3 displacement = sourceLocation - inspectingPlayerPosition.position;
+
+        Sound sound = FindSound(name);
+        if (sound != null)
         {
-            if (sound.name == name)
+            if (sound.source.isPlaying)
             {
-                if (sound.source.isPlaying)
-                {
-                    PlayNew(sound, sound.name, 1, scale, displacement);
-                    return;
-                }
-                //Debug.Log("found " + name);
-                sound.source.transform.localPosition = displacement * distanceMultiplier;
-                sound.source.volume = sound.volume * sfxVolume * scale;
-                sound.source.spatialBlend = blendValue;
-                sound.source.Play();
+                PlayNew(sound, sound.name, 1, scale, displacement);
                 return;
             }
+            PlaySound3D(sound, sfxVolume * scale, displacement);
         }
     }
 
-    private void PlayNew(Sound sound, string name,int count,float scale,Vector3 displacement)
+    private void PlayNew(Sound sound, string name, int count, float scale, Vector3 displacement)
     {
         string newName = name + count;
-        foreach (Sound s in sounds)
+
+        Sound s = FindSound(newName);
+        if (s != null)
         {
-            if (s.name == newName)
+            if (s.source.isPlaying)
             {
-                if (s.source.isPlaying)
-                {
-                    PlayNew(s, name, count+1, scale,displacement);
-                    return;
-                }
-                //Debug.Log("found " + newName);
-                sound.source.transform.localPosition = displacement * distanceMultiplier;
-                s.source.volume = s.volume * sfxVolume * scale;
-                sound.source.spatialBlend = blendValue;
-                s.source.Play();
+                PlayNew(s, name, count + 1, scale, displacement);
                 return;
             }
+            PlaySound3D(s, sfxVolume * scale, displacement);
         }
-        //Debug.Log("create " + newName);
-        GameObject newObject = new();
-        newObject.transform.parent = soundParent;
-        newObject.transform.position = transform.position;
-        newObject.name = newName;
-        Sound newSound = new(newName, sound.clip, sound.volume, sound.pitch, sound.isLoop)
+        else
         {
-            source = newObject.AddComponent<AudioSource>()
-        };
-        newSound.source.clip = newSound.clip;
-        newSound.source.pitch = newSound.pitch;
-        newSound.source.loop = newSound.isLoop;
-        newSound.source.spatialBlend = 0;
-
-        sounds.Add(newSound);
-
-        newSound.source.transform.localPosition = displacement * distanceMultiplier;
-        newSound.source.volume = newSound.volume * sfxVolume * scale;
-        sound.source.spatialBlend = blendValue;
-        newSound.source.Play();
+            Sound newSound = DuplicateSound(sound, newName);
+            PlaySound3D(newSound, sfxVolume * scale, displacement);
+        }
     }
 
     public void Stop(string name)
     {
-        foreach (Sound sound in sounds)
+        Sound sound = FindSound(name);
+        if (sound != null)
         {
-            if (sound.name == name)
-            {
-                //Debug.Log("found " + name);
-                sound.source.Stop();
-                return;
-            }
+            sound.source.Stop();
+            return;
         }
     }
 
-    public void PlayTheme(string name)
+    public void PlayMusic(string name)
     {
-        if (name == currentTheme) return;
-        ushort count = 0;
-        foreach (Sound sound in sounds)
+        if (name == currentMusicName) return;
+        byte count = 0;
+        foreach (Sound sound in soundList)
         {
-            if (sound.name == currentTheme)
+            if (sound.name == currentMusicName)
             {
-                //Debug.Log("found " + currentTheme);
                 sound.source.Stop();
                 count++;
             }
             if (sound.name == name)
             {
-                //Debug.Log("found " + name);
-                sound.source.volume = sound.volume * musicVolume;
-                sound.source.spatialBlend = 0;
-                sound.source.Play();
-                currentThemeSound = sound;
+                PlaySound(sound, musicVolume);
+                currentMusic = sound;
                 count++;
             }
             if (count == 2)
@@ -230,19 +244,65 @@ public class SoundManager : MonoBehaviour
                 break;
             }
         }
-        currentTheme = name;
+        currentMusicName = name;
     }
 
-    public void SetMusicVolume(float musicVolume)
+    public static string GetCurrentMusicName()
     {
-        this.musicVolume = musicVolume;
-        currentThemeSound.source.volume = currentThemeSound.volume * musicVolume;
+        if (instance == null)
+        {
+            Debug.Log("No SoundManager Instance Yet.");
+            return null;
+        }
+        return instance.currentMusicName;
+    }
+
+    public static void SetSoundAngle(float angleY)
+    {
+        if (instance == null)
+        {
+            Debug.Log("No SoundManager Instance Yet.");
+            return;
+        }
+        instance.soundParent.rotation = Quaternion.Euler(0, angleY, 0);
+    }
+
+    public static void SetInspectingPlayer(Transform playerModelTransform)
+    {
+        if (instance == null)
+        {
+            Debug.Log("No SoundManager Instance Yet.");
+            return;
+        }
+        instance.inspectingPlayerPosition = playerModelTransform;
+    }
+
+    public static void SetSfxVolume(float sfxVolume)
+    {
+        if(instance == null)
+        {
+            Debug.Log("No SoundManager Instance Yet.");
+            return;
+        }
+        instance.sfxVolume = sfxVolume;
+    }
+
+    public static void SetMusicVolume(float musicVolume)
+    {
+        if (instance == null)
+        {
+            Debug.Log("No SoundManager Instance Yet.");
+            return;
+        }
+        instance.musicVolume = musicVolume;
+        instance.currentMusic.source.volume = instance.currentMusic.volume * musicVolume;
     }
 
     public static float GetSfxVolume()
     {
         if (instance == null)
         {
+            Debug.Log("No SoundManager Instance Yet.");
             return 1f;
         }
         return instance.sfxVolume;
@@ -252,8 +312,10 @@ public class SoundManager : MonoBehaviour
     {
         if(instance == null)
         {
+            Debug.Log("No SoundManager Instance Yet.");
             return 1f;
         }
         return instance.musicVolume;
     }
+
 }
