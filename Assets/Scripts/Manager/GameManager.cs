@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
-using UnityEngine.UI;
 
 public enum GameState {MENU, LOBBY, INGAME};
 public enum GameMode { COOP, PVP };

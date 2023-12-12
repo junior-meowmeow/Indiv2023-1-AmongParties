@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
@@ -12,7 +13,6 @@ public class ObjectiveUIManager : NetworkBehaviour
     [SerializeField] private GameObject ObjectiveUIPrefab;
     [SerializeField] private List<ObjectiveUI> ObjectiveList;
     [SerializeField] private Transform ObjectiveParent;
-
 
     private void Awake()
     {
@@ -47,13 +47,13 @@ public class ObjectiveUIManager : NetworkBehaviour
 
     public void EndObjective(Objective objective)
     {
-        ObjectiveList[ObjectiveList.Count - 1].EndObjective(objective);
+        ObjectiveList.Last().EndObjective(objective);
     }
 
     public void UpdateObjective(Objective objective)
     {
         if (ObjectiveList.Count == 0) return;
-        ObjectiveList[ObjectiveList.Count - 1].UpdateObjective(objective);
+        ObjectiveList.Last().UpdateObjective(objective);
     }
 
     public void ResetObjectives()
