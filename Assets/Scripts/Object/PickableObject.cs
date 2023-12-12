@@ -14,22 +14,22 @@ public class PickableObject : SyncObject
     public ObjectType objectType;
     public ObjectColor objectColor;
     public string impactSound = "defaultImpact";
-    public float minimumImpact = 4f;
-    public float defaultMinimumImpact = 4f;
-    public float holdingMinimumImpact = 7f;
-    public float impactSoundCooldown = 0.2f;
+    [SerializeField] private float minimumImpact = 4f;
+    [SerializeField] private float defaultMinimumImpact = 4f;
+    [SerializeField] private float holdingMinimumImpact = 7f;
+    [SerializeField] private float impactSoundCooldown = 0.2f;
     private float lastImpactTime;
 
     public Vector3 holdPos = new(0f, 0.006f, -0.014f);
     public Vector3 holdRotation = new(0f, 0f, 0f);
-    public float movingSpeed = 8.0f;
-    public float rotatingSpeed = 8.0f;
+    [SerializeField] private float movingSpeed = 8.0f;
+    //[SerializeField] private float rotatingSpeed = 8.0f;
+    [SerializeField] private bool useRigidbody = true;
     public float weight = 1f;
-    public bool hasRigidbody = true;
     public bool isDroppedAfterUse = true;
     public bool hasAltUse = false;
     public bool isDroppedAfterAltUse = true;
-    public bool isStealable = false;
+    [SerializeField] private bool isStealable = false;
     public bool isHandShow = false;
 
     protected Rigidbody rb;
@@ -40,7 +40,7 @@ public class PickableObject : SyncObject
 
     protected virtual void Start()
     {
-        if (hasRigidbody)
+        if (useRigidbody)
         {
             rb = GetComponent<Rigidbody>();
         }
@@ -53,7 +53,7 @@ public class PickableObject : SyncObject
     {
         if (holdPlayer)
         {
-            if (hasRigidbody)
+            if (useRigidbody)
             {
                 UpdatePositionRB();
             }
