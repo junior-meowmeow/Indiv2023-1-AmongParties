@@ -67,7 +67,7 @@ public class ThrowableObject : PickableObject
     private void Throw(float currentThrowForce)
     {
         rb.AddForce((holdPlayer.hipJoint.transform.forward + Vector3.down * 0.25f) * -currentThrowForce, ForceMode.Impulse);
-        SoundManager.Instance.PlayNew("throw", transform.position);
+        SoundManager.PlayNew("throw", transform.position);
     }
 
     [ServerRpc(RequireOwnership = false)]

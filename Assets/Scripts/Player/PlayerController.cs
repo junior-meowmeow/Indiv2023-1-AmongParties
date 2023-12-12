@@ -283,7 +283,7 @@ public class PlayerController : SyncObject
                 ObjectInfoController.instance.SetHoldingText(obj.objectName, obj.description);
             }
         }
-        SoundManager.Instance.PlayNew("hold", rb.transform.position);
+        SoundManager.PlayNew("hold", rb.transform.position);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -386,14 +386,14 @@ public class PlayerController : SyncObject
     void JumpClientRPC()
     {
         rb.AddForce(jumpForce * jumpMultiplier * Vector3.up, ForceMode.Impulse);
-        SoundManager.Instance.PlayNew("jump", rb.transform.position + Vector3.down * 0.8f);
+        SoundManager.PlayNew("jump", rb.transform.position + Vector3.down * 0.8f);
     }
 
     [ClientRpc]
     public void FallClientRPC(float fallDuration)
     {
         Fall(fallDuration);
-        SoundManager.Instance.PlayNew("hit", rb.transform.position);
+        SoundManager.PlayNew("hit", rb.transform.position);
     }
 
     void CheckFallServer()
@@ -477,7 +477,7 @@ public class PlayerController : SyncObject
 
         if (angle * Mathf.Sin(currentStepTime * stepMultiplier) < 0 && Physics.Raycast(groundPoint.position, Vector3.down, out _, 0.35f))
         {
-            SoundManager.Instance.PlayNew("footstep", rb.transform.position + Vector3.down * 0.8f);
+            SoundManager.PlayNew("footstep", rb.transform.position + Vector3.down * 0.8f);
         }
     }
 

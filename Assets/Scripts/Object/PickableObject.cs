@@ -188,7 +188,7 @@ public class PickableObject : SyncObject
     {
         if (Time.time - lastImpactTime < impactSoundCooldown) return;
         float scale = magnitude / 30f;
-        SoundManager.Instance.PlayNew(impactSound, scale, position);
+        SoundManager.PlayNew(impactSound, scale, position);
         lastImpactTime = Time.time;
     }
 

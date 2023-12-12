@@ -45,7 +45,7 @@ public class GameManager : NetworkBehaviour
     public void JoinLobby(string username)
     {
         gameState = GameState.LOBBY;
-        SoundManager.Instance.PlayMusic("lobby");
+        SoundManager.PlayMusic("lobby");
         UpdateGameState(gameState);
         localPlayerName = username;
     }
@@ -116,7 +116,7 @@ public class GameManager : NetworkBehaviour
         ResetValueBeforeGame();
         winTargetScore = winScore;
         loseTargetScore = loseScore;
-        SoundManager.Instance.PlayMusic("coop");
+        SoundManager.PlayMusic("coop");
         mainObjectiveText.text = "Complete " + winScore + " Objective to Win(You have " + loseScore + " Chances to Fail)";
         UpdateUI();
         if (IsServer)
@@ -230,7 +230,7 @@ public class GameManager : NetworkBehaviour
             }
             else
             {
-                SoundManager.Instance.Play("get_point");
+                SoundManager.Play("get_point");
             }
         }
         else
@@ -242,7 +242,7 @@ public class GameManager : NetworkBehaviour
             }
             else
             {
-                SoundManager.Instance.Play("failed");
+                SoundManager.Play("failed");
             }
         }
     }
@@ -250,19 +250,19 @@ public class GameManager : NetworkBehaviour
     public void EndCOOPGame(bool isWin)
     {
         gameState = GameState.LOBBY;
-        SoundManager.Instance.PlayMusic("lobby");
+        SoundManager.PlayMusic("lobby");
         NetworkManagerUI.instance.UpdateCanvas(gameState);
         if (isWin)
         {
             Debug.Log("YOU WIN");
             winText.SetActive(true);
-            SoundManager.Instance.Play("win");
+            SoundManager.Play("win");
         }
         else
         {
             Debug.Log("YOU LOSE");
             loseText.SetActive(true);
-            SoundManager.Instance.Play("lose");
+            SoundManager.Play("lose");
         }
         if (IsServer)
         {
@@ -305,7 +305,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     private void PlaySoundClientRPC(string name, Vector3 position)
     {
-        SoundManager.Instance.PlayNew(name, position);
+        SoundManager.PlayNew(name, position);
     }
 
     public void SetTimer(float time, bool isRelax)
@@ -353,7 +353,7 @@ public class GameManager : NetworkBehaviour
     void UpdateThemeClientRPC(string name)
     {
         if (IsServer) return;
-        SoundManager.Instance.PlayMusic(name);
+        SoundManager.PlayMusic(name);
     }
 
 

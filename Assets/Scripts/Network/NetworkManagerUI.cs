@@ -117,20 +117,20 @@ public class NetworkManagerUI : NetworkBehaviour
             ToggleLoading(true, "Loading...");
             NetworkManager.Singleton.StartHost();
             GameManager.instance.JoinLobby(username);
-            SoundManager.Instance.Play("select");
+            SoundManager.Play("select");
         });
         clientBtn.onClick.AddListener(() => {
             ToggleLoading(true, "Findind Server...");
             NetworkManager.Singleton.StartClient();
             GameManager.instance.JoinLobby(username);
-            SoundManager.Instance.Play("select");
+            SoundManager.Play("select");
         });
         startGameBtn.onClick.AddListener(() => {
             GameManager.instance.StartGame(selectedGameMode);
-            SoundManager.Instance.Play("select");
+            SoundManager.Play("select");
         });
         backToMenuBtn.onClick.AddListener(() => {
-            SoundManager.Instance.Play("select");
+            SoundManager.Play("select");
             BackToMenu();
         });
         quitGameBtn.onClick.AddListener(() => {
@@ -154,7 +154,7 @@ public class NetworkManagerUI : NetworkBehaviour
         */
 
         changeColorBtn.onClick.AddListener(() => {
-            SoundManager.Instance.Play("select");
+            SoundManager.Play("select");
             colorPicker.gameObject.SetActive(true);
             confirmColorBtn.gameObject.SetActive(true);
             changeColorBtn.gameObject.SetActive(false);
@@ -162,7 +162,7 @@ public class NetworkManagerUI : NetworkBehaviour
 
         confirmColorBtn.onClick.AddListener(() =>
         {
-            SoundManager.Instance.Play("select");
+            SoundManager.Play("select");
             NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>().SetPlayerColorServerRPC(selectedColor);
             changeColorBtn.gameObject.SetActive(true);
             colorPicker.gameObject.SetActive(false);

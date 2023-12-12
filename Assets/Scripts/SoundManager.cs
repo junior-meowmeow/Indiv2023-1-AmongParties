@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
 
 public class SoundManager : MonoBehaviour
 {
     private static SoundManager instance;
-    public static SoundManager Instance => instance;
+    //public static SoundManager Instance => instance;
 
     public List<Sound> soundList;
 
@@ -78,7 +77,7 @@ public class SoundManager : MonoBehaviour
         Debug.Log("SoundManager: OnSceneLoaded");
         if (scene.buildIndex == 0)
         {
-            PlayMusic("menu");
+            PlayMusicPrivate("menu");
         }
     }
 
@@ -116,6 +115,16 @@ public class SoundManager : MonoBehaviour
         return null;
     }
 
+    private static bool CheckInstanceIsNull()
+    {
+        if (instance == null)
+        {
+            Debug.Log("No SoundManager Instance Yet.");
+            return true;
+        }
+        return false;
+    }
+
     private void PlaySound(Sound sound, float volumeScale)
     {
         sound.source.transform.localPosition = Vector3.zero;
@@ -134,7 +143,13 @@ public class SoundManager : MonoBehaviour
         sound.source.Play();
     }
 
-    public void Play(string name)
+    public static void Play(string name)
+    {
+        if (CheckInstanceIsNull()) return;
+        instance.PlayPrivate(name);
+    }
+
+    public void PlayPrivate(string name)
     {
         Sound sound = FindSound(name);
         if (sound != null)
@@ -143,7 +158,13 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void Play(string name, Vector3 sourceLocation)
+    public static void Play(string name, Vector3 sourceLocation)
+    {
+        if (CheckInstanceIsNull()) return;
+        instance.PlayPrivate(name, sourceLocation);
+    }
+
+    public void PlayPrivate(string name, Vector3 sourceLocation)
     {
         if (GameManager.instance.GetGameState() == GameState.MENU || inspectingPlayerPosition == null)
         {
@@ -162,12 +183,19 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void PlayNew(string name, Vector3 sourceLocation)
+    public static void PlayNew(string name, Vector3 sourceLocation)
     {
-        PlayNew(name, 1f, sourceLocation);
+        if (CheckInstanceIsNull()) return;
+        instance.PlayNewPrivate(name, 1f, sourceLocation);
     }
 
-    public void PlayNew(string name, float scale, Vector3 sourceLocation)
+    public static void PlayNew(string name, float scale, Vector3 sourceLocation)
+    {
+        if (CheckInstanceIsNull()) return;
+        instance.PlayNewPrivate(name, scale, sourceLocation);
+    }
+
+    private void PlayNewPrivate(string name, float scale, Vector3 sourceLocation)
     {
         if (GameManager.instance.GetGameState() == GameState.MENU || inspectingPlayerPosition == null)
         {
@@ -184,14 +212,14 @@ public class SoundManager : MonoBehaviour
         {
             if (sound.source.isPlaying)
             {
-                PlayNew(sound, sound.name, 1, scale, displacement);
+                PlayNewPrivate(sound, sound.name, 1, scale, displacement);
                 return;
             }
             PlaySound3D(sound, sfxVolume * scale, displacement);
         }
     }
 
-    private void PlayNew(Sound sound, string name, int count, float scale, Vector3 displacement)
+    private void PlayNewPrivate(Sound sound, string name, int count, float scale, Vector3 displacement)
     {
         string newName = name + count;
 
@@ -200,7 +228,7 @@ public class SoundManager : MonoBehaviour
         {
             if (s.source.isPlaying)
             {
-                PlayNew(s, name, count + 1, scale, displacement);
+                PlayNewPrivate(s, name, count + 1, scale, displacement);
                 return;
             }
             PlaySound3D(s, sfxVolume * scale, displacement);
@@ -212,17 +240,28 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void Stop(string name)
+    public static void Stop(string name)
+    {
+        if (CheckInstanceIsNull()) return;
+        instance.StopPrivate(name);
+    }
+
+    private void StopPrivate(string name)
     {
         Sound sound = FindSound(name);
         if (sound != null)
         {
             sound.source.Stop();
-            return;
         }
     }
 
-    public void PlayMusic(string name)
+    public static void PlayMusic(string name)
+    {
+        if (CheckInstanceIsNull()) return;
+        instance.PlayMusicPrivate(name);
+    }
+
+    private void PlayMusicPrivate(string name)
     {
         if (name == currentMusicName) return;
         byte count = 0;
@@ -249,72 +288,44 @@ public class SoundManager : MonoBehaviour
 
     public static string GetCurrentMusicName()
     {
-        if (instance == null)
-        {
-            Debug.Log("No SoundManager Instance Yet.");
-            return null;
-        }
+        if (CheckInstanceIsNull()) return string.Empty;
         return instance.currentMusicName;
     }
 
     public static void SetSoundAngle(float angleY)
     {
-        if (instance == null)
-        {
-            Debug.Log("No SoundManager Instance Yet.");
-            return;
-        }
+        if (CheckInstanceIsNull()) return;
         instance.soundParent.rotation = Quaternion.Euler(0, angleY, 0);
     }
 
     public static void SetInspectingPlayer(Transform playerModelTransform)
     {
-        if (instance == null)
-        {
-            Debug.Log("No SoundManager Instance Yet.");
-            return;
-        }
+        if (CheckInstanceIsNull()) return;
         instance.inspectingPlayerPosition = playerModelTransform;
     }
 
     public static void SetSfxVolume(float sfxVolume)
     {
-        if(instance == null)
-        {
-            Debug.Log("No SoundManager Instance Yet.");
-            return;
-        }
+        if (CheckInstanceIsNull()) return;
         instance.sfxVolume = sfxVolume;
     }
 
     public static void SetMusicVolume(float musicVolume)
     {
-        if (instance == null)
-        {
-            Debug.Log("No SoundManager Instance Yet.");
-            return;
-        }
+        if (CheckInstanceIsNull()) return;
         instance.musicVolume = musicVolume;
         instance.currentMusic.source.volume = instance.currentMusic.volume * musicVolume;
     }
 
     public static float GetSfxVolume()
     {
-        if (instance == null)
-        {
-            Debug.Log("No SoundManager Instance Yet.");
-            return 1f;
-        }
+        if (CheckInstanceIsNull()) return 1f;
         return instance.sfxVolume;
     }
 
     public static float GetMusicVolume()
     {
-        if(instance == null)
-        {
-            Debug.Log("No SoundManager Instance Yet.");
-            return 1f;
-        }
+        if (CheckInstanceIsNull()) return 1f;
         return instance.musicVolume;
     }
 

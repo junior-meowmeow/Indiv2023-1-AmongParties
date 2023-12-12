@@ -34,7 +34,7 @@ public class InteractableObject : SyncObject
     void Interaction()
     {
         anim.Play(interactClip.name);
-        SoundManager.Instance.PlayNew("door_open",transform.position);
+        SoundManager.PlayNew("door_open",transform.position);
         isUsed = true;
     }
 
