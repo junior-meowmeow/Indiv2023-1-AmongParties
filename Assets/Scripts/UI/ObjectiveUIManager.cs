@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class ObjectiveUIManager : NetworkBehaviour
 {
+
     private static ObjectiveUIManager instance;
     public static ObjectiveUIManager Instance => instance;
 
@@ -15,11 +16,6 @@ public class ObjectiveUIManager : NetworkBehaviour
     [SerializeField] private Transform ObjectiveParent;
 
     private void Awake()
-    {
-        InitSingleton();
-    }
-
-    private void InitSingleton()
     {
         if (instance != null && instance != this)
         {
@@ -100,7 +96,7 @@ public class ObjectiveUIManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void SetEndedObjectiveUIClientRPC(bool isDone, ClientRpcParams clientRpcParams = default)
+    private void SetEndedObjectiveUIClientRPC(bool isDone, ClientRpcParams clientRpcParams = default)
     {
         ObjectiveUI obj = Instantiate(ObjectiveUIPrefab, ObjectiveParent).GetComponent<ObjectiveUI>();
         obj.SetEndedUI(isDone);
@@ -109,7 +105,7 @@ public class ObjectiveUIManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void SetOngoingObjectiveUIClientRPC(int id, ushort score, ushort targetScore, ClientRpcParams clientRpcParams = default)
+    private void SetOngoingObjectiveUIClientRPC(int id, ushort score, ushort targetScore, ClientRpcParams clientRpcParams = default)
     {
         Objective objective = new();
         objective.Update(id, score, targetScore);

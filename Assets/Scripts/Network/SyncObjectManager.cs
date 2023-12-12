@@ -13,15 +13,10 @@ public class SyncObjectManager : NetworkBehaviour
     [SerializeField] private List<SyncObject> objectList;
     private Dictionary<SyncObject, ushort> objectToKey = new();
     private ushort count = 0;
+    [SerializeField] private ushort list_count = 0;
     [SerializeField] private ushort sync_count = 0;
 
     private void Awake()
-    {
-        InitSingleton();
-        ResetObjectList();
-    }
-
-    private void InitSingleton()
     {
         if (instance != null && instance != this)
         {
@@ -29,6 +24,8 @@ public class SyncObjectManager : NetworkBehaviour
             return;
         }
         instance = this;
+
+        ResetObjectList();
     }
 
     private void ResetObjectList()
@@ -63,6 +60,8 @@ public class SyncObjectManager : NetworkBehaviour
         else
         {
             SoundManager.SetSfxEnable(false);
+            list_count = 0;
+            sync_count = 0;
             RequestObjectList();
         }
     }
@@ -220,13 +219,14 @@ public class SyncObjectManager : NetworkBehaviour
             if (obj == null) continue;
             //Debug.Log("Syncing " + obj.name);
             obj.SyncObjectServerRPC(objectToKey[obj]);
+            list_count++;
         }
     }
 
     public void CountSynchronize()
     {
         sync_count++;
-        if(sync_count == count)
+        if (sync_count == list_count)
         {
             // Bad Practice But It's Necessary right now.
             Invoke(nameof(OnInitialSyncFinish), 0.2f);

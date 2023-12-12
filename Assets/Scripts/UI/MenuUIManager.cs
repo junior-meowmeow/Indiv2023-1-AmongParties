@@ -1,27 +1,38 @@
-using TMPro;
-using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
+using TMPro;
 
 public class MenuUIManager : NetworkBehaviour
 {
-    [Header("Menu")]
+
+    [SerializeField] private GameObject menuCanvas;
+    [SerializeField] private GameObject menuCamera;
+
     [SerializeField] private Button hostBtn;
     [SerializeField] private Button clientBtn;
-    [SerializeField] private Canvas menuCanvas;
-    [SerializeField] private Camera menuCam;
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private TMP_InputField addressInput;
     private string address = "127.0.0.1";
     private string username = "Player";
 
-    void Awake()
+    private void OnEnable()
+    {
+        MainUIManager.updateGameStateUI += GameStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        MainUIManager.updateGameStateUI -= GameStateChanged;
+    }
+
+    private void Awake()
     {
         InitButton();
     }
 
-    void InitButton()
+    private void InitButton()
     {
         if (addressInput != null)
         {
@@ -38,11 +49,17 @@ public class MenuUIManager : NetworkBehaviour
             SoundManager.Play("select");
         });
         clientBtn.onClick.AddListener(() => {
-            MainUIManager.Instance.ToggleLoading(true, "Findind Server...");
+            MainUIManager.Instance.ToggleLoading(true, "Finding Server...");
             NetworkManager.Singleton.StartClient();
             GameManager.instance.JoinLobby(username);
             SoundManager.Play("select");
         });
+    }
+
+    private void GameStateChanged(GameState gameState)
+    {
+        menuCanvas.SetActive(gameState == GameState.MENU);
+        menuCamera.SetActive(gameState == GameState.MENU);
     }
 
     private void AddressChanged(TMP_InputField input)

@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameModeButtonUI : MonoBehaviour
 {
@@ -29,7 +26,7 @@ public class GameModeButtonUI : MonoBehaviour
         toggle.onValueChanged.AddListener(delegate {
             if(toggle.isOn)
             {
-                NetworkManagerUI.instance.ToggleGameMode(gameMode);
+                MainUIManager.updateGameModeUI(gameMode);
             }
         });
         text.text = gameModeName;
@@ -48,4 +45,5 @@ public class GameModeButtonUI : MonoBehaviour
             toggle.interactable = isServer;
         }
     }
+
 }

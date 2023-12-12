@@ -1,12 +1,11 @@
-using Newtonsoft.Json.Bson;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using TMPro;
 
 public class ObjectInfoController : MonoBehaviour
 {
-    public static ObjectInfoController instance;
+    private static ObjectInfoController instance;
+    public static ObjectInfoController Instance => instance;
+
     [SerializeField] private TMP_Text text;
     [SerializeField] private bool isHolding;
     [SerializeField] private string holdingItemName;
@@ -16,7 +15,13 @@ public class ObjectInfoController : MonoBehaviour
 
     void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
+
         text = GetComponentInChildren<TMP_Text>();
     }
 

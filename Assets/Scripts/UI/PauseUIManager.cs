@@ -1,14 +1,25 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PauseUI : MonoBehaviour
+public class PauseUIManager : MonoBehaviour
 {
-    [Header("Pause")]
-    [SerializeField] private Canvas pauseCanvas;
+
+    [SerializeField] private GameObject pauseCanvas;
+
     [SerializeField] private Slider sfxSlider;
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Button backToMenuBtn;
     [SerializeField] private Button quitGameBtn;
+
+    private void OnEnable()
+    {
+        MainUIManager.updateGameStateUI += GameStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        MainUIManager.updateGameStateUI -= GameStateChanged;
+    }
 
     private void Awake()
     {
@@ -16,19 +27,34 @@ public class PauseUI : MonoBehaviour
         InitSlider();
     }
 
-    void InitButton()
+    private void InitButton()
     {
         backToMenuBtn.onClick.AddListener(() => {
             SoundManager.Play("select");
-            NetworkManagerUI.instance.BackToMenu();
+            MainUIManager.Instance.BackToMenu();
         });
         quitGameBtn.onClick.AddListener(() => {
             Application.Quit();
-            //Subscribed OnApplicationQuit
         });
     }
 
-    void Update()
+    private void InitSlider()
+    {
+        sfxSlider.value = SoundManager.GetSfxVolume();
+        musicSlider.value = SoundManager.GetMusicVolume();
+        sfxSlider.onValueChanged.AddListener(delegate { SfxVolumeChanged(); });
+        musicSlider.onValueChanged.AddListener(delegate { MusicVolumeChanged(); });
+    }
+
+    private void GameStateChanged(GameState gameState)
+    {
+        if (!pauseCanvas.activeSelf || gameState != GameState.INGAME)
+        {
+            pauseCanvas.SetActive(false);
+        }
+    }
+
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -42,7 +68,7 @@ public class PauseUI : MonoBehaviour
 
     private void TogglePause()
     {
-        if (pauseCanvas.gameObject.activeSelf)
+        if (pauseCanvas.activeSelf)
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -50,15 +76,7 @@ public class PauseUI : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
         }
-        pauseCanvas.gameObject.SetActive(!pauseCanvas.gameObject.activeSelf);
-    }
-
-    public void InitSlider()
-    {
-        sfxSlider.value = SoundManager.GetSfxVolume();
-        musicSlider.value = SoundManager.GetMusicVolume();
-        sfxSlider.onValueChanged.AddListener(delegate { SfxVolumeChanged(); });
-        musicSlider.onValueChanged.AddListener(delegate { MusicVolumeChanged(); });
+        pauseCanvas.SetActive(!pauseCanvas.gameObject.activeSelf);
     }
 
     private void SfxVolumeChanged()
@@ -70,4 +88,5 @@ public class PauseUI : MonoBehaviour
     {
         SoundManager.SetMusicVolume(musicSlider.value);
     }
+
 }

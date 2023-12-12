@@ -30,13 +30,6 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        InitSingleton();
-        InitSoundList();
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private void InitSingleton()
-    {
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -44,6 +37,9 @@ public class SoundManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
+
+        InitSoundList();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void InitSoundList()

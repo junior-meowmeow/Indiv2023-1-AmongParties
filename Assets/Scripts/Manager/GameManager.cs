@@ -80,6 +80,11 @@ public class GameManager : NetworkBehaviour
         */
     }
 
+    public void StartGame()
+    {
+        StartGame(gameMode);
+    }
+
     public void StartGame(GameMode gameMode)
     {
         if (!IsServer) return;
@@ -162,7 +167,7 @@ public class GameManager : NetworkBehaviour
         loseText.SetActive(false);
         doneScore = 0;
         failScore = 0;
-        NetworkManagerUI.instance.ResetObjectives();
+        ObjectiveUIManager.Instance.ResetObjectives();
         ObjectPool.Instance.RecallAllObjects();
         gameState = GameState.INGAME;
     }
@@ -178,7 +183,7 @@ public class GameManager : NetworkBehaviour
         if (timer > 0)
         {
             timer -= Time.deltaTime;
-            NetworkManagerUI.instance.UpdateTimer(timer, isRelax);
+            ObjectiveUIManager.Instance.UpdateTimer(timer, isRelax);
         }
         else
         {
@@ -251,7 +256,7 @@ public class GameManager : NetworkBehaviour
     {
         gameState = GameState.LOBBY;
         SoundManager.PlayMusic("lobby");
-        NetworkManagerUI.instance.UpdateCanvas(gameState);
+        MainUIManager.updateGameStateUI(gameState);
         if (isWin)
         {
             Debug.Log("YOU WIN");
@@ -362,14 +367,14 @@ public class GameManager : NetworkBehaviour
     {
         timer = time;
         this.isRelax = isRelax;
-        NetworkManagerUI.instance.UpdateTimer(time, isRelax);
+        ObjectiveUIManager.Instance.UpdateTimer(time, isRelax);
     }
 
     [ClientRpc]
     void UpdateObjectiveClientRPC(ushort score, ushort targetScore)
     {
         currentObjective.Update(score, targetScore);
-        NetworkManagerUI.instance.UpdateObjective(currentObjective);
+        ObjectiveUIManager.Instance.UpdateObjective(currentObjective);
     }
 
     void NextObjective()
@@ -389,21 +394,21 @@ public class GameManager : NetworkBehaviour
     {
         currentObjective.Update(id, score, targetScore);
 
-        NetworkManagerUI.instance.StartObjective(currentObjective);
+        ObjectiveUIManager.Instance.StartObjective(currentObjective);
     }
 
     [ClientRpc]
     void EndObjectiveClientRPC()
     {
-        NetworkManagerUI.instance.EndObjective(currentObjective);
+        ObjectiveUIManager.Instance.EndObjective(currentObjective);
         UpdateCOOPGameScore(currentObjective.isComplete);
     }
 
     void UpdateUI()
     {
-        NetworkManagerUI.instance.UpdateTimer(timer, isRelax);
-        NetworkManagerUI.instance.UpdateObjective(currentObjective);
-        NetworkManagerUI.instance.UpdateCanvas(gameState);
+        ObjectiveUIManager.Instance.UpdateTimer(timer, isRelax);
+        ObjectiveUIManager.Instance.UpdateObjective(currentObjective);
+        MainUIManager.updateGameStateUI(gameState);
     }
 
     public GameState GetGameState()

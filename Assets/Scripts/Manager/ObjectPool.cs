@@ -27,21 +27,17 @@ public class ObjectPool : NetworkBehaviour
 
     void Awake()
     {
-        InitSingleton();
-        if(spawningTransform == null)
-        {
-            spawningTransform = transform.root;
-        }
-    }
-
-    private void InitSingleton()
-    {
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
             return;
         }
         instance = this;
+
+        if (spawningTransform == null)
+        {
+            spawningTransform = transform.root;
+        }
     }
 
     public bool CheckPoolInitialized()

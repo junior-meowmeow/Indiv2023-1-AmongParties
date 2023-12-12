@@ -45,7 +45,7 @@ public class PlayerData : NetworkBehaviour
         base.OnNetworkDespawn();
         //Debug.Log("OnNetworkDespawn Called");
         GameManager.instance.RemovePlayer(this);
-        NetworkManagerUI.instance.UpdatePlayerList();
+        MainUIManager.Instance.UpdatePlayerList();
     }
 
     [ServerRpc]
@@ -92,7 +92,7 @@ public class PlayerData : NetworkBehaviour
     {
         playerName = name;
         playerNameText.text = name;
-        NetworkManagerUI.instance.UpdatePlayerList();
+        MainUIManager.Instance.UpdatePlayerList();
     }
 
 }

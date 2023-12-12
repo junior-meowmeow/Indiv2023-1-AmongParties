@@ -84,18 +84,30 @@ public class PlayerController : SyncObject
         //playDeadInput.action.started += _ => { Fall(fallDuration); };
 
         interactInput.action.started += Interact;
-        useItemInput.action.started += _ => { UseItemServerRPC(true); };
-        useItemInput.action.canceled += _ => { UseItemServerRPC(false); };
-        useItemAltInput.action.started += _ => { UseItemAltServerRPC(true); };
-        useItemAltInput.action.canceled += _ => { UseItemAltServerRPC(false); };
+        useItemInput.action.started += _ => { UseItem(true); };
+        useItemInput.action.canceled += _ => { UseItem(false); };
+        useItemAltInput.action.started += _ => { UseItemAlt(true); };
+        useItemAltInput.action.canceled += _ => { UseItemAlt(false); };
 
         SyncObjectManager.Instance.NetworkInitialize();
         GameManager.instance.UpdateGameStateServerRPC();
-        NetworkManagerUI.instance.RequestUIStateServerRPC();
-        NetworkManagerUI.instance.RequestObjectiveServerRPC();
+        MainUIManager.SyncUIState();
+        ObjectiveUIManager.Instance.RequestObjectiveServerRPC();
         GameManager.instance.localPlayer = this;
         SoundManager.SetInspectingPlayer(rb.transform);
-        NetworkManagerUI.instance.ToggleLoading(false);
+        MainUIManager.Instance.ToggleLoading(false);
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (!IsOwner) return;
+        jumpInput.action.started -= JumpServer;
+        interactInput.action.started -= Interact;
+        useItemInput.action.started -= _ => { UseItem(true); };
+        useItemInput.action.canceled -= _ => { UseItem(false); };
+        useItemAltInput.action.started -= _ => { UseItemAlt(true); };
+        useItemAltInput.action.canceled -= _ => { UseItemAlt(false); };
     }
 
     private void Update()
@@ -280,7 +292,7 @@ public class PlayerController : SyncObject
 
             if (IsOwner)
             {
-                ObjectInfoController.instance.SetHoldingText(obj.objectName, obj.description);
+                ObjectInfoController.Instance.SetHoldingText(obj.objectName, obj.description);
             }
         }
         SoundManager.PlayNew("hold", rb.transform.position);
@@ -318,19 +330,25 @@ public class PlayerController : SyncObject
 
         if (IsOwner)
         {
-            ObjectInfoController.instance.ResetHoldingText();
+            ObjectInfoController.Instance.ResetHoldingText();
         }
     }
 
+    private void UseItem(bool isHolding)
+    {
+        if (holdingObject == null) return;
+        UseItemServerRPC(isHolding);
+    }
+
     [ServerRpc]
-    void UseItemServerRPC(bool isHolding)
+    private void UseItemServerRPC(bool isHolding)
     {
         if (holdingObject == null) return;
         UseItemClientRPC(isHolding);
     }
 
     [ClientRpc]
-    void UseItemClientRPC(bool isHolding)
+    private void UseItemClientRPC(bool isHolding)
     {
         if (holdingObject == null) return;
         holdingObject.Use(isHolding);
@@ -341,8 +359,14 @@ public class PlayerController : SyncObject
         }
     }
 
+    private void UseItemAlt(bool isHolding)
+    {
+        if (holdingObject == null) return;
+        UseItemAltServerRPC(isHolding);
+    }
+
     [ServerRpc]
-    void UseItemAltServerRPC(bool isHolding)
+    private void UseItemAltServerRPC(bool isHolding)
     {
         if (holdingObject == null) return;
         if (!holdingObject.hasAltUse) return;
@@ -350,7 +374,7 @@ public class PlayerController : SyncObject
     }
 
     [ClientRpc]
-    void UseItemAltClientRPC(bool isHolding)
+    private void UseItemAltClientRPC(bool isHolding)
     {
         if (holdingObject == null) return;
         holdingObject.AltUse(isHolding);
@@ -546,11 +570,11 @@ public class PlayerController : SyncObject
         if (!IsOwner) return;
         if (isSet)
         {
-            ObjectInfoController.instance.SetItemText(itemName);
+            ObjectInfoController.Instance.SetItemText(itemName);
         }
         else
         {
-            ObjectInfoController.instance.ResetItemText();
+            ObjectInfoController.Instance.ResetItemText();
         }
     }
 

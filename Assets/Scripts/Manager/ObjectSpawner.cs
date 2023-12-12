@@ -14,11 +14,6 @@ public class ObjectSpawner : NetworkBehaviour
 
     void Awake()
     {
-        InitSingleton();
-    }
-
-    private void InitSingleton()
-    {
         if (instance != null && instance != this)
         {
             Destroy(gameObject);

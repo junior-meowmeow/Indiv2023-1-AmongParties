@@ -4462,7 +4462,7 @@ GameObject:
   - component: {fileID: 331927198}
   - component: {fileID: 331927197}
   m_Layer: 5
-  m_Name: Waiting Text
+  m_Name: LoadingText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13435,7 +13435,7 @@ GameObject:
   - component: {fileID: 1121816141}
   - component: {fileID: 1121816142}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: MusicSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14735,8 +14735,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1289247946}
-  - component: {fileID: 1289247942}
   - component: {fileID: 1289247947}
+  - component: {fileID: 1289247952}
+  - component: {fileID: 1289247951}
+  - component: {fileID: 1289247950}
+  - component: {fileID: 1289247949}
+  - component: {fileID: 1289247948}
   m_Layer: 5
   m_Name: User Interface
   m_TagString: Untagged
@@ -14744,51 +14748,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1289247942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1289247941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f143b6b78b22bc40a6ef3353ff0644c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hostBtn: {fileID: 1463752342}
-  clientBtn: {fileID: 2147133620}
-  menuCanvas: {fileID: 269804075}
-  menuCam: {fileID: 1970475438}
-  usernameInput: {fileID: 965904798}
-  addressInput: {fileID: 0}
-  selectedGameMode: 0
-  lobbyCanvas: {fileID: 1768645896}
-  startGameBtn: {fileID: 1015601294}
-  lobbyWaitText: {fileID: 1570503934}
-  changeColorBtn: {fileID: 1927344841}
-  confirmColorBtn: {fileID: 1073927847}
-  colorPicker: {fileID: 1890675023}
-  selectedColor: {r: 0.90588236, g: 0.27450982, b: 0.22745098, a: 1}
-  playerListText: {fileID: 920130001}
-  coopToggle: {fileID: 835403184}
-  pvpToggle: {fileID: 976856979}
-  gameModeBtnList:
-  - {fileID: 835403185}
-  - {fileID: 976856981}
-  ingameCanvas: {fileID: 904364708}
-  timerText: {fileID: 655678257}
-  ObjectiveUIPrefab: {fileID: 4775611866723062593, guid: 0667f1305b8f43c45871d61306488260,
-    type: 3}
-  ObjectiveList: []
-  ObjectiveParent: {fileID: 255937398}
-  pauseCanvas: {fileID: 1533967790}
-  sfxSlider: {fileID: 1785847841}
-  musicSlider: {fileID: 1121816142}
-  backToMenuBtn: {fileID: 580341559}
-  quitGameBtn: {fileID: 7366915}
-  loadingCanvas: {fileID: 2120060261}
-  loadingText: {fileID: 331927197}
 --- !u!224 &1289247946
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14834,6 +14793,98 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &1289247948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289247941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7675d8ab1e33b8248b344da5693fc006, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseCanvas: {fileID: 1533967786}
+  sfxSlider: {fileID: 1785847841}
+  musicSlider: {fileID: 1121816142}
+  backToMenuBtn: {fileID: 580341559}
+  quitGameBtn: {fileID: 7366915}
+--- !u!114 &1289247949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289247941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a8571dd0c1775340bd6e0ac61e65f38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerText: {fileID: 655678257}
+  ObjectiveUIPrefab: {fileID: 4775611866723062593, guid: 0667f1305b8f43c45871d61306488260,
+    type: 3}
+  ObjectiveList: []
+  ObjectiveParent: {fileID: 255937398}
+--- !u!114 &1289247950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289247941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32b8f64118d499044876356b7017b521, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedGameMode: 0
+  lobbyCanvas: {fileID: 1768645892}
+  gameModeBtnList:
+  - {fileID: 835403185}
+  - {fileID: 976856981}
+  lobbyWaitText: {fileID: 1570503934}
+  startGameBtn: {fileID: 1015601294}
+  changeColorBtn: {fileID: 1927344841}
+  confirmColorBtn: {fileID: 1073927847}
+  colorPicker: {fileID: 1890675023}
+  selectedColor: {r: 0.90588236, g: 0.27450982, b: 0.22745098, a: 1}
+--- !u!114 &1289247951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289247941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c956e7861ed1f5b4ca42dadf4fc39cca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menuCanvas: {fileID: 269804071}
+  menuCamera: {fileID: 1970475434}
+  hostBtn: {fileID: 1463752342}
+  clientBtn: {fileID: 2147133620}
+  usernameInput: {fileID: 965904798}
+  addressInput: {fileID: 1376221843}
+--- !u!114 &1289247952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289247941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8115116d606f0a4f82d454de1b0d20f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadingCanvas: {fileID: 2120060257}
+  pauseCanvas: {fileID: 1533967786}
+  ingameCanvas: {fileID: 904364707}
+  playerListText: {fileID: 920130001}
+  loadingText: {fileID: 331927197}
 --- !u!1 &1319042349
 GameObject:
   m_ObjectHideFlags: 0
@@ -19336,7 +19387,7 @@ GameObject:
   - component: {fileID: 1785847840}
   - component: {fileID: 1785847841}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: SfxSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
