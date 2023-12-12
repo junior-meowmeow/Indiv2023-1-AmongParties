@@ -20,7 +20,7 @@ public class Weapon : PickableObject
     private void SyncWeaponVariableClientRPC(ushort obj_key, bool isAttacking)
     {
         if (IsServer) return;
-        Weapon obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<Weapon>();
+        Weapon obj = SyncObjectManager.Instance.GetSyncObject(obj_key).GetComponent<Weapon>();
         obj.isAttacking = isAttacking;
     }
 }

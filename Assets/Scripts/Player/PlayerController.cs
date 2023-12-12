@@ -89,7 +89,7 @@ public class PlayerController : SyncObject
         useItemAltInput.action.started += _ => { UseItemAltServerRPC(true); };
         useItemAltInput.action.canceled += _ => { UseItemAltServerRPC(false); };
 
-        SyncObjectManager.instance.Initialize();
+        SyncObjectManager.Instance.NetworkInitialize();
         GameManager.instance.UpdateGameStateServerRPC();
         NetworkManagerUI.instance.RequestUIStateServerRPC();
         NetworkManagerUI.instance.RequestObjectiveServerRPC();
@@ -259,7 +259,7 @@ public class PlayerController : SyncObject
             PickableObject obj = interactionCollider.GetNearestObject();
             if (obj.IsPickable() && obj.TryGetComponent(out SyncObject sync_obj))
             {
-                PickObjectClientRPC(SyncObjectManager.instance.objectToKey[sync_obj]);
+                PickObjectClientRPC(SyncObjectManager.Instance.GetKey(sync_obj));
             }
         }
     }
@@ -268,7 +268,7 @@ public class PlayerController : SyncObject
     void PickObjectClientRPC(ushort obj_key)
     {
         SyncObject sync_obj;
-        if (sync_obj = SyncObjectManager.instance.objectList[obj_key])
+        if (sync_obj = SyncObjectManager.Instance.GetSyncObject(obj_key))
         {
             PickableObject obj = sync_obj.GetComponent<PickableObject>();
             obj.Hold(this);
@@ -577,7 +577,7 @@ public class PlayerController : SyncObject
         }
         else
         {
-            SyncPlayerVariableClientRPC(obj_key, SyncObjectManager.instance.objectToKey[holdingObject], data, isFall);
+            SyncPlayerVariableClientRPC(obj_key, SyncObjectManager.Instance.GetKey(holdingObject), data, isFall);
         }
     }
 
@@ -585,10 +585,10 @@ public class PlayerController : SyncObject
     private void SyncPlayerVariableClientRPC(ushort obj_key, ushort holdingObject_key, float[] data, bool isFall)
     {
         if (IsServer) return;
-        PlayerController player = SyncObjectManager.instance.objectList[obj_key].GetComponent<PlayerController>();
+        PlayerController player = SyncObjectManager.Instance.GetSyncObject(obj_key).GetComponent<PlayerController>();
         if (holdingObject_key != ushort.MaxValue)
         {
-            player.holdingObject = SyncObjectManager.instance.objectList[holdingObject_key].GetComponent<PickableObject>();
+            player.holdingObject = SyncObjectManager.Instance.GetSyncObject(holdingObject_key).GetComponent<PickableObject>();
         }
         player.speedMultiplier = data[0];
         player.jumpMultiplier = data[1];
@@ -602,7 +602,7 @@ public class PlayerController : SyncObject
     private void SyncPlayerDataClientRPC(ushort obj_key, string playerName, Color playerColor)
     {
         if (IsServer) return;
-        PlayerData obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<PlayerData>();
+        PlayerData obj = SyncObjectManager.Instance.GetSyncObject(obj_key).GetComponent<PlayerData>();
         obj.SetPlayerName(playerName);
         obj.SetPlayerColor(playerColor);
     }

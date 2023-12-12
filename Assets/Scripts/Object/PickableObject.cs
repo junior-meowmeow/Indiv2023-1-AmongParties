@@ -149,7 +149,7 @@ public class PickableObject : SyncObject
         }
         else
         {
-            SyncObjectVariableClientRPC(obj_key, SyncObjectManager.instance.objectToKey[holdPlayer], data, states);
+            SyncObjectVariableClientRPC(obj_key, SyncObjectManager.Instance.GetKey(holdPlayer), data, states);
         }
     }
 
@@ -157,7 +157,7 @@ public class PickableObject : SyncObject
     private void SyncObjectVariableClientRPC(ushort obj_key, ushort holdPlayer_key, byte[] data, bool[] states)
     {
         if (IsServer) return;
-        PickableObject obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<PickableObject>();
+        PickableObject obj = SyncObjectManager.Instance.GetSyncObject(obj_key).GetComponent<PickableObject>();
         obj.objectType = (ObjectType)data[0];
         obj.objectColor = (ObjectColor)data[1];
         obj.isDroppedAfterUse = states[0];
@@ -165,7 +165,7 @@ public class PickableObject : SyncObject
         obj.isStealable = states[2];
         if(holdPlayer_key != ushort.MaxValue)
         {
-            PlayerController player = SyncObjectManager.instance.objectList[holdPlayer_key].GetComponent<PlayerController>();
+            PlayerController player = SyncObjectManager.Instance.GetSyncObject(holdPlayer_key).GetComponent<PlayerController>();
             obj.holdPlayer = player;
             player.holdingObject = obj;
         }

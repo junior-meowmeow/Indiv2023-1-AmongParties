@@ -81,7 +81,7 @@ public class ThrowableObject : PickableObject
     private void SyncThrowableObjectVariableClientRPC(ushort obj_key, float startThrowTime, bool isCharging)
     {
         if (IsServer) return;
-        ThrowableObject obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<ThrowableObject>();
+        ThrowableObject obj = SyncObjectManager.Instance.GetSyncObject(obj_key).GetComponent<ThrowableObject>();
         obj.startThrowTime = startThrowTime;
         obj.isCharging = isCharging;
     }

@@ -49,7 +49,7 @@ public class InteractableObject : SyncObject
     private void SyncInteractionClientRPC(ushort obj_key, bool enabled, bool isUsed)
     {
         if (IsServer) return;
-        InteractableObject obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<InteractableObject>();
+        InteractableObject obj = SyncObjectManager.Instance.GetSyncObject(obj_key).GetComponent<InteractableObject>();
         obj.isUsed = isUsed;
         if(obj.isOnce && isUsed)
         {

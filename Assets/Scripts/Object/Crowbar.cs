@@ -98,7 +98,7 @@ public class Crowbar : Weapon
     private void SyncCrowbarClientRPC(ushort obj_key, float lastAttackTime, bool isThrowing)
     {
         if (IsServer) return;
-        Crowbar obj = SyncObjectManager.instance.objectList[obj_key].GetComponent<Crowbar>();
+        Crowbar obj = SyncObjectManager.Instance.GetSyncObject(obj_key).GetComponent<Crowbar>();
         obj.lastAttackTime = lastAttackTime;
         obj.isThrowing = isThrowing;
     }

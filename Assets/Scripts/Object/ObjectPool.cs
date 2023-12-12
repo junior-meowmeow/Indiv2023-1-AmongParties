@@ -71,7 +71,7 @@ public class ObjectPool : NetworkBehaviour
     }
     public void CheckPool()
     {
-        CheckPoolReadyServerRPC(SyncObjectManager.instance.count);
+        CheckPoolReadyServerRPC(SyncObjectManager.Instance.GetObjectCount());
         if(isPoolReady)
         {
             poolDict = new Dictionary<string, Queue<GameObject>>();
@@ -94,7 +94,7 @@ public class ObjectPool : NetworkBehaviour
                     TargetClientIds = new ulong[] { clientId }
                 }
             };
-            CheckPoolReadyClientRPC(SyncObjectManager.instance.count == count);
+            CheckPoolReadyClientRPC(SyncObjectManager.Instance.GetObjectCount() == count);
         }
     }
 
@@ -218,7 +218,7 @@ public class ObjectPool : NetworkBehaviour
                 while (enumerator.MoveNext())
                 {
                     GameObject obj = enumerator.Current;
-                    obj_keys[count] = SyncObjectManager.instance.objectToKey[obj.GetComponent<SyncObject>()];
+                    obj_keys[count] = SyncObjectManager.Instance.GetKey(obj.GetComponent<SyncObject>());
                     obj_actives[count] = obj.activeInHierarchy;
                     count++;
                 }
@@ -233,7 +233,7 @@ public class ObjectPool : NetworkBehaviour
         tempPool = new Queue<GameObject>();
         for (int i = 0; i < obj_keys.Length; i++)
         {
-            GameObject obj = SyncObjectManager.instance.objectList[obj_keys[i]].gameObject;
+            GameObject obj = SyncObjectManager.Instance.GetSyncObject(obj_keys[i]).gameObject;
             obj.SetActive(obj_actives[i]);
             //obj.transform.SetParent(objectParent);
             tempPool.Enqueue(obj);

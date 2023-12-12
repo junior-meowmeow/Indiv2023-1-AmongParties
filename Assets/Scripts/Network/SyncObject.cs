@@ -1,15 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
 public class SyncObject : NetworkBehaviour
 {
-    public NetworkObject net_obj;
-    private ushort playerCount;
-    private bool isAdded;
+    [SerializeField] private NetworkObject net_obj;
     public bool isInScene = false;
+    private byte playerCount;
+    private bool isAdded;
 
     protected virtual void Awake()
     {
@@ -17,6 +14,11 @@ public class SyncObject : NetworkBehaviour
         playerCount = 0;
         isAdded = false;
         //SyncObjectManager.instance.AddObjectListServerRPC(net_obj);
+    }
+
+    public NetworkObject GetNetworkObject()
+    {
+        return net_obj;
     }
 
     public override void OnNetworkSpawn()
@@ -35,7 +37,7 @@ public class SyncObject : NetworkBehaviour
         }
         if(!isAdded && playerCount == NetworkManager.ConnectedClientsIds.Count)
         {
-            SyncObjectManager.instance.AddObjectListServerRPC(net_obj);
+            SyncObjectManager.Instance.AddObjectListServerRPC(net_obj);
             isAdded = true;
         }
     }
@@ -50,6 +52,6 @@ public class SyncObject : NetworkBehaviour
     protected virtual void SyncTransformClientRPC(ushort obj_key, Vector3 pos, Quaternion rot)
     {
         if (IsServer) return;
-        SyncObjectManager.instance.objectList[obj_key].transform.SetPositionAndRotation(pos, rot);
+        SyncObjectManager.Instance.GetSyncObject(obj_key).transform.SetPositionAndRotation(pos, rot);
     }
 }
