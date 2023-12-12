@@ -45,13 +45,16 @@ public class SyncObject : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public virtual void SyncObjectServerRPC(ushort obj_key)
     {
-        SyncTransformClientRPC(obj_key, transform.position, transform.rotation);
+        SyncBaseClientRPC(obj_key, transform.position, transform.rotation);
     }
 
     [ClientRpc]
-    protected virtual void SyncTransformClientRPC(ushort obj_key, Vector3 pos, Quaternion rot)
+    protected virtual void SyncBaseClientRPC(ushort obj_key, Vector3 pos, Quaternion rot)
     {
         if (IsServer) return;
+        // Synchronize Transform
         SyncObjectManager.Instance.GetSyncObject(obj_key).transform.SetPositionAndRotation(pos, rot);
+        // Count Synchronized Object
+        SyncObjectManager.Instance.CountSynchronize();
     }
 }

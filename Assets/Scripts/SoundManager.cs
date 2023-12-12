@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -22,6 +23,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private float sfxVolume = 1f;
     [SerializeField] private float musicVolume = 1f;
     [SerializeField] private Transform inspectingPlayerPosition;
+    [SerializeField] private bool isSfxEnable = true;
     private Transform soundParent;
     private string currentMusicName;
     private Sound currentMusic;
@@ -146,6 +148,7 @@ public class SoundManager : MonoBehaviour
     public static void Play(string name)
     {
         if (CheckInstanceIsNull()) return;
+        if (!instance.isSfxEnable) return;
         instance.PlayPrivate(name);
     }
 
@@ -161,6 +164,7 @@ public class SoundManager : MonoBehaviour
     public static void Play(string name, Vector3 sourceLocation)
     {
         if (CheckInstanceIsNull()) return;
+        if (!instance.isSfxEnable) return;
         instance.PlayPrivate(name, sourceLocation);
     }
 
@@ -186,12 +190,14 @@ public class SoundManager : MonoBehaviour
     public static void PlayNew(string name, Vector3 sourceLocation)
     {
         if (CheckInstanceIsNull()) return;
+        if (!instance.isSfxEnable) return;
         instance.PlayNewPrivate(name, 1f, sourceLocation);
     }
 
     public static void PlayNew(string name, float scale, Vector3 sourceLocation)
     {
         if (CheckInstanceIsNull()) return;
+        if (!instance.isSfxEnable) return;
         instance.PlayNewPrivate(name, scale, sourceLocation);
     }
 
@@ -253,6 +259,12 @@ public class SoundManager : MonoBehaviour
         {
             sound.source.Stop();
         }
+    }
+
+    public static void SetSfxEnable(bool isEnable)
+    {
+        if (CheckInstanceIsNull()) return;
+        instance.isSfxEnable = isEnable;
     }
 
     public static void PlayMusic(string name)

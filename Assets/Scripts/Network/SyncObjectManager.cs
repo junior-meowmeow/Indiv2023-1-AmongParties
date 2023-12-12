@@ -13,8 +13,9 @@ public class SyncObjectManager : NetworkBehaviour
     [SerializeField] private List<SyncObject> objectList;
     private Dictionary<SyncObject, ushort> objectToKey = new();
     private ushort count = 0;
+    [SerializeField] private ushort sync_count = 0;
 
-    void Awake()
+    private void Awake()
     {
         InitSingleton();
         ResetObjectList();
@@ -37,7 +38,7 @@ public class SyncObjectManager : NetworkBehaviour
         count = 0;
     }
 
-    void Start()
+    private void Start()
     {
         // Initialize In-Scene Objects
         inSceneObjectList.AddRange(FindObjectsOfType<SyncObject>(true));
@@ -61,6 +62,7 @@ public class SyncObjectManager : NetworkBehaviour
         }
         else
         {
+            SoundManager.SetSfxEnable(false);
             RequestObjectList();
         }
     }
@@ -119,6 +121,32 @@ public class SyncObjectManager : NetworkBehaviour
             objectToKey[objectList[i]] = i;
             count++;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void AddObjectListServerRPC(NetworkObjectReference obj_ref)
+    {
+        AddObjectListClientRPC(obj_ref);
+    }
+
+    [ClientRpc]
+    public void AddObjectListClientRPC(NetworkObjectReference obj_ref)
+    {
+        if (obj_ref.TryGet(out NetworkObject obj))
+        {
+            objectList.Add(obj.GetComponent<SyncObject>());
+        }
+        else
+        {
+            Debug.Log("NO OBJECT FROM REFERENCE!!!");
+            objectList.Add(null);
+        }
+
+        if (objectList[count] != null)
+        {
+            objectToKey[objectList[count]] = count;
+        }
+        count++;
     }
 
     [ContextMenu(itemName:"Request Object List")]
@@ -184,32 +212,6 @@ public class SyncObjectManager : NetworkBehaviour
         ObjectPool.instance.CheckLateJoinServerRPC();
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void AddObjectListServerRPC(NetworkObjectReference obj_ref)
-    {
-        AddObjectListClientRPC(obj_ref);
-    }
-
-    [ClientRpc]
-    public void AddObjectListClientRPC(NetworkObjectReference obj_ref)
-    {
-        if (obj_ref.TryGet(out NetworkObject obj))
-        {
-            objectList.Add(obj.GetComponent<SyncObject>());
-        }
-        else
-        {
-            Debug.Log("NO OBJECT FROM REFERENCE!!!");
-            objectList.Add(null);
-        }
-
-        if (objectList[count] != null)
-        {
-            objectToKey[objectList[count]] = count;
-        }
-        count++;
-    }
-
     [ContextMenu(itemName: "Synchronize Objects")]
     private void SyncInitialStates()
     {
@@ -219,6 +221,21 @@ public class SyncObjectManager : NetworkBehaviour
             //Debug.Log("Syncing " + obj.name);
             obj.SyncObjectServerRPC(objectToKey[obj]);
         }
+    }
+
+    public void CountSynchronize()
+    {
+        sync_count++;
+        if(sync_count == count)
+        {
+            // Bad Practice But It's Necessary right now.
+            Invoke(nameof(OnInitialSyncFinish), 0.2f);
+        }
+    }
+
+    private void OnInitialSyncFinish()
+    {
+        SoundManager.SetSfxEnable(true);
     }
 
 }
