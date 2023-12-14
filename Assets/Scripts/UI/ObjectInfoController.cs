@@ -66,7 +66,7 @@ public class ObjectInfoController : MonoBehaviour
         }
         else if(hasItemNearby)
         {
-            text.text = "Press [E] to pick up " + itemName;
+            text.text = "Press <sprite name=keyE> to pick up " + itemName;
         }
         else
         {

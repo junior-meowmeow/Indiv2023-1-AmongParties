@@ -59,7 +59,7 @@ public class COOPGameModeManager : GameModeManager
     {
         ObjectiveUIManager.Instance.UpdateTimer(timer, isRelax);
         ObjectiveUIManager.Instance.UpdateObjective(currentObjective);
-        GameplayManager.Instance.SetMainObjectiveText("Complete " + winTargetScore + " Objective to Win(You have " + loseTargetScore + " Chances to Fail)");
+        GameplayManager.Instance.SetMainObjectiveText("Complete " + winTargetScore + " Objectives to Win (Maximum Fail :  " + (loseTargetScore - 1) + " times)");
     }
 
     public override Vector3 GetSpawnPosition()

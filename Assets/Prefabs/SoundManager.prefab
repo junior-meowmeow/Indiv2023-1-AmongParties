@@ -25,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 903048521664763039}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -182,7 +182,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 2d05dadd68291a742ba7841fd28f991c, type: 3}
     volume: 0.75
     pitch: 1
-    isLoop: 0
+    isLoop: 1
     source: {fileID: 0}
   - name: lobby
     clip: {fileID: 8300000, guid: fd6bbea98ca725440ae664f809eeb2a8, type: 3}
@@ -198,7 +198,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: battle
     clip: {fileID: 8300000, guid: 8149a479754e8454db8b64daac929105, type: 3}
-    volume: 1
+    volume: 0.4
     pitch: 1
     isLoop: 1
     source: {fileID: 0}
@@ -208,6 +208,7 @@ MonoBehaviour:
   sfxVolume: 1
   musicVolume: 1
   inspectingPlayerPosition: {fileID: 0}
+  isSfxEnable: 1
 --- !u!81 &903048521664763024
 AudioListener:
   m_ObjectHideFlags: 0

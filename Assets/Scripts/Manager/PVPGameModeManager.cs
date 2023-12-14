@@ -32,7 +32,7 @@ public class PVPGameModeManager : GameModeManager
                 ps.player.WarpClientRPC(GetSpawnPosition(), isDropItem: true);
             }
         }
-        EndGameClient();
+        //EndGameClient();
     }
 
     private void ResetValueBeforeGame()

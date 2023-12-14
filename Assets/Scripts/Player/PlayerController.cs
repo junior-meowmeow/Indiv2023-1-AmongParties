@@ -390,7 +390,7 @@ public class PlayerController : SyncObject
         {
             return;
         }
-        if (Physics.Raycast(groundPoint.position, Vector3.down, out _, 0.25f))
+        if (Physics.Raycast(groundPoint.position, -rb.transform.up, out _, 0.25f))
         {
             JumpServerRPC();
         }
@@ -399,7 +399,7 @@ public class PlayerController : SyncObject
     [ServerRpc]
     void JumpServerRPC()
     {
-        if (Physics.Raycast(groundPoint.position, Vector3.down, out _, 0.25f))
+        if (Physics.Raycast(groundPoint.position, -rb.transform.up, out _, 0.25f))
         {
             JumpClientRPC();
         }
