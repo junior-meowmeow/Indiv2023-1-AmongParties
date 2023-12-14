@@ -135,12 +135,12 @@ MonoBehaviour:
   net_obj: {fileID: 0}
   isInScene: 0
   objectName: Hammer
-  description: 'Press [E] to DROP
+  description: 'Press <sprite name=keyE> to DROP
 
-    Press [MOUSE1] to ATTACK
+    Press <sprite name=M1> to ATTACK
 
-    Press [MOUSE2]
-    to THROW'
+    Press
+    <sprite name=M2> to THROW'
   objectType: 3
   objectColor: 2
   impactSound: metal1
@@ -151,9 +151,8 @@ MonoBehaviour:
   holdPos: {x: 0.005, y: 0.005, z: -0.01}
   holdRotation: {x: 30, y: -180, z: 0}
   movingSpeed: 8
-  rotatingSpeed: 8
+  useRigidbody: 1
   weight: 1
-  hasRigidbody: 1
   isDroppedAfterUse: 0
   hasAltUse: 1
   isDroppedAfterAltUse: 1

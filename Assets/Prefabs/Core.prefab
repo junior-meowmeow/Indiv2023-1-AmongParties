@@ -185,12 +185,10 @@ MonoBehaviour:
   net_obj: {fileID: 0}
   isInScene: 0
   objectName: Core
-  description: 'Press [E] to DROP
+  description: 'Press <sprite name=keyE> or <sprite name=M1> to DROP
 
-    Press [MOUSE1] to DROP
-
-    Hold and Release
-    [MOUSE2] to CHARGETHROW'
+    Hold then
+    release <sprite name=M2> to THROW'
   objectType: 2
   objectColor: 0
   impactSound: wood
@@ -201,9 +199,8 @@ MonoBehaviour:
   holdPos: {x: 0, y: 0.006, z: -0.0125}
   holdRotation: {x: 0, y: -180, z: 0}
   movingSpeed: 8
-  rotatingSpeed: 8
+  useRigidbody: 1
   weight: 20
-  hasRigidbody: 1
   isDroppedAfterUse: 1
   hasAltUse: 1
   isDroppedAfterAltUse: 0

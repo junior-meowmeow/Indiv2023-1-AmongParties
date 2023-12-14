@@ -134,17 +134,19 @@ MonoBehaviour:
   net_obj: {fileID: 0}
   isInScene: 0
   objectName: Pickable Object
-  description: 'Press [E] to DROP
-
-    Press [MOUSE1] to DROP'
+  description: Press <sprite name=keyE> or <sprite name=M1> to DROP
   objectType: 1
   objectColor: 0
+  impactSound: defaultImpact
+  minimumImpact: 4
+  defaultMinimumImpact: 4
+  holdingMinimumImpact: 7
+  impactSoundCooldown: 0.2
   holdPos: {x: 0, y: 0.006, z: -0.014}
   holdRotation: {x: 0, y: -180, z: 0}
   movingSpeed: 8
-  rotatingSpeed: 8
+  useRigidbody: 1
   weight: 20
-  hasRigidbody: 1
   isDroppedAfterUse: 1
   hasAltUse: 0
   isDroppedAfterAltUse: 1
