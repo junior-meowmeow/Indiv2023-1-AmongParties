@@ -36,6 +36,7 @@ public class COOPGameModeManager : GameModeManager
         winTargetScore = winScore;
         loseTargetScore = loseScore;
         SoundManager.PlayMusic("coop");
+        ObjectiveUIManager.Instance.SetTimerActive(true);
         UpdateObjectiveUI();
         if (IsServer)
         {
@@ -194,6 +195,7 @@ public class COOPGameModeManager : GameModeManager
         {
             WarpAllPlayerToLobby();
         }
+        ObjectiveUIManager.Instance.SetTimerActive(false);
         AfterGameEndClient();
     }
 

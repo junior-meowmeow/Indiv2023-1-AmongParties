@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Collections.Generic;
-using TMPro;
-using Unity.Netcode;
 using UnityEngine;
+using Unity.Netcode;
+using TMPro;
 
 public class ObjectiveUIManager : NetworkBehaviour
 {
@@ -24,6 +24,11 @@ public class ObjectiveUIManager : NetworkBehaviour
             return;
         }
         instance = this;
+    }
+
+    public void SetTimerActive(bool isActive)
+    {
+        timerText.gameObject.SetActive(isActive);
     }
 
     public void UpdateTimer(float time, bool isRelax)
