@@ -129,14 +129,6 @@ public class MainUIManager : NetworkBehaviour
         }
     }
 
-    private void OnApplicationQuit()
-    {
-        if (IsHost)
-        {
-            AfterHostEndedClientRPC();
-        }
-    }
-
     public void BackToMenu()
     {
         if (IsHost)
