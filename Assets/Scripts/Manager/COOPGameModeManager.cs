@@ -215,17 +215,16 @@ public class COOPGameModeManager : GameModeManager
         currentObjective = objective;
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public override void RequestGameModeUpdateServerRPC()
+    public override void RequestGameModeUpdate(ClientRpcParams clientRpcParams = default)
     {
-        base.RequestGameModeUpdateServerRPC();
-        SendGameScoreClientRPC(doneScore, failScore, winTargetScore, loseTargetScore);
-        SendObjectiveClientRPC(currentObjective.score, currentObjective.targetScore);
+        base.RequestGameModeUpdate();
+        SendGameScoreClientRPC(doneScore, failScore, winTargetScore, loseTargetScore, clientRpcParams);
+        SendObjectiveClientRPC(currentObjective.score, currentObjective.targetScore, clientRpcParams);
         SetTimerClientRPC(timer, isRelax);
     }
 
     [ClientRpc]
-    void SendGameScoreClientRPC(ushort doneScore, ushort failScore, ushort winTargetScore, ushort loseTargetScore)
+    void SendGameScoreClientRPC(ushort doneScore, ushort failScore, ushort winTargetScore, ushort loseTargetScore, ClientRpcParams clientRpcParams = default)
     {
         if (IsServer) return;
         this.doneScore = doneScore;
@@ -235,7 +234,7 @@ public class COOPGameModeManager : GameModeManager
     }
 
     [ClientRpc]
-    void SendObjectiveClientRPC(ushort score, ushort targetScore)
+    void SendObjectiveClientRPC(ushort score, ushort targetScore, ClientRpcParams clientRpcParams = default)
     {
         currentObjective.Update(score, targetScore);
         UpdateObjectiveUI();

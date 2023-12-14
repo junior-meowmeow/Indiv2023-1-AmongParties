@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Unity.Netcode;
 
@@ -111,16 +112,34 @@ public class GameDataManager : NetworkBehaviour
         // AddNewPlayerServerRpc(player);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void RequestGameStateServerRPC()
+    public void ReorderPlayerList()
     {
-        SendGameStateClientRPC(gameState, gameMode);
-        UpdateMusicClientRPC(SoundManager.GetCurrentMusicName());
-        GameplayManager.Instance.RequestGameModeManagerUpdate();
+        playerList = playerList.OrderBy(player => player.indexInPlayerList).ToList();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestGameDataServerRPC(ServerRpcParams serverRpcParams = default)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+        if (!NetworkManager.ConnectedClients.ContainsKey(clientId)) return;
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+        SendGameDataClientRPC(gameState, gameMode,clientRpcParams);
+        UpdateMusicClientRPC(SoundManager.GetCurrentMusicName(),clientRpcParams);
+        GameplayManager.Instance.RequestGameModeManagerUpdate(clientRpcParams);
+        for (byte i = 0;i < playerList.Count;i++)
+        {
+            playerList[i].SetIndexClientRPC(i);
+        }
     }
 
     [ClientRpc]
-    private void SendGameStateClientRPC(GameState gameState, GameMode gameMode)
+    private void SendGameDataClientRPC(GameState gameState, GameMode gameMode, ClientRpcParams clientRpcParams = default)
     {
         if (IsServer) return;
         this.gameMode = gameMode;
@@ -129,7 +148,7 @@ public class GameDataManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void UpdateMusicClientRPC(string name)
+    private void UpdateMusicClientRPC(string name, ClientRpcParams clientRpcParams = default)
     {
         if (IsServer) return;
         SoundManager.PlayMusic(name);

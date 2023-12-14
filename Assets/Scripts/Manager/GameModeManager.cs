@@ -63,14 +63,13 @@ public abstract class GameModeManager : NetworkBehaviour
         ObjectPool.Instance.SpawnObject("Score Particle", position, Quaternion.identity);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public virtual void RequestGameModeUpdateServerRPC()
+    public virtual void RequestGameModeUpdate(ClientRpcParams clientRpcParams = default)
     {
-        SendBaseUpdateClientRPC(isPlaying);
+        SendBaseUpdateClientRPC(isPlaying, clientRpcParams);
     }
 
     [ClientRpc]
-    private void SendBaseUpdateClientRPC(bool isPlaying)
+    private void SendBaseUpdateClientRPC(bool isPlaying, ClientRpcParams clientRpcParams = default)
     {
         this.isPlaying = isPlaying;
     }

@@ -83,7 +83,7 @@ public class PlayerController : SyncObject
         //playDeadInput.action.started += _ => { Fall(fallDuration); };
 
         SyncObjectManager.Instance.NetworkInitialize();
-        GameDataManager.Instance.RequestGameStateServerRPC();
+        GameDataManager.Instance.RequestGameDataServerRPC();
         MainUIManager.SyncUIState();
         ObjectiveUIManager.Instance.RequestObjectiveServerRPC();
 
@@ -442,8 +442,11 @@ public class PlayerController : SyncObject
         jointYZDrive.positionSpring = 1500f;
         hipJoint.angularYZDrive = jointYZDrive;
 
-        playerControl.Humanoid.Interact.started += Interact;
-        playerControl.Humanoid.Jump.started += JumpServer;
+        if(IsOwner)
+        {
+            playerControl.Humanoid.Interact.started += Interact;
+            playerControl.Humanoid.Jump.started += JumpServer;
+        }
 
         /* Get current direction */
         float currentAngleY = hipJoint.transform.localEulerAngles.y;
@@ -518,8 +521,11 @@ public class PlayerController : SyncObject
         isMoving = false;
         stopped = true;
 
-        playerControl.Humanoid.Interact.started -= Interact;
-        playerControl.Humanoid.Jump.started -= JumpServer;
+        if(IsOwner)
+        {
+            playerControl.Humanoid.Interact.started -= Interact;
+            playerControl.Humanoid.Jump.started -= JumpServer;
+        }
 
         JointDrive jointXDrive = hipJoint.angularXDrive;
         jointXDrive.positionSpring = 0f;

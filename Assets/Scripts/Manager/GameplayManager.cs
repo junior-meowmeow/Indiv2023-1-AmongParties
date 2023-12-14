@@ -103,11 +103,11 @@ public class GameplayManager : NetworkBehaviour
         return currentGameModeManager;
     }
 
-    public void RequestGameModeManagerUpdate()
+    public void RequestGameModeManagerUpdate(ClientRpcParams clientRpcParams = default)
     {
         if (currentGameModeManager != null)
         {
-            currentGameModeManager.RequestGameModeUpdateServerRPC();
+            currentGameModeManager.RequestGameModeUpdate(clientRpcParams);
         }
     }
 

@@ -93,4 +93,11 @@ public class PlayerData : NetworkBehaviour
         MainUIManager.Instance.UpdatePlayerList();
     }
 
+    [ClientRpc]
+    public void SetIndexClientRPC(byte index, ClientRpcParams clientRpcParams = default)
+    {
+        indexInPlayerList = index;
+        GameDataManager.Instance.ReorderPlayerList();
+    }
+
 }
