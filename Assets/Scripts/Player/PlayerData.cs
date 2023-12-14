@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using TMPro;
@@ -23,13 +21,13 @@ public class PlayerData : NetworkBehaviour
 
     void Start()
     {
-        GameManager.instance.AddNewPlayer(this);
+        GameDataManager.Instance.AddNewPlayer(this);
         if(IsOwner)
         {
-            SetPlayerNameServerRPC(GameManager.instance.localPlayerName);
+            SetPlayerNameServerRPC(GameDataManager.Instance.localPlayerName);
         }
         player = gameObject.GetComponent<PlayerController>();
-        playerNameText.enabled = GameManager.instance.isLocalPlayerEnableUI;
+        playerNameText.enabled = GameDataManager.Instance.isLocalPlayerEnableUI;
     }
 
     void Update()
@@ -44,7 +42,7 @@ public class PlayerData : NetworkBehaviour
     {
         base.OnNetworkDespawn();
         //Debug.Log("OnNetworkDespawn Called");
-        GameManager.instance.RemovePlayer(this);
+        GameDataManager.Instance.RemovePlayer(this);
         MainUIManager.Instance.UpdatePlayerList();
     }
 
@@ -78,7 +76,7 @@ public class PlayerData : NetworkBehaviour
     [ServerRpc]
     private void SetPlayerNameServerRPC(string name)
     {
-        string validUsername = GameManager.instance.GetValidUsername(name);
+        string validUsername = GameDataManager.Instance.GetValidUsername(name);
         SetPlayerNameClientRPC(validUsername);
     }
 

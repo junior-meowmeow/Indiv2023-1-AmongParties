@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -120,7 +117,7 @@ public class CameraController : MonoBehaviour
     {
         if (!player.isDisplayUI) return;
 
-        foreach (PlayerData player in GameManager.instance.GetPlayerList())
+        foreach (PlayerData player in GameDataManager.Instance.GetPlayerList())
         {
             if (player == null) return;
             if (player.playerNameText.enabled)

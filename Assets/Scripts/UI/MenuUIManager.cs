@@ -45,13 +45,13 @@ public class MenuUIManager : NetworkBehaviour
         hostBtn.onClick.AddListener(() => {
             MainUIManager.Instance.ToggleLoading(true, "Loading...");
             NetworkManager.Singleton.StartHost();
-            GameManager.instance.JoinLobby(username);
+            GameDataManager.Instance.OnJoinLobby(username);
             SoundManager.Play("select");
         });
         clientBtn.onClick.AddListener(() => {
             MainUIManager.Instance.ToggleLoading(true, "Finding Server...");
             NetworkManager.Singleton.StartClient();
-            GameManager.instance.JoinLobby(username);
+            GameDataManager.Instance.OnJoinLobby(username);
             SoundManager.Play("select");
         });
     }

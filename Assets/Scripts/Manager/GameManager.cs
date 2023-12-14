@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-public enum GameState {MENU, LOBBY, INGAME};
-public enum GameMode { COOP, PVP };
+//public enum GameState {MENU, LOBBY, INGAME};
+//public enum GameMode { COOP, PVP };
 
 public class GameManager : NetworkBehaviour
 {

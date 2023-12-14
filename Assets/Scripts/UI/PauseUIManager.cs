@@ -59,7 +59,7 @@ public class PauseUIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;
-            if (GameManager.instance.GetGameState() != GameState.MENU)
+            if (GameDataManager.Instance.GetGameState() != GameState.MENU)
             {
                 TogglePause();
             }

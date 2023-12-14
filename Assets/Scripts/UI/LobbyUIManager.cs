@@ -44,7 +44,7 @@ public class LobbyUIManager : NetworkBehaviour
     private void InitButton()
     {
         startGameBtn.onClick.AddListener(() => {
-            GameManager.instance.StartGame(selectedGameMode);
+            GameplayManager.Instance.StartGame(selectedGameMode);
             SoundManager.Play("select");
         });
 

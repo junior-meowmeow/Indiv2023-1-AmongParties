@@ -50,14 +50,14 @@ public class MainUIManager : NetworkBehaviour
 
     private void Start()
     {
-        updateGameStateUI(GameManager.instance.GetGameState());
+        updateGameStateUI(GameDataManager.Instance.GetGameState());
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (GameManager.instance.GetGameState() == GameState.INGAME)
+            if (GameDataManager.Instance.GetGameState() == GameState.INGAME)
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }
@@ -68,7 +68,7 @@ public class MainUIManager : NetworkBehaviour
         }
         if (Input.GetMouseButtonDown(0))
         {
-            if (GameManager.instance.GetGameState() == GameState.INGAME && !pauseCanvas.activeSelf)
+            if (GameDataManager.Instance.GetGameState() == GameState.INGAME && !pauseCanvas.activeSelf)
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }
@@ -94,7 +94,7 @@ public class MainUIManager : NetworkBehaviour
 
     public void UpdatePlayerList()
     {
-        List<PlayerData> players = GameManager.instance.GetPlayerList();
+        List<PlayerData> players = GameDataManager.Instance.GetPlayerList();
 
         playerListText.text = "Player List:\n";
 
@@ -149,7 +149,7 @@ public class MainUIManager : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
+    [ClientRpc(Delivery = RpcDelivery.Reliable)]
     private void AfterHostEndedClientRPC()
     {
         DisconnectToMenu();

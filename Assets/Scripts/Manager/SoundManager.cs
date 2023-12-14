@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,10 +10,13 @@ public class SoundManager : MonoBehaviour
     public List<Sound> soundList;
 
     [Header("Sound Settings")]
+
     [Tooltip("Max Distance Between Sound and Inspecting Player to Play Sound Using [PlayNew]")]
     [SerializeField] private float maxDistance = 40f;
+
     [Tooltip("Make Sound Feel More Distance.")]
     [SerializeField] private float distanceMultiplier = 2f;
+
     [Tooltip("Make Sound Feel More 3D. (Value is between 0 and 1)")]
     [SerializeField] private float blendValue = 0.75f;
 
@@ -166,7 +167,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayPrivate(string name, Vector3 sourceLocation)
     {
-        if (GameManager.instance.GetGameState() == GameState.MENU || inspectingPlayerPosition == null)
+        if (GameDataManager.Instance.GetGameState() == GameState.MENU || inspectingPlayerPosition == null)
         {
             Play(name);
             return;
@@ -199,7 +200,7 @@ public class SoundManager : MonoBehaviour
 
     private void PlayNewPrivate(string name, float scale, Vector3 sourceLocation)
     {
-        if (GameManager.instance.GetGameState() == GameState.MENU || inspectingPlayerPosition == null)
+        if (GameDataManager.Instance.GetGameState() == GameState.MENU || inspectingPlayerPosition == null)
         {
             Play(name);
             return;

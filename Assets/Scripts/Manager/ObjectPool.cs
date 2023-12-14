@@ -45,6 +45,14 @@ public class ObjectPool : NetworkBehaviour
         return isPoolInitialized;
     }
 
+    public void InitPool()
+    {
+        if (!isPoolInitialized)
+        {
+            PrewarmSpawn();
+        }
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void CheckLateJoinServerRPC(ServerRpcParams serverRpcParams = default)
     {

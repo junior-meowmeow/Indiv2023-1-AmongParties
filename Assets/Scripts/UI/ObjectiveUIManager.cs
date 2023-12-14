@@ -14,6 +14,7 @@ public class ObjectiveUIManager : NetworkBehaviour
     [SerializeField] private GameObject ObjectiveUIPrefab;
     [SerializeField] private List<ObjectiveUI> ObjectiveList;
     [SerializeField] private Transform ObjectiveParent;
+    [SerializeField] private COOPGameModeManager gameModeManager;
 
     private void Awake()
     {
@@ -64,7 +65,7 @@ public class ObjectiveUIManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void RequestObjectiveServerRPC(ServerRpcParams serverRpcParams = default)
     {
-        if (GameManager.instance.GetGameState() != GameState.INGAME) return;
+        if (GameDataManager.Instance.GetGameState() != GameState.INGAME) return;
         var clientId = serverRpcParams.Receive.SenderClientId;
         if (NetworkManager.ConnectedClients.ContainsKey(clientId))
         {
@@ -85,7 +86,7 @@ public class ObjectiveUIManager : NetworkBehaviour
                 }
                 else
                 {
-                    Objective objective = GameManager.instance.GetCurrentObjective();
+                    Objective objective = gameModeManager.GetCurrentObjective();
                     int id = objective.GetID();
                     ushort score = objective.score;
                     ushort targetScore = objective.targetScore;
@@ -109,7 +110,7 @@ public class ObjectiveUIManager : NetworkBehaviour
     {
         Objective objective = new();
         objective.Update(id, score, targetScore);
-        GameManager.instance.SetCurrentObjective(objective);
+        gameModeManager.SetCurrentObjective(objective);
         ObjectiveUI obj = Instantiate(ObjectiveUIPrefab, ObjectiveParent).GetComponent<ObjectiveUI>();
         obj.UpdateObjective(objective);
         ObjectiveList.Add(obj);

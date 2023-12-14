@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
@@ -90,10 +88,11 @@ public class PlayerController : SyncObject
         useItemAltInput.action.canceled += _ => { UseItemAlt(false); };
 
         SyncObjectManager.Instance.NetworkInitialize();
-        GameManager.instance.UpdateGameStateServerRPC();
+        GameDataManager.Instance.RequestGameStateServerRPC();
         MainUIManager.SyncUIState();
         ObjectiveUIManager.Instance.RequestObjectiveServerRPC();
-        GameManager.instance.localPlayer = this;
+
+        GameDataManager.Instance.localPlayer = this;
         SoundManager.SetInspectingPlayer(rb.transform);
         MainUIManager.Instance.ToggleLoading(false);
     }
@@ -156,7 +155,7 @@ public class PlayerController : SyncObject
 
     }
 
-    [ServerRpc]
+    [ServerRpc(Delivery = RpcDelivery.Unreliable)]
     void MoveServerRPC(float camRotY, float moveX, float moveY, float targetAngle)
     {
         if (isFall) return;
@@ -581,8 +580,8 @@ public class PlayerController : SyncObject
     private void ToggleUI(InputAction.CallbackContext c)
     {
         isDisplayUI = !isDisplayUI;
-        GameManager.instance.isLocalPlayerEnableUI = isDisplayUI;
-        foreach (PlayerData player in GameManager.instance.GetPlayerList())
+        GameDataManager.Instance.isLocalPlayerEnableUI = isDisplayUI;
+        foreach (PlayerData player in GameDataManager.Instance.GetPlayerList())
         {
             if (player == null) return;
             player.playerNameText.enabled = isDisplayUI;
