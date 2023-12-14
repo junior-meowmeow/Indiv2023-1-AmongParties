@@ -25,14 +25,7 @@ public class PlayerController : SyncObject
     private float scrollAxis = 0f;
 
     [Header("Input Action")]
-    public InputActionReference moveInput;
-    public InputActionReference jumpInput;
-    public InputActionReference interactInput;
-    public InputActionReference useItemInput;
-    public InputActionReference useItemAltInput;
-    public InputActionReference scrollInput;
-    public InputActionReference playDeadInput;
-    public InputActionReference toggleUIInput;
+    [SerializeField] private PlayerControl playerControl;
 
     [Header("Body")]
     public Rigidbody rb;
@@ -76,16 +69,18 @@ public class PlayerController : SyncObject
 
     private void LocalInit()
     {
-        toggleUIInput.action.started += ToggleUI;
+        playerControl = new PlayerControl();
+        playerControl.Enable();
 
-        jumpInput.action.started += JumpServer;
+        playerControl.Humanoid.ToggleUI.started += ToggleUI;
+        playerControl.Humanoid.Jump.started += JumpServer;
+        playerControl.Humanoid.Interact.started += Interact;
+        playerControl.Humanoid.UseItem.started += _ => { UseItem(true); };
+        playerControl.Humanoid.UseItem.canceled += _ => { UseItem(false); };
+        playerControl.Humanoid.UseItemAlt.started += _ => { UseItemAlt(true); };
+        playerControl.Humanoid.UseItemAlt.canceled += _ => { UseItemAlt(false); };
+
         //playDeadInput.action.started += _ => { Fall(fallDuration); };
-
-        interactInput.action.started += Interact;
-        useItemInput.action.started += _ => { UseItem(true); };
-        useItemInput.action.canceled += _ => { UseItem(false); };
-        useItemAltInput.action.started += _ => { UseItemAlt(true); };
-        useItemAltInput.action.canceled += _ => { UseItemAlt(false); };
 
         SyncObjectManager.Instance.NetworkInitialize();
         GameDataManager.Instance.RequestGameStateServerRPC();
@@ -101,12 +96,14 @@ public class PlayerController : SyncObject
     {
         base.OnDestroy();
         if (!IsOwner) return;
-        jumpInput.action.started -= JumpServer;
-        interactInput.action.started -= Interact;
-        useItemInput.action.started -= _ => { UseItem(true); };
-        useItemInput.action.canceled -= _ => { UseItem(false); };
-        useItemAltInput.action.started -= _ => { UseItemAlt(true); };
-        useItemAltInput.action.canceled -= _ => { UseItemAlt(false); };
+        playerControl.Humanoid.ToggleUI.started -= ToggleUI;
+        playerControl.Humanoid.Jump.started -= JumpServer;
+        playerControl.Humanoid.Interact.started -= Interact;
+        playerControl.Humanoid.UseItem.started -= _ => { UseItem(true); };
+        playerControl.Humanoid.UseItem.canceled -= _ => { UseItem(false); };
+        playerControl.Humanoid.UseItemAlt.started -= _ => { UseItemAlt(true); };
+        playerControl.Humanoid.UseItemAlt.canceled -= _ => { UseItemAlt(false); };
+        playerControl.Disable();
     }
 
     private void Update()
@@ -130,7 +127,7 @@ public class PlayerController : SyncObject
 
     void MoveServer()
     {
-        Vector2 moveDir = moveInput.action.ReadValue<Vector2>();
+        Vector2 moveDir = playerControl.Humanoid.Move.ReadValue<Vector2>();
 
         if (moveDir == Vector2.zero)
         {
@@ -444,9 +441,9 @@ public class PlayerController : SyncObject
         JointDrive jointYZDrive = hipJoint.angularYZDrive;
         jointYZDrive.positionSpring = 1500f;
         hipJoint.angularYZDrive = jointYZDrive;
-        interactInput.action.started += Interact;
-        //jumpInput.action.started += Jump;
-        jumpInput.action.started += JumpServer;
+
+        playerControl.Humanoid.Interact.started += Interact;
+        playerControl.Humanoid.Jump.started += JumpServer;
 
         /* Get current direction */
         float currentAngleY = hipJoint.transform.localEulerAngles.y;
@@ -506,7 +503,7 @@ public class PlayerController : SyncObject
 
     void CameraControl()
     {
-        float axis = scrollInput.action.ReadValue<Vector2>().normalized.y;
+        float axis = playerControl.Humanoid.Scroll.ReadValue<Vector2>().normalized.y;
         if (scrollAxis != axis)
         {
             cam.SetScrollAxis(axis);
@@ -520,9 +517,9 @@ public class PlayerController : SyncObject
         isFall = true;
         isMoving = false;
         stopped = true;
-        interactInput.action.started -= Interact;
-        //jumpInput.action.started -= Jump;
-        jumpInput.action.started -= JumpServer;
+
+        playerControl.Humanoid.Interact.started -= Interact;
+        playerControl.Humanoid.Jump.started -= JumpServer;
 
         JointDrive jointXDrive = hipJoint.angularXDrive;
         jointXDrive.positionSpring = 0f;
@@ -583,7 +580,7 @@ public class PlayerController : SyncObject
         GameDataManager.Instance.isLocalPlayerEnableUI = isDisplayUI;
         foreach (PlayerData player in GameDataManager.Instance.GetPlayerList())
         {
-            if (player == null) return;
+            if (player == null) continue;
             player.playerNameText.enabled = isDisplayUI;
         }
     }

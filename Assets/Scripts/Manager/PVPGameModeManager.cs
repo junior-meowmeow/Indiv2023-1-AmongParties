@@ -6,6 +6,7 @@ public class PVPGameModeManager : GameModeManager
 
     [SerializeField] private Transform[] gameplayLocations;
     [SerializeField] private int spawnCount = 0;
+    [SerializeField] private Transform[] itemSpawnLocations;
 
     public override GameMode GetGameMode()
     {
