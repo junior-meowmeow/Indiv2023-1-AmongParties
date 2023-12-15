@@ -21,6 +21,7 @@ public class GameDataManager : NetworkBehaviour
     public PlayerController localPlayer;
     public string localPlayerName;
     public bool isLocalPlayerEnableUI = true;
+    private byte deadPlayerCount = 0;
 
 
     private void Awake()
@@ -88,6 +89,23 @@ public class GameDataManager : NetworkBehaviour
     public void SetGameMode(GameMode gameMode)
     {
         this.gameMode = gameMode;
+    }
+
+    public void UpdateDeadPlayerCount()
+    {
+        deadPlayerCount = 0;
+        foreach (PlayerData ps in playerList)
+        {
+            if(ps.player.CheckIsDead())
+            {
+                deadPlayerCount++;
+            }
+        }
+    }
+
+    public byte GetDeadPlayerCount()
+    {
+        return deadPlayerCount;
     }
 
     public List<PlayerData> GetPlayerList()

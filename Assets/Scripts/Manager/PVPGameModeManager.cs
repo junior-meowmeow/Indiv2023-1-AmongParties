@@ -7,6 +7,7 @@ public class PVPGameModeManager : GameModeManager
     [SerializeField] private Transform[] gameplayLocations;
     [SerializeField] private int spawnCount = 0;
     [SerializeField] private Transform[] itemSpawnLocations;
+    [SerializeField] private DangerZone dangerZone;
 
     public override GameMode GetGameMode()
     {
@@ -25,6 +26,7 @@ public class PVPGameModeManager : GameModeManager
     {
         ResetValueBeforeGame();
         SoundManager.PlayMusic("battle");
+        dangerZone.StartMove(1f);
         UpdateUI();
         if (IsServer)
         {
@@ -33,7 +35,6 @@ public class PVPGameModeManager : GameModeManager
                 ps.player.WarpClientRPC(GetSpawnPosition(), isDropItem: true);
             }
         }
-        //EndGameClient();
     }
 
     private void ResetValueBeforeGame()
@@ -41,6 +42,7 @@ public class PVPGameModeManager : GameModeManager
         GameplayManager.Instance.SetWinText("YOU WIN", false);
         GameplayManager.Instance.SetLoseText("YOU LOSE", false);
         spawnCount = Random.Range(0, gameplayLocations.Length);
+        dangerZone.Reset();
     }
 
     private void UpdateUI()
@@ -51,7 +53,13 @@ public class PVPGameModeManager : GameModeManager
     public override void UpdateGameMode()
     {
         base.UpdateGameMode();
-        return;
+
+        if(!IsServer) return;
+
+        if(GameDataManager.Instance.GetDeadPlayerCount() >= GameDataManager.Instance.GetPlayerList().Count - 1)
+        {
+            EndGameClientRPC();
+        }
     }
 
     public override Vector3 GetSpawnPosition()
@@ -60,9 +68,22 @@ public class PVPGameModeManager : GameModeManager
         return gameplayLocations[spawnCount++].position + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
     }
 
+    [ClientRpc]
+    private void EndGameClientRPC()
+    {
+        EndGameClient();
+    }
+
     private void EndGameClient()
     {
         Debug.Log("PVP ENDED");
+        dangerZone.StopMove();
+        if (IsServer)
+        {
+            WarpAllPlayerToLobbyServer();
+            ReviveAllPlayerServer();
+        }
+
         AfterGameEndClient();
     }
 

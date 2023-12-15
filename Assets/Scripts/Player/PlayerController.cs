@@ -17,10 +17,10 @@ public class PlayerController : SyncObject
     private float currentStepTime;
     private bool stopped = false;
     private bool isMoving = false;
-    [SerializeField] private float fallDuration = 3f;
     private float lastfallDuration;
     private float lastFallTime;
     [SerializeField] private bool isFall = false;
+    [SerializeField] private bool isDead = false;
 
     private float scrollAxis = 0f;
 
@@ -416,13 +416,64 @@ public class PlayerController : SyncObject
         SoundManager.PlayNew("hit", rb.transform.position);
     }
 
+    void Fall(float fallDuration)
+    {
+        isFall = true;
+        isMoving = false;
+        stopped = true;
+
+        if (IsOwner)
+        {
+            playerControl.Humanoid.Interact.started -= Interact;
+            playerControl.Humanoid.Jump.started -= JumpServer;
+        }
+
+        JointDrive jointXDrive = hipJoint.angularXDrive;
+        jointXDrive.positionSpring = 0f;
+        hipJoint.angularXDrive = jointXDrive;
+
+        if (holdingObject != null)
+        {
+            holdingObject.Drop();
+            holdingObject = null;
+        }
+
+        JointDrive jointYZDrive = hipJoint.angularYZDrive;
+        jointYZDrive.positionSpring = 0f;
+        hipJoint.angularYZDrive = jointYZDrive;
+
+        lastfallDuration = fallDuration;
+        lastFallTime = Time.time;
+    }
+
     void CheckFallServer()
     {
         if (!IsServer) return;
-        if (isFall && Time.time - lastFallTime > lastfallDuration)
+        if (isFall && Time.time - lastFallTime > lastfallDuration && !isDead)
         {
             GetUpClientRPC();
         }
+    }
+
+    [ClientRpc]
+    public void DieClientRPC()
+    {
+        Fall(0f);
+        isDead = true;
+        GameDataManager.Instance.UpdateDeadPlayerCount();
+        SoundManager.PlayNew("dead", rb.transform.position);
+    }
+
+    [ClientRpc]
+    public void ReviveClientRPC()
+    {
+        isDead = false;
+        GameDataManager.Instance.UpdateDeadPlayerCount();
+    }
+
+    public bool CheckIsDead()
+    {
+        return isDead;
     }
 
     [ClientRpc]
@@ -513,36 +564,6 @@ public class PlayerController : SyncObject
             scrollAxis = axis;
         }
 
-    }
-
-    void Fall(float fallDuration)
-    {
-        isFall = true;
-        isMoving = false;
-        stopped = true;
-
-        if(IsOwner)
-        {
-            playerControl.Humanoid.Interact.started -= Interact;
-            playerControl.Humanoid.Jump.started -= JumpServer;
-        }
-
-        JointDrive jointXDrive = hipJoint.angularXDrive;
-        jointXDrive.positionSpring = 0f;
-        hipJoint.angularXDrive = jointXDrive;
-
-        if (holdingObject != null)
-        {
-            holdingObject.Drop();
-            holdingObject = null;
-        }
-
-        JointDrive jointYZDrive = hipJoint.angularYZDrive;
-        jointYZDrive.positionSpring = 0f;
-        hipJoint.angularYZDrive = jointYZDrive;
-
-        lastfallDuration = fallDuration;
-        lastFallTime = Time.time;
     }
 
     public PlayerData GetPlayerData()

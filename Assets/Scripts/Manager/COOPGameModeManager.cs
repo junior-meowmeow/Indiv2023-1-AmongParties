@@ -193,7 +193,7 @@ public class COOPGameModeManager : GameModeManager
         }
         if (IsServer)
         {
-            WarpAllPlayerToLobby();
+            WarpAllPlayerToLobbyServer();
         }
         ObjectiveUIManager.Instance.SetTimerActive(false);
         AfterGameEndClient();

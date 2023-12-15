@@ -43,11 +43,19 @@ public abstract class GameModeManager : NetworkBehaviour
         return false;
     }
 
-    protected void WarpAllPlayerToLobby()
+    protected void WarpAllPlayerToLobbyServer()
     {
         foreach (PlayerData ps in GameDataManager.Instance.GetPlayerList())
         {
             ps.player.WarpClientRPC(GameDataManager.Instance.GetLobbySpawnPosition(), isDropItem: true);
+        }
+    }
+
+    protected void ReviveAllPlayerServer()
+    {
+        foreach (PlayerData ps in GameDataManager.Instance.GetPlayerList())
+        {
+            ps.player.ReviveClientRPC();
         }
     }
 

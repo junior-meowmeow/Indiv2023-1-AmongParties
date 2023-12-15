@@ -6,7 +6,9 @@ using UnityEngine;
 
 public class PlayerCollisionDetector : NetworkBehaviour
 {
+
     [SerializeField] private PlayerController player;
+
     private void OnCollisionEnter(Collision collision)
     {
         if (!IsServer) return;
@@ -21,4 +23,15 @@ public class PlayerCollisionDetector : NetworkBehaviour
         }
 
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!IsServer) return;
+
+        if (other.gameObject.TryGetComponent(out DangerZone dz))
+        {
+            dz.OnPlayerEnterServer(player);
+        }
+    }
+
 }

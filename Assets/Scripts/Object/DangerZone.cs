@@ -6,11 +6,42 @@ using UnityEngine;
 public class DangerZone : MonoBehaviour
 {
 
-    private void OnTriggerEnter(Collider col)
+    private Vector3 startPosition;
+    private bool isMoving;
+    private float moveSpeed;
+
+    private void Start()
     {
-        if (col.TryGetComponent(out PlayerController player))
+        startPosition = transform.position;
+    }
+
+    private void FixedUpdate()
+    {
+        if(isMoving)
         {
+            transform.Translate(moveSpeed * Time.deltaTime * Vector3.up);
         }
+    }
+
+    public void Reset()
+    {
+        transform.position = startPosition;
+    }
+
+    public void StartMove(float moveSpeed)
+    {
+        isMoving = true;
+        this.moveSpeed = moveSpeed;
+    }
+
+    public void StopMove()
+    {
+        isMoving = false;
+    }
+
+    public void OnPlayerEnterServer(PlayerController player)
+    {
+        player.DieClientRPC();
     }
 
 }
