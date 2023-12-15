@@ -45,7 +45,7 @@ public abstract class GameModeManager : NetworkBehaviour
 
     public abstract int GetCurrentRound();
 
-    protected void WarpAllPlayerToLobby()
+    protected void WarpAllPlayerToLobbyServer()
     {
         foreach (PlayerData ps in GameDataManager.Instance.GetPlayerList())
         {

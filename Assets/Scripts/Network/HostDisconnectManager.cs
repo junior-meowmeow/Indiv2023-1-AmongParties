@@ -14,7 +14,7 @@ public class HostDisconnectManager : NetworkBehaviour
 
     private bool WantsToQuit()
     {
-        if (IsHost)
+        if (IsHost && GameDataManager.Instance.GetPlayerList().Count > 1)
         {
             AfterHostQuitClientRPC();
             return rpcSended;
@@ -32,6 +32,7 @@ public class HostDisconnectManager : NetworkBehaviour
     [ServerRpc(Delivery = RpcDelivery.Reliable, RequireOwnership = false)]
     private void NotifyServerRPC()
     {
+        if (IsServer) return;
         rpcSended = true;
     }
 
