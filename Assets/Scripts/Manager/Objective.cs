@@ -17,6 +17,8 @@ public class Objective : INetworkSerializeByMemcpy
     [SerializeField] private static string[] colorList = {"Any", "Red", "Blue", "Yellow", "Orange"};
     [SerializeField] private static string[] allTypeList = { "Object", "Crate", "Core", "Crowbar", "Hammer" };
 
+    [SerializeField] private static ushort[] targetScoreList = {2, 3, 3, 3, 4, 4, 5, 5, 6, 7, 8};
+
     [HideInInspector] public float startTime; //not used yet
     [HideInInspector] public float duration; //not used yet
 
@@ -25,14 +27,16 @@ public class Objective : INetworkSerializeByMemcpy
 
     public void SetUp()
     {
-        req = (byte)Random.Range(0, 3);
+        req = (byte)Random.Range(1, 3);
         objectType = req == 1? (ObjectType)Random.Range(1, 3) : 0;
         objectColor = req == 2? (ObjectColor)Random.Range(1, 4) : 0;
         locationId = (byte)Random.Range(0, locationList.Length);
         startTime = Time.time;
         score = 0;
-        targetScore = (ushort)Random.Range(2, 5);
-        duration = 30 + 10 * targetScore;
+        int scoreIdx = GameplayManager.Instance.GetCurrentGameModeManager().GetCurrentRound() +
+            (GameDataManager.Instance.GetPlayerCount() - 1) * 2;
+        targetScore = targetScoreList[scoreIdx < targetScoreList.Length? scoreIdx : targetScoreList.Length];
+        duration = 45 + GameplayManager.Instance.GetCurrentGameModeManager().GetCurrentRound() * 5;
         isComplete = score >= targetScore;
     }
 

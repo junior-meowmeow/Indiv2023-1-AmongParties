@@ -26,6 +26,7 @@ public class ObjectSpawner : NetworkBehaviour
     {
         Objective objective = new();
         objective.SetUp(id);
+
         for (int i = 0; i < targetScore; i++)
         {
             int spawnIdx = 0;

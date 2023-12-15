@@ -8,6 +8,7 @@ public class PVPGameModeManager : GameModeManager
     [SerializeField] private int spawnCount = 0;
     [SerializeField] private Transform[] itemSpawnLocations;
     [SerializeField] private DangerZone dangerZone;
+    [SerializeField] private int round;
 
     public override GameMode GetGameMode()
     {
@@ -72,6 +73,11 @@ public class PVPGameModeManager : GameModeManager
     private void EndGameClientRPC()
     {
         EndGameClient();
+    }
+
+    public override int GetCurrentRound()
+    {
+        return round;
     }
 
     private void EndGameClient()
