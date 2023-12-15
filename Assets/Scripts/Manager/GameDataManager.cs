@@ -95,6 +95,11 @@ public class GameDataManager : NetworkBehaviour
         return playerList;
     }
 
+    public int GetPlayerCount()
+    {
+        return playerList.Count;
+    }
+
     public void AddNewPlayer(PlayerData player)
     {
         player.indexInPlayerList = playerList.Count;

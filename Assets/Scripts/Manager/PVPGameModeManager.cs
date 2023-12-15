@@ -7,6 +7,7 @@ public class PVPGameModeManager : GameModeManager
     [SerializeField] private Transform[] gameplayLocations;
     [SerializeField] private int spawnCount = 0;
     [SerializeField] private Transform[] itemSpawnLocations;
+    [SerializeField] private int round;
 
     public override GameMode GetGameMode()
     {
@@ -58,6 +59,11 @@ public class PVPGameModeManager : GameModeManager
     {
         spawnCount %= gameplayLocations.Length;
         return gameplayLocations[spawnCount++].position + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+    }
+
+    public override int GetCurrentRound()
+    {
+        return round;
     }
 
     private void EndGameClient()

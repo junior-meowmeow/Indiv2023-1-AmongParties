@@ -215,6 +215,11 @@ public class COOPGameModeManager : GameModeManager
         currentObjective = objective;
     }
 
+    public override int GetCurrentRound()
+    {
+        return doneScore + failScore;
+    }
+
     public override void RequestGameModeUpdate(ClientRpcParams clientRpcParams = default)
     {
         base.RequestGameModeUpdate();
