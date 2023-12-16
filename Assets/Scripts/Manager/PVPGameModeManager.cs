@@ -84,6 +84,17 @@ public class PVPGameModeManager : GameModeManager
     {
         Debug.Log("PVP ENDED");
         dangerZone.StopMove();
+
+        if(GameDataManager.Instance.localPlayer.GetPlayerData().player.CheckIsDead())
+        {
+            string winnerName = GameDataManager.Instance.GetPlayerList()[GameDataManager.Instance.spectatingPlayerIndex].playerName;
+            GameplayManager.Instance.SetLoseText(winnerName + " WIN", true);
+        }
+        else
+        {
+            GameplayManager.Instance.SetWinText("YOU WIN", true);
+        }
+
         if (IsServer)
         {
             WarpAllPlayerToLobbyServer();

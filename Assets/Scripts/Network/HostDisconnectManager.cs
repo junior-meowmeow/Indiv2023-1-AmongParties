@@ -5,11 +5,13 @@ using UnityEngine.SceneManagement;
 public class HostDisconnectManager : NetworkBehaviour
 {
 
-    private bool rpcSended = false;
+    private bool isTryQuit = false;
 
     private void Awake()
     {
         Application.wantsToQuit += WantsToQuit;
+        NetworkManager.Singleton.OnClientDisconnectCallback += CheckTryQuit;
+        isTryQuit = false;
     }
 
     private bool WantsToQuit()
@@ -17,23 +19,25 @@ public class HostDisconnectManager : NetworkBehaviour
         if (IsHost && GameDataManager.Instance.GetPlayerList().Count > 1)
         {
             AfterHostQuitClientRPC();
-            return rpcSended;
+            isTryQuit = true;
+            return false;
         }
         return true;
+    }
+
+    private void CheckTryQuit(ulong clientId)
+    {
+        if(isTryQuit)
+        {
+            Application.Quit();
+        }
     }
 
     [ClientRpc(Delivery = RpcDelivery.Reliable)]
     private void AfterHostQuitClientRPC()
     {
-        NotifyServerRPC();
-        DisconnectToMenu();
-    }
-
-    [ServerRpc(Delivery = RpcDelivery.Reliable, RequireOwnership = false)]
-    private void NotifyServerRPC()
-    {
         if (IsServer) return;
-        rpcSended = true;
+        DisconnectToMenu();
     }
 
     private void DisconnectToMenu()

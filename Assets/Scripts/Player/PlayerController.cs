@@ -461,6 +461,7 @@ public class PlayerController : SyncObject
         Fall(0f);
         isDead = true;
         GameDataManager.Instance.UpdateDeadPlayerCount();
+        GameDataManager.Instance.ChangeSpectatingPlayer();
         SoundManager.PlayNew("dead", rb.transform.position);
     }
 
@@ -469,6 +470,7 @@ public class PlayerController : SyncObject
     {
         isDead = false;
         GameDataManager.Instance.UpdateDeadPlayerCount();
+        GameDataManager.Instance.ChangeSpectatingPlayer();
     }
 
     public bool CheckIsDead()
@@ -569,6 +571,11 @@ public class PlayerController : SyncObject
     public PlayerData GetPlayerData()
     {
         return playerData;
+    }
+
+    public CameraController GetCamera()
+    {
+        return cam;
     }
 
     [ServerRpc(RequireOwnership = false)]

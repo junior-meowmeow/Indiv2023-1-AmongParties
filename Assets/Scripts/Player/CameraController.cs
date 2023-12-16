@@ -27,14 +27,14 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float currentDistance = 40f;
 
-    private PlayerController player;
+    private PlayerController spectatingPlayer;
     private float verticalRotation = 0;
     private float horizontalRotation = 0;
     private float mouseScroll = 0;
 
     void Awake()
     {
-        player = GetComponentInParent<PlayerController>();
+        spectatingPlayer = GetComponentInParent<PlayerController>();
         //mainCamera = Camera.main;
         currentDistance = defaultDistance;
         offset = mainCamera.transform.localPosition;
@@ -43,11 +43,11 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
+        if (spectatingPlayer == null) return;
 
         /* Camera Position */
 
-        Vector3 targetPosition = player.rb.transform.position + flatOffset;
+        Vector3 targetPosition = spectatingPlayer.rb.transform.position + flatOffset;
         
         /*
         if(Mathf.Abs(targetPosition.y - transform.position.y) < verticalThreshold)
@@ -103,6 +103,12 @@ public class CameraController : MonoBehaviour
         SoundManager.SetSoundAngle(-horizontalRotation);
     }
 
+    public void SetSpectatingPlayer(PlayerController player)
+    {
+        spectatingPlayer = player;
+        transform.position = player.rb.transform.position;
+    }
+
     public void SetScrollAxis(float axis)
     {
         mouseScroll = axis;
@@ -115,7 +121,7 @@ public class CameraController : MonoBehaviour
 
     private void UpdatePlayerNameText()
     {
-        if (!player.isDisplayUI) return;
+        if (!spectatingPlayer.isDisplayUI) return;
 
         foreach (PlayerData player in GameDataManager.Instance.GetPlayerList())
         {

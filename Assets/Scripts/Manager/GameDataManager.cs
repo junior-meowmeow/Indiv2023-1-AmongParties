@@ -18,6 +18,7 @@ public class GameDataManager : NetworkBehaviour
     [SerializeField] private Transform lobbyLocation;
 
     [SerializeField] private List<PlayerData> playerList;
+    public int spectatingPlayerIndex = 0;
     public PlayerController localPlayer;
     public string localPlayerName;
     public bool isLocalPlayerEnableUI = true;
@@ -89,6 +90,26 @@ public class GameDataManager : NetworkBehaviour
     public void SetGameMode(GameMode gameMode)
     {
         this.gameMode = gameMode;
+    }
+
+    public void ChangeSpectatingPlayer()
+    {
+        if (deadPlayerCount >= playerList.Count) return;
+        if (localPlayer.CheckIsDead())
+        {
+            while (playerList[spectatingPlayerIndex].player.CheckIsDead())
+            {
+                spectatingPlayerIndex = (spectatingPlayerIndex + 1) % playerList.Count;
+            }
+            localPlayer.GetCamera().SetSpectatingPlayer(playerList[spectatingPlayerIndex].player);
+            MainUIManager.Instance.UpdateSpectatingText(false, playerList[spectatingPlayerIndex].playerName);
+        }
+        else
+        {
+            spectatingPlayerIndex = localPlayer.GetPlayerData().indexInPlayerList;
+            localPlayer.GetCamera().SetSpectatingPlayer(localPlayer);
+            MainUIManager.Instance.UpdateSpectatingText(true, localPlayer.GetPlayerData().playerName);
+        }
     }
 
     public void UpdateDeadPlayerCount()

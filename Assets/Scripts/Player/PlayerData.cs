@@ -97,6 +97,7 @@ public class PlayerData : NetworkBehaviour
     public void SetIndexClientRPC(byte index, ClientRpcParams clientRpcParams = default)
     {
         indexInPlayerList = index;
+        GameDataManager.Instance.spectatingPlayerIndex = index;
         GameDataManager.Instance.ReorderPlayerList();
     }
 

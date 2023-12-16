@@ -27,6 +27,7 @@ public class MainUIManager : NetworkBehaviour
     [Header("Texts")]
     [SerializeField] private TMP_Text playerListText;
     [SerializeField] private TMP_Text loadingText;
+    [SerializeField] private TMP_Text spectatingText;
 
     private void OnEnable()
     {
@@ -114,6 +115,12 @@ public class MainUIManager : NetworkBehaviour
     {
         loadingCanvas.SetActive(isLoading);
         loadingText.text = text;
+    }
+
+    public void UpdateSpectatingText(bool isLocalPlayer, string name)
+    {
+        spectatingText.gameObject.SetActive(!isLocalPlayer);
+        spectatingText.text = "Spectating " + name;
     }
 
     private void GameStateChanged(GameState gameState)
