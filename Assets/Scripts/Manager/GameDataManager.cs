@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 
 public enum GameState { MENU, LOBBY, INGAME };
-public enum GameMode { COOP, PVP };
+public enum GameMode { COOP, PVP, PARKOUR };
 
 public class GameDataManager : NetworkBehaviour
 {

@@ -20,7 +20,7 @@ public class LobbyUIManager : NetworkBehaviour
     [SerializeField] private Button confirmColorBtn;
 
     [SerializeField] private ColorPicker colorPicker;
-    [SerializeField] private Color selectedColor = new(231, 70, 58);
+    [SerializeField] private Color selectedColor = new (231, 70, 58);
 
     private void OnEnable()
     {
