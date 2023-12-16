@@ -196,6 +196,7 @@ public class COOPGameModeManager : GameModeManager
             WarpAllPlayerToLobbyServer();
         }
         ObjectiveUIManager.Instance.SetTimerActive(false);
+        GameplayManager.ResetAllObjects();
         AfterGameEndClient();
     }
 

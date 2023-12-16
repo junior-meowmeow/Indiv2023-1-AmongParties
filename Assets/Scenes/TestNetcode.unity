@@ -22559,10 +22559,15 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 4005193900
       objectReference: {fileID: 0}
-    - target: {fileID: 2400502471199266995, guid: e5460f3aa7840374ebc18d7d130c876d,
+    - target: {fileID: 2399256522944988055, guid: e5460f3aa7840374ebc18d7d130c876d,
         type: 3}
-      propertyPath: m_PlayAutomatically
+      propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6284838084363216961, guid: e5460f3aa7840374ebc18d7d130c876d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 8498804546677375763, guid: e5460f3aa7840374ebc18d7d130c876d,
         type: 3}

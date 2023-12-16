@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
@@ -8,6 +9,8 @@ public class GameplayManager : NetworkBehaviour
 
     private static GameplayManager instance;
     public static GameplayManager Instance => instance;
+
+    public static event Action resetAllObjects;
 
     [SerializeField] private List<GameModeManager> gameModeManagerList;
     [SerializeField] private GameModeManager currentGameModeManager;
@@ -68,6 +71,11 @@ public class GameplayManager : NetworkBehaviour
         {
             currentGameModeManager.UpdateGameMode();
         }
+    }
+
+    public static void ResetAllObjects()
+    {
+        resetAllObjects();
     }
 
     public void GameModeEnd()

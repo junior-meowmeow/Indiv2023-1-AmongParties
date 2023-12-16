@@ -13,6 +13,7 @@ public class InteractableObject : SyncObject
     private void OnCollisionEnter(Collision collision)
     {
         if (!IsServer) return;
+        if (isOnce && isUsed) return;
 
         if (collision.gameObject.TryGetComponent(out Weapon w))
         {
@@ -20,22 +21,42 @@ public class InteractableObject : SyncObject
 
             //anim.Play(interactClip.name);
             InteractionClientRPC();
-            if (isOnce) enabled = false;
         }
 
     }
 
+    private void OnEnable()
+    {
+        GameplayManager.resetAllObjects += ResetAnimation;
+    }
+
+    private void OnDisable()
+    {
+        GameplayManager.resetAllObjects -= ResetAnimation;
+    }
+
     [ClientRpc]
-    void InteractionClientRPC()
+    private void InteractionClientRPC()
     {
         Interaction();
     }
 
-    void Interaction()
+    private void Interaction()
     {
-        anim.Play(interactClip.name);
+        anim.clip = interactClip;
+        anim.Play();
         SoundManager.PlayNew("door_open",transform.position);
         isUsed = true;
+    }
+
+    [ContextMenu(itemName: "Reset")]
+    private void ResetAnimation()
+    {
+        isUsed = false;
+        anim.Rewind();
+        anim.Play();
+        anim.Sample();
+        anim.Stop();
     }
 
     [ServerRpc(RequireOwnership = false)]
