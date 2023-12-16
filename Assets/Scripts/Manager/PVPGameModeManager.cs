@@ -19,6 +19,7 @@ public class PVPGameModeManager : GameModeManager
     {
         base.StartGameServer();
         ObjectPool.Instance.InitPool();
+        EasyObjectSpawner.Instance.SpawnObjectsClientRPC();
         StartGameClientRPC();
     }
 
@@ -84,8 +85,9 @@ public class PVPGameModeManager : GameModeManager
     {
         Debug.Log("PVP ENDED");
         dangerZone.StopMove();
+        ObjectPool.Instance.RecallAllObjects();
 
-        if(GameDataManager.Instance.localPlayer.GetPlayerData().player.CheckIsDead())
+        if (GameDataManager.Instance.localPlayer.GetPlayerData().player.CheckIsDead())
         {
             string winnerName = GameDataManager.Instance.GetPlayerList()[GameDataManager.Instance.spectatingPlayerIndex].playerName;
             GameplayManager.Instance.SetLoseText(winnerName + " WIN", true);

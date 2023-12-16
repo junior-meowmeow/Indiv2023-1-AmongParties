@@ -14,7 +14,7 @@ public class ObjectToSpawn
     public GameObject obj_ref;
 }
 
-public class EasyObjectSpawner : MonoBehaviour
+public class EasyObjectSpawner : NetworkBehaviour
 {
 
     private static EasyObjectSpawner instance;
@@ -33,9 +33,10 @@ public class EasyObjectSpawner : MonoBehaviour
     }
 
     [ClientRpc]
-    public void SpawnObjectsClientRpc()
+    public void SpawnObjectsClientRPC()
     {
-        foreach(ObjectToSpawn obj_info in objectToSpawnList)
+        Debug.Log("YES");
+        foreach (ObjectToSpawn obj_info in objectToSpawnList)
         {
             GameObject obj = ObjectPool.Instance.SpawnObject(obj_info.objectToSpawn.ToString(), obj_info.transform.position, obj_info.transform.rotation);
             if (obj != null)
