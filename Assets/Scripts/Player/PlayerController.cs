@@ -383,11 +383,7 @@ public class PlayerController : SyncObject
 
     void JumpServer(InputAction.CallbackContext c)
     {
-        if (!IsOwner)
-        {
-            return;
-        }
-        if (Physics.Raycast(groundPoint.position, -rb.transform.up, out _, 0.25f))
+        if (Physics.Raycast(groundPoint.position, -rb.transform.up, out _, 0.325f))
         {
             JumpServerRPC();
         }
@@ -396,7 +392,7 @@ public class PlayerController : SyncObject
     [ServerRpc]
     void JumpServerRPC()
     {
-        if (Physics.Raycast(groundPoint.position, -rb.transform.up, out _, 0.25f))
+        if (Physics.Raycast(groundPoint.position, -rb.transform.up, out _, 0.275f))
         {
             JumpClientRPC();
         }
