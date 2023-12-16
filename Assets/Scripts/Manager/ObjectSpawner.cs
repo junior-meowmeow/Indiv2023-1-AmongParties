@@ -48,7 +48,7 @@ public class ObjectSpawner : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void SpawnObjectClientRPC(string tag, byte typeId, byte colorId, int spawnIdx)
+    private void SpawnObjectClientRPC(string tag, byte typeId, byte colorId, int spawnIdx)
     {
         GameObject obj = ObjectPool.Instance.SpawnObject(tag, spawnPos[spawnIdx].position, spawnPos[spawnIdx].rotation);
         if(obj != null)
