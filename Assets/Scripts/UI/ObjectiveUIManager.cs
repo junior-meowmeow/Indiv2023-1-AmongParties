@@ -35,8 +35,9 @@ public class ObjectiveUIManager : NetworkBehaviour
     {
         if (isRelax) timerText.color = new Color(1, 0.185f, 0.185f);
         else timerText.color = new Color(1, 1, 1);
-        string secondText = ((int)time % 60).ToString("00");
-        timerText.text = ((int)time / 60).ToString() + ":" + secondText;
+        int timeInt = Mathf.RoundToInt(time);
+        string secondText = (timeInt % 60).ToString("00");
+        timerText.text = (timeInt / 60).ToString() + ":" + secondText;
     }
 
     public void StartObjective(Objective objective)
