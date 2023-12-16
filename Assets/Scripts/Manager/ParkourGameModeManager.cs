@@ -19,6 +19,7 @@ public class ParkourGameModeManager : GameModeManager
     {
         base.StartGameServer();
         ObjectPool.Instance.InitPool();
+        EasyObjectSpawner.Instance.SpawnObjectsClientRPC();
         StartGameClientRPC();
     }
 
@@ -27,7 +28,7 @@ public class ParkourGameModeManager : GameModeManager
     {
         ResetValueBeforeGame();
         SoundManager.PlayMusic("battle");
-        dangerZone.StartMove(0.3f, Vector3.up);
+        dangerZone.StartMove(0.6f, Vector3.up);
         UpdateUI();
         if (IsServer)
         {
@@ -84,8 +85,9 @@ public class ParkourGameModeManager : GameModeManager
     {
         Debug.Log("PVP ENDED");
         dangerZone.StopMove();
+        ObjectPool.Instance.RecallAllObjects();
 
-        if(GameDataManager.Instance.localPlayer.GetPlayerData().player.CheckIsDead())
+        if (GameDataManager.Instance.localPlayer.GetPlayerData().player.CheckIsDead())
         {
             string winnerName = GameDataManager.Instance.GetPlayerList()[GameDataManager.Instance.spectatingPlayerIndex].playerName;
             GameplayManager.Instance.SetLoseText(winnerName + " WIN", true);
