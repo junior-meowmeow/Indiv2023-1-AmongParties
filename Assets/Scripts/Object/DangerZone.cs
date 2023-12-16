@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -9,6 +7,7 @@ public class DangerZone : MonoBehaviour
     private Vector3 startPosition;
     private bool isMoving;
     private float moveSpeed;
+    private Vector3 direction = Vector3.up;
 
     private void Start()
     {
@@ -19,7 +18,7 @@ public class DangerZone : MonoBehaviour
     {
         if(isMoving)
         {
-            transform.Translate(moveSpeed * Time.deltaTime * Vector3.up);
+            transform.Translate(moveSpeed * Time.deltaTime * direction);
         }
     }
 
@@ -28,10 +27,11 @@ public class DangerZone : MonoBehaviour
         transform.position = startPosition;
     }
 
-    public void StartMove(float moveSpeed)
+    public void StartMove(float moveSpeed, Vector3 direction)
     {
         isMoving = true;
         this.moveSpeed = moveSpeed;
+        this.direction = direction.normalized;
     }
 
     public void StopMove()

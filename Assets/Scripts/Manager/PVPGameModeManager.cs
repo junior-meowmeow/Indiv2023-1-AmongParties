@@ -28,7 +28,7 @@ public class PVPGameModeManager : GameModeManager
     {
         ResetValueBeforeGame();
         SoundManager.PlayMusic("battle");
-        dangerZone.StartMove(1f);
+        dangerZone.StartMove(0.25f, Vector3.up);
         UpdateUI();
         if (IsServer)
         {
