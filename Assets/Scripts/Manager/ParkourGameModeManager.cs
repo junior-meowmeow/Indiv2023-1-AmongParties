@@ -27,7 +27,7 @@ public class ParkourGameModeManager : GameModeManager
     {
         ResetValueBeforeGame();
         SoundManager.PlayMusic("battle");
-        dangerZone.StartMove(1f, Vector3.up);
+        dangerZone.StartMove(0.3f, Vector3.up);
         UpdateUI();
         if (IsServer)
         {
